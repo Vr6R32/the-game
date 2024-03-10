@@ -1,0 +1,141 @@
+services:
+
+
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db-init/db-init.sql:/docker-entrypoint-initdb.d/db-init.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dontgotosql
+      PGDATA: /data/postgres
+      TZ: Europe/Warsaw
+    networks:
+      - postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  eureka-server:
+    image: michaelkey/eureka-server:0.0.1-SNAPSHOT
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+    restart: unless-stopped
+
+  api-gateway:
+    image: michaelkey/api-gateway:0.0.1-SNAPSHOT
+    container_name: api-gateway
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+    depends_on:
+      - eureka-server
+    restart: unless-stopped
+
+  user-service:
+    image: michaelkey/user-service:0.0.1-SNAPSHOT
+    container_name: user-service
+    ports:
+      - "8082:8082"
+    environment:
+      SERVER_PORT: 8082
+      SPRING_PROFILES_ACTIVE: docker
+      TZ: Europe/Warsaw
+    networks:
+      - spring
+      - postgres
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+
+  frontend:
+    image: michaelkey/frontend:0.0.1-SNAPSHOT
+    container_name: frontend
+    ports:
+      - "8080:8080"
+    environment:
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: docker
+      TZ: Europe/Warsaw
+    networks:
+      - spring
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+
+  auth-service:
+    image: michaelkey/auth-service:0.0.1-SNAPSHOT
+    container_name: auth-service
+    ports:
+      - "8084:8084"
+    environment:
+      SERVER_PORT: 8084
+      SPRING_PROFILES_ACTIVE: docker
+      TZ: Europe/Warsaw
+    networks:
+      - spring
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+
+
+
+
+
+
+
+
+
+#  frontend2:
+#    image: michaelkey/frontend:0.0.1-SNAPSHOT
+#    container_name: frontend2
+#    ports:
+#      - "8079:8079"
+#    environment:
+#      SERVER_PORT: 8079
+#      SPRING_PROFILES_ACTIVE: docker
+#      TZ: Europe/Warsaw
+#    networks:
+#      - spring
+#    depends_on:
+#      - api-gateway
+
+
+
+#  user-service2:
+#    image: michaelkey/user-service:0.0.1-SNAPSHOT
+#    container_name: user-service2
+#    ports:
+#      - "8081:8081"
+#    environment:
+#      SERVER_PORT: 8081
+#      SPRING_PROFILES_ACTIVE: docker
+#      TZ: Europe/Warsaw
+#    networks:
+#      - spring
+#    depends_on:
+#      - api-gateway
+
+volumes:
+  postgres-data:
+
+networks:
+  spring:
+    driver: bridge
+  postgres:
+    driver: bridge

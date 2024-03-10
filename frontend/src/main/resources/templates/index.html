@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>
+    WELCOME TO INDEX
+</h1>
+
+<div id="instanceId" style="display: none;" th:text="${instanceId}"></div>
+
+<form id="loginForm">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="button" onclick="submitForm()">Submit</button>
+</form>
+
+<script type="text/javascript">
+    let instanceIdFromJava = document.getElementById("instanceId").innerText;
+    console.log("Instance ID from Java: " + instanceIdFromJava);
+</script>
+
+<script type="text/javascript">
+    function submitForm() {
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+
+        const data = {
+            username: username,
+            password: password
+        };
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        };
+
+        fetch('/api/v1/auth', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Odpowiedź z serwera:', data);
+            })
+            .catch(error => {
+                console.error('Wystąpił błąd:', error);
+            });
+    }
+</script>
+
+
+</body>
+</html>
