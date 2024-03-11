@@ -2,6 +2,7 @@ package com.thegame.security.jwt;
 
 import com.thegame.AppUser;
 import com.thegame.dto.AuthenticationUserObject;
+import com.thegame.response.LogoutResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -17,5 +18,9 @@ public record JwtFacade(JwtService jwtService) {
 
     public AuthenticationUserObject authenticateRefreshToken(String token, ServerWebExchange response) {
         return jwtService.authenticateRefreshToken(token, response);
+    }
+
+    public LogoutResponse logout(HttpServletResponse response) {
+        return jwtService.logout(response);
     }
 }

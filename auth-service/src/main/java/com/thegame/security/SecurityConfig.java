@@ -24,7 +24,6 @@ class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -33,7 +32,8 @@ class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("api/v1/auth").permitAll()
+                                .requestMatchers("api/v1/auth/logout").permitAll()
+                                .requestMatchers("api/v1/auth/login").permitAll()
                                 .anyRequest().hasRole(Role.ROLE_ADMIN.toString())
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

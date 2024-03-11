@@ -4,6 +4,7 @@ import com.thegame.AppUser;
 import com.thegame.dto.AuthenticationUserObject;
 import com.thegame.mapper.UserMapper;
 import com.thegame.model.Role;
+import com.thegame.response.LogoutResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -58,6 +59,13 @@ public class JwtServiceImpl implements JwtService {
         AuthenticationUserObject authenticationUserObject = authenticateAccessToken(token);
         AppUser user = UserMapper.mapToUserEntity(authenticationUserObject);
         return setRefreshTokenAuthenticationResponse(user, response);
+    }
+
+    @Override
+    public LogoutResponse logout(HttpServletResponse response) {
+        HttpHeaders httpHeaders = buildHttpTokenHeaders("", "", 0, 0);
+        applyHttpHeaders(response, httpHeaders);
+        return new LogoutResponse("/login?logout=true","SUCCESFULLY_LOGGED_OUT");
     }
 
     private AuthenticationUserObject setRefreshTokenAuthenticationResponse(AppUser user, ServerWebExchange exchange) {

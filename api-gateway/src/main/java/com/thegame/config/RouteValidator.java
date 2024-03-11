@@ -8,7 +8,9 @@ public class RouteValidator {
 
     private final List<String> openEndpoints = List.of(
             "/api/v1/users/generate",
-            "/api/v1/auth",
+            "/api/v1/auth/logout",
+            "/api/v1/auth/login",
+            "/login",
             "/"
     );
 

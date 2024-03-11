@@ -6,26 +6,14 @@
 </head>
 <body>
 
-<h1>
-    WELCOME TO INDEX
-</h1>
+<label for="username">Username:</label>
+<input type="text" id="username" name="username" required>
 
-<div id="instanceId" style="display: none;" th:text="${instanceId}"></div>
+<label for="password">Password:</label>
+<input type="password" id="password" name="password" required>
 
-<form id="loginForm">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required>
-
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-
-    <button type="button" onclick="submitForm()">Submit</button>
-</form>
-
-<script type="text/javascript">
-    let instanceIdFromJava = document.getElementById("instanceId").innerText;
-    console.log("Instance ID from Java: " + instanceIdFromJava);
-</script>
+<button onclick="submitForm()">Login</button>
+<button onclick="logout()">Logout</button>
 
 <script type="text/javascript">
     function submitForm() {
@@ -45,7 +33,7 @@
             body: JSON.stringify(data)
         };
 
-        fetch('/api/v1/auth', requestOptions)
+        fetch('/api/v1/auth/login', requestOptions)
             .then(response => response.json())
             .then(data => {
                 console.log('Odpowiedź z serwera:', data);
@@ -54,8 +42,26 @@
                 console.error('Wystąpił błąd:', error);
             });
     }
-</script>
 
+    function logout() {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        fetch('/api/v1/auth/logout', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Odpowiedź z serwera po wylogowaniu:', data);
+                window.location.href = data.location;
+            })
+            .catch(error => {
+                console.error('Wystąpił błąd podczas wylogowywania:', error);
+            });
+    }
+</script>
 
 </body>
 </html>

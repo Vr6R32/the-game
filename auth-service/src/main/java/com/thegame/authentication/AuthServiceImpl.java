@@ -1,6 +1,7 @@
 package com.thegame.authentication;
 
 import com.thegame.AppUser;
+import com.thegame.response.LogoutResponse;
 import com.thegame.security.jwt.JwtFacade;
 import com.thegame.security.jwt.TokenResponse;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,5 +37,10 @@ class AuthServiceImpl implements AuthService {
             log.info("[AUTHENTICATION-SERVICE] -> {} FOR {} ",e.getMessage(),request);
             return new AuthResponse(e.getMessage(), HttpStatus.UNAUTHORIZED,null,null);
         }
+    }
+
+    @Override
+    public LogoutResponse logout(HttpServletResponse response) {
+        return jwtFacade.logout(response);
     }
 }
