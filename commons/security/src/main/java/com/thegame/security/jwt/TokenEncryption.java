@@ -1,5 +1,6 @@
-package com.thegame.jwt;
+package com.thegame.security.jwt;
 
+import com.thegame.security.JwtConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

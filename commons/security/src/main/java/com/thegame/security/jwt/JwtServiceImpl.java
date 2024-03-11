@@ -1,6 +1,9 @@
-package com.thegame.jwt;
+package com.thegame.security.jwt;
 
 import com.thegame.AppUser;
+import com.thegame.dto.AuthenticationUserObject;
+import com.thegame.model.Role;
+import com.thegame.security.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,24 +19,57 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 
 import java.security.Key;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @RequiredArgsConstructor
-class JwtServiceImpl implements JwtService {
+public class JwtServiceImpl implements JwtService {
 
     private final TokenEncryption tokenEncryption;
     private final JwtConfig jwtConfig;
 
+    @Override
+    public TokenResponse authenticate(AppUser user, HttpServletResponse response) {
+        return setAuthenticationResponse(user, response);
+    }
 
-    public String extractUsername(String token) {
+    @Override
+    public AuthenticationUserObject resolveToken(String accessToken) {
+        Collection<? extends GrantedAuthority> authorities = extractAuthorities(accessToken);
+        Long userId = extractUserId(accessToken);
+        String userEmail = extractUserEmail(accessToken);
+        String username = extractUsername(accessToken);
+        Role userRole = extractUserRole(authorities);
+
+        return AuthenticationUserObject.builder()
+                .username(username)
+                .id(userId)
+                .email(userEmail)
+                .role(userRole)
+                .build();
+    }
+
+    private Role extractUserRole(Collection<? extends GrantedAuthority> authorities) {
+        return authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(authorityName -> switch (authorityName) {
+                    case "ROLE_ADMIN" -> Role.ROLE_ADMIN;
+                    case "ROLE_USER" -> Role.ROLE_USER;
+                    case "ROLE_AWAITING_DETAILS" -> Role.ROLE_AWAITING_DETAILS;
+                    case "ROLE_MONITORING" -> Role.ROLE_MONITORING;
+                    default -> null;
+                })
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+    }
+
+
+    private String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public Collection<? extends GrantedAuthority> extractAuthorities(String token) {
+    private Collection<? extends GrantedAuthority> extractAuthorities(String token) {
         return extractClaim(token, claims -> {
             List<?> rolesList = claims.get("roles", List.class);
             return rolesList.stream()
@@ -47,18 +83,18 @@ class JwtServiceImpl implements JwtService {
         });
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    public String generateAccessToken(UserDetails userDetails) {
+    private String generateAccessToken(UserDetails userDetails) {
         AppUser user = (AppUser) userDetails;
         Map<String, Object> userClaims = Map.of("roles", userDetails.getAuthorities(), "userId", user.getId(), "email", user.getEmail());
         return buildToken(userClaims, userDetails, jwtConfig.getJwtExpiration());
     }
 
-    public Long extractUserId(String token) {
+    private Long extractUserId(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(jwtConfig.getSecretKey())
                 .build()
@@ -67,7 +103,7 @@ class JwtServiceImpl implements JwtService {
         return claims.get("userId", Long.class);
     }
 
-    public String extractUserEmail(String token) {
+    private String extractUserEmail(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(jwtConfig.getSecretKey())
                 .build()
@@ -76,7 +112,7 @@ class JwtServiceImpl implements JwtService {
         return claims.get("email", String.class);
     }
 
-    public String generateRefreshToken(UserDetails userDetails) {
+    private String generateRefreshToken(UserDetails userDetails) {
         AppUser user = (AppUser) userDetails;
         Map<String, Object> userClaims = Map.of("roles", userDetails.getAuthorities(), "userId", user.getId(), "email", user.getEmail());
         return buildToken(userClaims, userDetails, jwtConfig.getRefreshExpiration());
@@ -155,9 +191,6 @@ class JwtServiceImpl implements JwtService {
 //        return null;
 //    }
 
-    public TokenResponse authenticate(AppUser user, HttpServletResponse response) {
-        return setAuthenticationResponse(user, response);
-    }
 
     private TokenResponse setAuthenticationResponse(AppUser user, HttpServletResponse response) {
         var accessToken = generateAccessToken(user);

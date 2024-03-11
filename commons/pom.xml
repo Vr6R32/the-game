@@ -15,6 +15,7 @@
         <module>entities</module>
         <module>models</module>
         <module>feign-clients</module>
+        <module>security</module>
     </modules>
 
     <properties>

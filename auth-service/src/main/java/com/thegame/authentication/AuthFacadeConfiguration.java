@@ -1,6 +1,6 @@
 package com.thegame.authentication;
 
-import com.thegame.jwt.JwtFacade;
+import com.thegame.security.jwt.JwtFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

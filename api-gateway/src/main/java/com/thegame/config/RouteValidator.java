@@ -6,16 +6,17 @@ import java.util.List;
 
 public class RouteValidator {
 
-    private RouteValidator() {
+    public RouteValidator() {
+        // TODO document why this constructor is empty
     }
 
-    private static final List<String> openEndpoints = List.of(
+    private final List<String> openEndpoints = List.of(
             "/api/v1/auth",
             "/"
     );
 
-    public static boolean isSecured(ServerHttpRequest request) {
+    public boolean isSecured(ServerHttpRequest request) {
         return openEndpoints.stream()
-                .noneMatch(uri -> request.getURI().getPath().contains(uri));
+                .noneMatch(e -> request.getURI().getPath().equals(e));
     }
 }

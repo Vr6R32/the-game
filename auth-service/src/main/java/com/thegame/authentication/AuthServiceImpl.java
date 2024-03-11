@@ -1,8 +1,8 @@
 package com.thegame.authentication;
 
 import com.thegame.AppUser;
-import com.thegame.jwt.JwtFacade;
-import com.thegame.jwt.TokenResponse;
+import com.thegame.security.jwt.JwtFacade;
+import com.thegame.security.jwt.TokenResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
