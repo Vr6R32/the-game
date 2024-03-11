@@ -17,6 +17,7 @@
         <module>feign-clients</module>
         <module>auth-filter-security</module>
         <module>mapper</module>
+        <module>service-jwt-filter-security</module>
     </modules>
 
     <properties>

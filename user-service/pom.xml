@@ -55,13 +55,15 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!--@@@@@@@@@@@@@@@@@@@@@@@@@ RELATED MODULES @@@@@@@@@@@@@@@@@@@@@@@@@@-->
+        <!--@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SECURITY  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@-->
 
         <dependency>
-            <groupId>com.thegame</groupId>
-            <artifactId>commons</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <!--@@@@@@@@@@@@@@@@@@@@@@@@@ RELATED MODULES @@@@@@@@@@@@@@@@@@@@@@@@@@-->
+
+
         <dependency>
             <groupId>com.thegame</groupId>
             <artifactId>models</artifactId>
@@ -71,6 +73,12 @@
             <groupId>com.thegame</groupId>
             <artifactId>entities</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.thegame</groupId>
+            <artifactId>service-jwt-filter-security</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

@@ -3,7 +3,7 @@ package com.thegame.user;
 import com.thegame.AppUser;
 import com.thegame.dto.AppUserAuthDTO;
 import com.thegame.model.Role;
-import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,13 +13,10 @@ record UserController(UserFacade userFacade, UserRepository userRepository, Pass
 
 
     @GetMapping("{username}")
-    public AppUserAuthDTO getUserByName(@PathVariable("username") String username, HttpServletRequest request) {
+    public AppUserAuthDTO getUserByName(@PathVariable("username") String username, Authentication authentication) {
 
-
-        String header = request.getHeader("X-USER-AUTH");
-
-        System.out.println(header);
-
+        Object principal = authentication.getPrincipal();
+        System.out.println(principal);
         AppUser user = userRepository.findByUsername(username);
 
         return new AppUserAuthDTO(user.getId(),user.getUsername(), user.getPassword(),user.getEmail(), user.getRole(),user.isAccountEnabled(),user.isAccountNotLocked(),user.isAccountNotExpired(),user.isCredentialsNotExpired());

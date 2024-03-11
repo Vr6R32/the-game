@@ -6,9 +6,6 @@ import java.util.List;
 
 public class RouteValidator {
 
-    public RouteValidator() {
-    }
-
     private final List<String> openEndpoints = List.of(
             "/api/v1/users/generate",
             "/api/v1/auth",

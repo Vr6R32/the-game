@@ -1,5 +1,7 @@
 package com.thegame.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thegame.dto.AuthenticationUserObject;
 import com.thegame.security.jwt.JwtFacade;
 import com.thegame.security.jwt.TokenEncryption;
@@ -27,6 +29,7 @@ public class ApiGatewayFilter implements GatewayFilter {
     private final RouteValidator routeValidator;
     private final TokenEncryption tokenEncryption;
     private final JwtFacade jwtFacade;
+    private final ObjectMapper objectMapper;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -62,11 +65,13 @@ public class ApiGatewayFilter implements GatewayFilter {
         AuthenticationUserObject appUser = null;
 
         try {
-            appUser = jwtFacade.authenticateRefreshToken(decryptedRefreshToken,exchange);
+            appUser = jwtFacade.authenticateRefreshToken(decryptedRefreshToken, exchange);
+
+            String jsonUserAuthObject = mapUserToJsonObject(appUser);
 
             ServerHttpRequest request = exchange.getRequest()
                     .mutate()
-                    .header("X-USER-AUTH", appUser.toString())
+                    .header("X-USER-AUTH", jsonUserAuthObject)
                     .build();
             ServerWebExchange newExchange = exchange.mutate().request(request).build();
 
@@ -95,9 +100,11 @@ public class ApiGatewayFilter implements GatewayFilter {
         try {
             appUser = jwtFacade.authenticateAccessToken(decryptedAccessToken);
 
+            String jsonUserAuthObject = mapUserToJsonObject(appUser);
+
             ServerHttpRequest request = exchange.getRequest()
                     .mutate()
-                    .header("X-USER-AUTH", appUser.toString())
+                    .header("X-USER-AUTH", jsonUserAuthObject)
                     .build();
             ServerWebExchange newExchange = exchange.mutate().request(request).build();
 
@@ -110,7 +117,17 @@ public class ApiGatewayFilter implements GatewayFilter {
             }
         }
 
-        private boolean areHttpCookieTokensMissing (ServerHttpRequest request){
+    private String mapUserToJsonObject(AuthenticationUserObject appUser) {
+        String jsonUserObject = null;
+        try {
+            jsonUserObject = objectMapper.writeValueAsString(appUser);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return jsonUserObject;
+    }
+
+    private boolean areHttpCookieTokensMissing (ServerHttpRequest request){
             RequestCookies requestCookies = RequestCookies.extractCookiesFromRequest(request.getCookies());
             return requestCookies.accessToken() == null && requestCookies.refreshToken() == null;
         }
