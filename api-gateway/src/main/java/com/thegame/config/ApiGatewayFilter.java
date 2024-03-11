@@ -2,7 +2,7 @@ package com.thegame.config;
 
 import com.thegame.dto.AuthenticationUserObject;
 import com.thegame.security.JwtConfig;
-import com.thegame.security.jwt.JwtService;
+import com.thegame.security.jwt.JwtFacade;
 import com.thegame.security.jwt.JwtServiceImpl;
 import com.thegame.security.jwt.TokenEncryption;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -23,7 +23,8 @@ public class ApiGatewayFilter implements GatewayFilter {
     private final RouteValidator routeValidator = new RouteValidator();
     private final JwtConfig jwtConfig = new JwtConfig();
     private final TokenEncryption tokenEncryption = new TokenEncryption(jwtConfig);
-    private final JwtService jwtService = new JwtServiceImpl(tokenEncryption,jwtConfig);
+    private final JwtFacade jwtFacade = new JwtFacade(new JwtServiceImpl(tokenEncryption,jwtConfig));
+
 
 
     @Override
@@ -62,7 +63,7 @@ public class ApiGatewayFilter implements GatewayFilter {
             String decryptedAccessToken = tokenEncryption.decrypt(token);
             System.out.println(decryptedAccessToken);
 
-            AuthenticationUserObject appUser = jwtService.resolveToken(decryptedAccessToken);
+            AuthenticationUserObject appUser = jwtFacade.resolveToken(decryptedAccessToken);
             System.out.println(appUser);
             return chain.filter(exchange);
         }
