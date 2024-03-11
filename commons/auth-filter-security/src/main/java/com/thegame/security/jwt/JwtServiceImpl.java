@@ -3,7 +3,6 @@ package com.thegame.security.jwt;
 import com.thegame.AppUser;
 import com.thegame.dto.AuthenticationUserObject;
 import com.thegame.model.Role;
-import com.thegame.security.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

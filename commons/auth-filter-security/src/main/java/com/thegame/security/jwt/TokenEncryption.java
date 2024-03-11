@@ -1,6 +1,5 @@
 package com.thegame.security.jwt;
 
-import com.thegame.security.JwtConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,21 +17,22 @@ public class TokenEncryption {
 
     private final String ALGORITHM = "AES";
     private final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
+    private final String keyString = "Udh5YQlFnpMuEwltT7m4q8Dcsvz+G28Iqru3kk3vJx8=";
+    private final String ivString = "anjbBT/W+R6ycBK2Akx1Ug==";
     private final int KEY_SIZE = 256;
 
-    private final JwtConfig jwtConfig;
 
 
 
 //    @PostConstruct
-    public void init(){
-        System.out.println("Generated Key: " + jwtConfig.getKeyString());
-        System.out.println("Generated IV: " + jwtConfig.getIvString());
-    }
+//    public void init(){
+//        System.out.println("Generated Key: " + jwtConfig.getKeyString());
+//        System.out.println("Generated IV: " + jwtConfig.getIvString());
+//    }
 
     public String encrypt(String token) {
-        SecretKey key = decodeKeyFromString(jwtConfig.getKeyString());
-        IvParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(jwtConfig.getIvString()));
+        SecretKey key = decodeKeyFromString(keyString);
+        IvParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(ivString));
         byte[] cipherText = new byte[0];
 
         try {
@@ -47,8 +47,8 @@ public class TokenEncryption {
     }
 
     public String decrypt(String token) {
-        SecretKey key = decodeKeyFromString(jwtConfig.getKeyString());
-        IvParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(jwtConfig.getIvString()));
+        SecretKey key = decodeKeyFromString(keyString);
+        IvParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(ivString));
         byte[] plainText = new byte[0];
         try {
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);

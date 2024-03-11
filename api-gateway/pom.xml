@@ -33,7 +33,7 @@
 
         <dependency>
             <groupId>com.thegame</groupId>
-            <artifactId>security</artifactId>
+            <artifactId>auth-filter-security</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
