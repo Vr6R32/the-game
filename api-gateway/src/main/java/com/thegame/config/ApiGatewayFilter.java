@@ -4,6 +4,9 @@ import com.thegame.dto.AuthenticationUserObject;
 import com.thegame.security.jwt.JwtFacade;
 import com.thegame.security.jwt.TokenEncryption;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -32,24 +35,46 @@ public class ApiGatewayFilter implements GatewayFilter {
         if (routeValidator.isSecured(request)) {
             if (areHttpCookieTokensMissing(request)) {
                 return processBearerTokenAuthorization(exchange, chain);
+            } else {
+                return processHttpCookieAuthorization(exchange, chain);
             }
-            System.out.println("Auth failed secured");
-            return onError(exchange, HttpStatus.FORBIDDEN);
         } else {
-            System.out.println("not secured");
             return chain.filter(exchange);
         }
     }
 
-    private boolean areHttpCookieTokensMissing(ServerHttpRequest request) {
-        RequestCookies requestCookies = RequestCookies.extractCookiesFromRequest(request.getCookies());
-        return requestCookies.accessToken() == null && requestCookies.refreshToken() == null;
+    private Mono<Void> processHttpCookieAuthorization(ServerWebExchange exchange, GatewayFilterChain chain) {
+        RequestCookies requestCookies = RequestCookies.extractCookiesFromRequest(exchange.getRequest().getCookies());
+        if (requestCookies.accessToken() != null && !requestCookies.accessToken().isEmpty()) {
+            String accessToken = requestCookies.accessToken();
+            return authenticateToken(exchange, chain, accessToken);
+        } else if (requestCookies.refreshToken() != null && !requestCookies.refreshToken().isEmpty()) {
+            String refreshToken = requestCookies.refreshToken();
+            return authenticateRefreshToken(exchange, chain, refreshToken);
+        }
+        log.info("missing httpCookie token - secured");
+        return onError(exchange, HttpStatus.FORBIDDEN);
     }
 
-    private Mono<Void> onError(ServerWebExchange exchange, HttpStatus httpStatus) {
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(httpStatus);
-        return response.setComplete();
+    private Mono<Void> authenticateRefreshToken(ServerWebExchange exchange, GatewayFilterChain chain, String refreshToken) {
+        String decryptedRefreshToken = tokenEncryption.decrypt(refreshToken);
+
+        AuthenticationUserObject appUser = null;
+
+        try {
+            appUser = jwtFacade.authenticateRefreshToken(decryptedRefreshToken,exchange);
+
+            ServerHttpRequest request = exchange.getRequest()
+                    .mutate()
+                    .header("X-USER-AUTH", appUser.toString())
+                    .build();
+            ServerWebExchange newExchange = exchange.mutate().request(request).build();
+
+            return chain.filter(newExchange);
+        } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
+            log.warn(e.getMessage() + appUser);
+            return onError(exchange, HttpStatus.FORBIDDEN);
+        }
     }
 
     private Mono<Void> processBearerTokenAuthorization(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -58,23 +83,42 @@ public class ApiGatewayFilter implements GatewayFilter {
         if (authHeaderList != null && !authHeaderList.isEmpty()) {
             String bearerHeader = authHeaderList.get(0);
             String token = bearerHeader.substring(7);
-            String decryptedAccessToken = tokenEncryption.decrypt(token);
-            try {
-                AuthenticationUserObject appUser = jwtFacade.resolveToken(decryptedAccessToken);
-
-                ServerHttpRequest request = exchange.getRequest()
-                        .mutate()
-                        .header("X-USER-AUTH", appUser.toString())
-                        .build();
-                ServerWebExchange newExchange = exchange.mutate().request(request).build();
-
-                return chain.filter(newExchange);
-            } catch (ExpiredJwtException e) {
-                log.warn(e.getMessage());
-                return onError(exchange, HttpStatus.FORBIDDEN);
-            }
+            return authenticateToken(exchange, chain, token);
         }
-        System.out.println("no token - secured");
+        log.info("missing bearer token - secured");
         return onError(exchange, HttpStatus.FORBIDDEN);
     }
+
+    private Mono<Void> authenticateToken(ServerWebExchange exchange, GatewayFilterChain chain, String token) {
+        String decryptedAccessToken = tokenEncryption.decrypt(token);
+        AuthenticationUserObject appUser = null;
+        try {
+            appUser = jwtFacade.authenticateAccessToken(decryptedAccessToken);
+
+            ServerHttpRequest request = exchange.getRequest()
+                    .mutate()
+                    .header("X-USER-AUTH", appUser.toString())
+                    .build();
+            ServerWebExchange newExchange = exchange.mutate().request(request).build();
+
+            return chain.filter(newExchange);
+        } catch (ExpiredJwtException e) {
+            return processHttpCookieAuthorization(exchange, chain);
+        } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
+            log.warn(e.getMessage() + appUser);
+            return onError(exchange, HttpStatus.FORBIDDEN);
+            }
+        }
+
+        private boolean areHttpCookieTokensMissing (ServerHttpRequest request){
+            RequestCookies requestCookies = RequestCookies.extractCookiesFromRequest(request.getCookies());
+            return requestCookies.accessToken() == null && requestCookies.refreshToken() == null;
+        }
+
+        private Mono<Void> onError(ServerWebExchange exchange, HttpStatus httpStatus){
+            ServerHttpResponse response = exchange.getResponse();
+            response.setStatusCode(httpStatus);
+            return response.setComplete();
+        }
+
 }

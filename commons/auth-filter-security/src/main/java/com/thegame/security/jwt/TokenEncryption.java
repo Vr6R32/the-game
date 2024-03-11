@@ -8,6 +8,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
@@ -15,24 +16,17 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class TokenEncryption {
 
-    private final String ALGORITHM = "AES";
-    private final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
-    private final String keyString = "Udh5YQlFnpMuEwltT7m4q8Dcsvz+G28Iqru3kk3vJx8=";
-    private final String ivString = "anjbBT/W+R6ycBK2Akx1Ug==";
-    private final int KEY_SIZE = 256;
+    private static final String ALGORITHM = "AES";
+    private static final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
+    private static final String KEY_STRING = "Udh5YQlFnpMuEwltT7m4q8Dcsvz+G28Iqru3kk3vJx8=";
+    private static final String IV_STRING = "anjbBT/W+R6ycBK2Akx1Ug==";
+    private static final int KEY_SIZE = 256;
 
 
-
-
-//    @PostConstruct
-//    public void init(){
-//        System.out.println("Generated Key: " + jwtConfig.getKeyString());
-//        System.out.println("Generated IV: " + jwtConfig.getIvString());
-//    }
 
     public String encrypt(String token) {
-        SecretKey key = decodeKeyFromString(keyString);
-        IvParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(ivString));
+        SecretKey key = decodeKeyFromString();
+        IvParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(IV_STRING));
         byte[] cipherText = new byte[0];
 
         try {
@@ -47,8 +41,8 @@ public class TokenEncryption {
     }
 
     public String decrypt(String token) {
-        SecretKey key = decodeKeyFromString(keyString);
-        IvParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(ivString));
+        SecretKey key = decodeKeyFromString();
+        IvParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(IV_STRING));
         byte[] plainText = new byte[0];
         try {
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
@@ -60,7 +54,7 @@ public class TokenEncryption {
         return new String(plainText);
     }
 
-    public String generateKeyString() throws Exception {
+    public String generateKeyString() throws NoSuchAlgorithmException {
         SecretKey key = generateKey();
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
@@ -76,13 +70,13 @@ public class TokenEncryption {
         return new IvParameterSpec(iv);
     }
 
-    private SecretKey generateKey() throws Exception {
+    private SecretKey generateKey() throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM);
         keyGenerator.init(KEY_SIZE, new SecureRandom());
         return keyGenerator.generateKey();
     }
-    private SecretKey decodeKeyFromString(String keyString) {
-        byte[] decodedKey = Base64.getDecoder().decode(keyString);
+    private SecretKey decodeKeyFromString() {
+        byte[] decodedKey = Base64.getDecoder().decode(TokenEncryption.KEY_STRING);
         return new SecretKeySpec(decodedKey, 0, decodedKey.length, ALGORITHM);
     }
 }

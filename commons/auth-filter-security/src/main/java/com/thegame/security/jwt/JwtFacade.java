@@ -3,6 +3,7 @@ package com.thegame.security.jwt;
 import com.thegame.AppUser;
 import com.thegame.dto.AuthenticationUserObject;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.server.ServerWebExchange;
 
 public record JwtFacade(JwtService jwtService) {
 
@@ -10,7 +11,11 @@ public record JwtFacade(JwtService jwtService) {
         return jwtService.authenticate(user, response);
     }
 
-    public AuthenticationUserObject resolveToken(String token){
-        return jwtService.resolveToken(token);
+    public AuthenticationUserObject authenticateAccessToken(String token){
+        return jwtService.authenticateAccessToken(token);
+    }
+
+    public AuthenticationUserObject authenticateRefreshToken(String token, ServerWebExchange response) {
+        return jwtService.authenticateRefreshToken(token, response);
     }
 }

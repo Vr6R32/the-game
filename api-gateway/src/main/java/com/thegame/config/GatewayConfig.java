@@ -20,16 +20,16 @@ public class GatewayConfig {
         return builder.routes()
                 .route("user-service", r -> r.path("/api/v1/users/**")
                         .filters(f -> f.filter(gatewayFilter))
-                        .uri("lb://user-service"))
+                        .uri("lb://USER-SERVICE"))
                 .route("auth-service", r -> r.path("/api/v1/auth/**")
                         .filters(f -> f.filter(gatewayFilter))
-                        .uri("lb://auth-service"))
+                        .uri("lb://AUTH-SERVICE"))
                 .route("auth-service", r -> r.path("/api/v1/robberies/**")
                         .filters(f -> f.filter(gatewayFilter))
-                        .uri("lb://robberies-service"))
+                        .uri("lb://ROBBERIES-SERVICE"))
                 .route("frontend", r -> r.path("/**")
                         .filters(f -> f.filter(gatewayFilter))
-                        .uri("lb://frontend"))
+                        .uri("lb://FRONTEND"))
                 .build();
     }
 

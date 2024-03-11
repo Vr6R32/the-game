@@ -12,7 +12,6 @@ class ApiGatewayFilterConfig {
 
     private final JwtFacade jwtFacade;
 
-
     @Bean
     ApiGatewayFilter gatewayFilter(){
         TokenEncryption tokenEncryption = new TokenEncryption();

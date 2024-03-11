@@ -89,6 +89,7 @@ services:
       TZ: Europe/Warsaw
     networks:
       - spring
+      - postgres
     depends_on:
       - api-gateway
     restart: unless-stopped

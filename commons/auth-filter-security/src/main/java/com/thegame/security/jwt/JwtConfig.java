@@ -2,23 +2,21 @@ package com.thegame.security.jwt;
 
 import org.springframework.context.annotation.Configuration;
 
+import java.nio.charset.StandardCharsets;
+
 @Configuration
 class JwtConfig {
 
-    private final String secretKey = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B59701231BZCZWQWRXCVXQWEQWREYGCX34234VXCVERW";
-    private final long jwtExpiration = 3600000L;
-    private final long refreshExpiration = 604800000L;
-
-    public String getSecretKey(){
-        return this.secretKey;
+    public byte[] getSecretKey(){
+        return "404E635266556A586E3272357538782F413F4428472B4B6250645367566B59701231BZCZWQWRXCVXQWEQWREYGCX34234VXCVERW".getBytes(StandardCharsets.UTF_8);
     }
 
     public long getJwtExpiration(){
-        return this.jwtExpiration;
+        return 3600L;
     }
 
-    public long getRefreshExpiration(){
-        return this.refreshExpiration;
+    public long getRefreshTokenExpiration(){
+        return 604800000L;
     }
 
 }

@@ -2,11 +2,11 @@ package com.thegame.security.jwt;
 
 import com.thegame.AppUser;
 import com.thegame.dto.AuthenticationUserObject;
+import com.thegame.mapper.UserMapper;
 import com.thegame.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.server.ServerWebExchange;
 
 
 import java.security.Key;
@@ -23,6 +24,10 @@ import java.util.function.Function;
 
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
+
+    public static final String USER_ID = "userId";
+    public static final String EMAIL = "email";
+    public static final String ROLES = "roles";
 
     private final TokenEncryption tokenEncryption;
     private final JwtConfig jwtConfig;
@@ -33,7 +38,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public AuthenticationUserObject resolveToken(String accessToken) {
+    public AuthenticationUserObject authenticateAccessToken(String accessToken) {
         Collection<? extends GrantedAuthority> authorities = extractAuthorities(accessToken);
         Long userId = extractUserId(accessToken);
         String userEmail = extractUserEmail(accessToken);
@@ -48,14 +53,50 @@ public class JwtServiceImpl implements JwtService {
                 .build();
     }
 
+    @Override
+    public AuthenticationUserObject authenticateRefreshToken(String token, ServerWebExchange response) {
+        AuthenticationUserObject authenticationUserObject = authenticateAccessToken(token);
+        AppUser user = UserMapper.mapToUserEntity(authenticationUserObject);
+        return setRefreshTokenAuthenticationResponse(user, response);
+    }
+
+    private AuthenticationUserObject setRefreshTokenAuthenticationResponse(AppUser user, ServerWebExchange exchange) {
+        TokenHeaders result = buildAndGetTokenHeaders(user);
+        exchange.getResponse().getHeaders().addAll(result.httpHeaders);
+        return UserMapper.mapUserEntityToAuthObject(user);
+    }
+
+    private TokenResponse setAuthenticationResponse(AppUser user, HttpServletResponse response) {
+        TokenHeaders result = buildAndGetTokenHeaders(user);
+        //        revokeAllUserTokens(user);
+        //        saveUserToken(user, encryptedRefreshToken);
+        applyHttpHeaders(response, result.httpHeaders());
+        response.setStatus(HttpServletResponse.SC_OK);
+        return new TokenResponse(result.encryptedAccessToken(), result.encryptedRefreshToken());
+    }
+
+    private TokenHeaders buildAndGetTokenHeaders(AppUser user) {
+        var accessToken = generateAccessToken(user);
+        var refreshToken = generateRefreshToken(user);
+
+        String encryptedAccessToken;
+        String encryptedRefreshToken;
+
+        encryptedAccessToken = encryptToken(accessToken);
+        encryptedRefreshToken = encryptToken(refreshToken);
+
+        HttpHeaders httpHeaders = buildHttpTokenHeaders(encryptedAccessToken, encryptedRefreshToken, jwtConfig.getJwtExpiration(), jwtConfig.getRefreshTokenExpiration());
+        return new TokenHeaders(encryptedAccessToken, encryptedRefreshToken, httpHeaders);
+    }
+
     private Role extractUserRole(Collection<? extends GrantedAuthority> authorities) {
         return authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .map(authorityName -> switch (authorityName) {
-                    case "ROLE_ADMIN" -> Role.ROLE_ADMIN;
-                    case "ROLE_USER" -> Role.ROLE_USER;
                     case "ROLE_AWAITING_DETAILS" -> Role.ROLE_AWAITING_DETAILS;
                     case "ROLE_MONITORING" -> Role.ROLE_MONITORING;
+                    case "ROLE_ADMIN" -> Role.ROLE_ADMIN;
+                    case "ROLE_USER" -> Role.ROLE_USER;
                     default -> null;
                 })
                 .filter(Objects::nonNull)
@@ -70,7 +111,7 @@ public class JwtServiceImpl implements JwtService {
 
     private Collection<? extends GrantedAuthority> extractAuthorities(String token) {
         return extractClaim(token, claims -> {
-            List<?> rolesList = claims.get("roles", List.class);
+            List<?> rolesList = claims.get(ROLES, List.class);
             return rolesList.stream()
                     .map(roleMap -> {
                         if (roleMap instanceof Map<?, ?> roleDetails) {
@@ -89,7 +130,7 @@ public class JwtServiceImpl implements JwtService {
 
     private String generateAccessToken(UserDetails userDetails) {
         AppUser user = (AppUser) userDetails;
-        Map<String, Object> userClaims = Map.of("roles", userDetails.getAuthorities(), "userId", user.getId(), "email", user.getEmail());
+        Map<String, Object> userClaims = Map.of(ROLES, userDetails.getAuthorities(), USER_ID, user.getId(), EMAIL, user.getEmail());
         return buildToken(userClaims, userDetails, jwtConfig.getJwtExpiration());
     }
 
@@ -99,7 +140,7 @@ public class JwtServiceImpl implements JwtService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return claims.get("userId", Long.class);
+        return claims.get(USER_ID, Long.class);
     }
 
     private String extractUserEmail(String token) {
@@ -108,13 +149,13 @@ public class JwtServiceImpl implements JwtService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return claims.get("email", String.class);
+        return claims.get(EMAIL, String.class);
     }
 
     private String generateRefreshToken(UserDetails userDetails) {
         AppUser user = (AppUser) userDetails;
-        Map<String, Object> userClaims = Map.of("roles", userDetails.getAuthorities(), "userId", user.getId(), "email", user.getEmail());
-        return buildToken(userClaims, userDetails, jwtConfig.getRefreshExpiration());
+        Map<String, Object> userClaims = Map.of(ROLES, userDetails.getAuthorities(), USER_ID, user.getId(), EMAIL, user.getEmail());
+        return buildToken(userClaims, userDetails, jwtConfig.getRefreshTokenExpiration());
     }
 
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
@@ -151,7 +192,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtConfig.getSecretKey());
+        byte[] keyBytes = jwtConfig.getSecretKey();
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -177,38 +218,10 @@ public class JwtServiceImpl implements JwtService {
 //        tokenRepository.saveAll(validUserTokens);
 //    }
 
-//    String refreshToken(String refreshToken, HttpServletResponse response) {
-//
-//        final String username = extractUsername(refreshToken);
-//
-//        if (username != null) {
-//            AppUser user = userRepository.findByUserName(username).orElseThrow();
-//            return setAuthenticationResponse(user, response);
-//        } else {
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//        }
-//        return null;
-//    }
 
 
-    private TokenResponse setAuthenticationResponse(AppUser user, HttpServletResponse response) {
-        var accessToken = generateAccessToken(user);
-        var refreshToken = generateRefreshToken(user);
 
-        String encryptedAccessToken;
-        String encryptedRefreshToken;
 
-        encryptedAccessToken = encryptToken(accessToken);
-        encryptedRefreshToken = encryptToken(refreshToken);
-
-//        revokeAllUserTokens(user);
-//        saveUserToken(user, encryptedRefreshToken);
-
-        HttpHeaders httpHeaders = buildHttpTokenHeaders(encryptedAccessToken, encryptedRefreshToken, jwtConfig.getJwtExpiration(), jwtConfig.getRefreshExpiration());
-        applyHttpHeaders(response, httpHeaders);
-        response.setStatus(HttpServletResponse.SC_OK);
-        return new TokenResponse(encryptedAccessToken, encryptedRefreshToken);
-    }
 
     private String encryptToken(String token) {
         return tokenEncryption.encrypt(token);
@@ -227,7 +240,7 @@ public class JwtServiceImpl implements JwtService {
         );
     }
 
-    HttpHeaders buildHttpTokenHeaders(String accessToken, String refreshToken, long jwtExpiration, long refreshExpiration) {
+    private HttpHeaders buildHttpTokenHeaders(String accessToken, String refreshToken, long jwtExpiration, long refreshExpiration) {
 
         ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
                 .httpOnly(true)
@@ -247,9 +260,11 @@ public class JwtServiceImpl implements JwtService {
 
     private HttpHeaders getHttpHeaders(ResponseCookie accessTokenCookie, ResponseCookie refreshTokenCookie) {
         HttpHeaders headers = new HttpHeaders();
-
         headers.add(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
         headers.add(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
         return headers;
+    }
+
+    private record TokenHeaders(String encryptedAccessToken, String encryptedRefreshToken, HttpHeaders httpHeaders) {
     }
 }
