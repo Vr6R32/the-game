@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.function.Function;
 
 @RequiredArgsConstructor
-public class JwtServiceImpl implements JwtService {
+class JwtServiceImpl implements JwtService {
 
     public static final String USER_ID = "userId";
     public static final String EMAIL = "email";

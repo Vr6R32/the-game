@@ -6,7 +6,7 @@ import com.thegame.response.LogoutResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.server.ServerWebExchange;
 
-public interface JwtService {
+interface JwtService {
 
     TokenResponse authenticate(AppUser user, HttpServletResponse response);
 
