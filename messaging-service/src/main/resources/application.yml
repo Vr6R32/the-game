@@ -1,14 +1,23 @@
 server:
-  port: 8080
-
-app:
-  websocketUrl: http://localhost:8083/websocket
+  port: 8085
 
 spring:
+  main:
+    web-application-type: servlet
   application:
-    name: frontend
+    name: messaging-service
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
   zipkin:
     base-url: http://localhost:9411
+
+
+broker:
+  relay:
+    host: ${BROKER_HOST:localhost}
 
 eureka:
   client:
@@ -18,4 +27,4 @@ eureka:
     register-with-eureka: true
   instance:
     preferIpAddress: true
-    hostname: frontend
+    hostname: messaging-service

@@ -16,6 +16,7 @@
         <module>frontend</module>
         <module>auth-service</module>
         <module>commons</module>
+        <module>messaging-service</module>
     </modules>
 
     <properties>

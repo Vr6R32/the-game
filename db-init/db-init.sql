@@ -1,1 +1,1 @@
-CREATE DATABASE thegamedb;
+CREATE DATABASE the_game_user;

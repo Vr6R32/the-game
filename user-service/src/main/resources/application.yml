@@ -9,7 +9,7 @@ spring:
   datasource:
     hikari:
       max-lifetime: 600000
-    url: jdbc:postgresql://localhost:5432/thegamedb
+    url: jdbc:postgresql://localhost:5432/the_game_user
     username: postgres
     password: dontgotosql
   jpa:
@@ -23,9 +23,7 @@ spring:
     enabled: false
     drop-first: false
     change-log: classpath:db/changelog/db.changelog-master.xml
-  sql:
-    init:
-      mode: always
+
 
 eureka:
   client:
