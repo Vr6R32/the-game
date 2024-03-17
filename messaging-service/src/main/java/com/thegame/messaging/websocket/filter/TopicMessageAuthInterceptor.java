@@ -2,7 +2,6 @@ package com.thegame.messaging.websocket.filter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.security.auth.UserPrincipal;
 import com.thegame.dto.AuthenticationUserObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +14,7 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -22,7 +22,7 @@ import java.util.Objects;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TopicMessageSendInterceptor implements ChannelInterceptor {
+public class TopicMessageAuthInterceptor implements ChannelInterceptor {
 
     private final ObjectMapper objectMapper;
 
@@ -31,9 +31,10 @@ public class TopicMessageSendInterceptor implements ChannelInterceptor {
     private final SimpMessagingTemplate messagingTemplate;
 
     public void handleAuthenticationError(StompHeaderAccessor accessor){
-        String user = Objects.requireNonNull(accessor.getUser()).getName();
+        Principal principal = Objects.requireNonNull(accessor.getUser());
+        WebsocketUserPrincipal user = (WebsocketUserPrincipal) principal;
         messagingTemplate.convertAndSendToUser(
-                user, "/errors", "403 FORBIDDEN"
+                user.getUserId().toString(), "/errors", "403 FORBIDDEN"
         );
     }
 
@@ -84,7 +85,7 @@ public class TopicMessageSendInterceptor implements ChannelInterceptor {
             AuthenticationUserObject authUserObject = objectMapper.readValue(jsonValue, AuthenticationUserObject.class);
             Map<String, Object> sessionAttributes = Objects.requireNonNull(accessor.getSessionAttributes());
 
-            UserPrincipal userPrincipal = new UserPrincipal(authUserObject.username());
+            Principal userPrincipal = new WebsocketUserPrincipal(authUserObject.username(),authUserObject.id());
             sessionAttributes.put("user", authUserObject);
             accessor.setUser(userPrincipal);
             return authUserObject;

@@ -3,7 +3,13 @@ let blockUntil = 0;
 let messageTimes = [];
 
 document.addEventListener("DOMContentLoaded", function () {
-    connectSocket();
+    connectSocket(); // Initial connection
+
+    // Set interval for reconnecting every minute
+    setInterval(function() {
+        console.log('Reconnecting...');
+        connectSocket();
+    }, 11000); // 60000 milliseconds = 1 minute
 
     document.getElementById('message').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
@@ -13,23 +19,41 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-
-
 function connectSocket(){
+    // Disconnect existing connection if any
+    if (stompClient && stompClient.connected) {
+        stompClient.disconnect(function() {
+            console.log('Disconnected');
+        });
+    }
+
+    // Create a new connection
     let socketUrl = document.getElementById('websocketUrl').value;
     const socket = new SockJS(socketUrl);
     stompClient = Stomp.over(socket);
-    const usernameInput = document.getElementById('username').value;
+
+    const username = document.getElementById('username').value;
+    const userId = document.getElementById('userId').value;
+
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/user/'+ usernameInput +'/errors', function (error) {
-            alert("Otrzymano błąd: " + error.body);
+
+        // stompClient.subscribe('/user/'+ usernameInput +'/errors', function (error) {
+        //     alert("Otrzymano błąd: " + error.body);
+        // });
+
+        stompClient.subscribe('/user/'+ userId +'/errors', function (message) {
+            const chatMessage = JSON.parse(message.body);
+            appendMessage(chatMessage);
+            // console.log(chatMessage)
         });
 
         stompClient.subscribe('/conversation/1', function (message) {
             const chatMessage = JSON.parse(message.body);
-         appendMessage(chatMessage);
+            appendMessage(chatMessage);
         });
+    }, function(error) {
+        console.log('Connection error: ', error);
     });
 }
 

@@ -12,11 +12,11 @@ class JwtConfig {
     }
 
     public long getJwtExpiration(){
-        return 1000000L;
+        return 10000L;
     }
 
     public long getRefreshTokenExpiration(){
-        return 1000000L;
+        return 100000L;
     }
 
 }

@@ -2,8 +2,8 @@ package com.thegame.messaging.websocket;
 
 
 import com.thegame.messaging.websocket.filter.HandshakeInterceptorImpl;
-import com.thegame.messaging.websocket.filter.TopicMessageSendInterceptor;
-import com.thegame.messaging.websocket.filter.TopicSubscriptionInterceptor;
+import com.thegame.messaging.websocket.filter.TopicMessageAuthInterceptor;
+import com.thegame.messaging.websocket.filter.TopicSubscriptionAuthInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -19,15 +19,16 @@ import org.springframework.web.socket.config.annotation.*;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+
     private final HandshakeInterceptorImpl handshakeInterceptor;
 
     @Lazy
     @Autowired
-    private TopicMessageSendInterceptor topicMessageSendInterceptor;
+    private TopicMessageAuthInterceptor topicMessageAuthInterceptor;
 
     @Lazy
     @Autowired
-    private TopicSubscriptionInterceptor topicSubscriptionInterceptor;
+    private TopicSubscriptionAuthInterceptor topicSubscriptionAuthInterceptor;
 
 
 
@@ -53,6 +54,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(topicMessageSendInterceptor,topicSubscriptionInterceptor);
+        registration.interceptors(topicMessageAuthInterceptor, topicSubscriptionAuthInterceptor);
     }
 }
