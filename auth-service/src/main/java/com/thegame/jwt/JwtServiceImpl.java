@@ -1,10 +1,12 @@
-package com.thegame.security.jwt;
+package com.thegame.jwt;
 
 import com.thegame.AppUser;
 import com.thegame.dto.AuthenticationUserObject;
+import com.thegame.dto.RefreshTokenAuthResponse;
 import com.thegame.mapper.UserMapper;
 import com.thegame.model.Role;
 import com.thegame.response.LogoutResponse;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,8 +18,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.server.ServerWebExchange;
-
 
 import java.security.Key;
 import java.util.*;
@@ -34,18 +34,19 @@ class JwtServiceImpl implements JwtService {
     private final JwtConfig jwtConfig;
 
     @Override
-    public TokenResponse authenticate(AppUser user, HttpServletResponse response) {
+    public AuthenticationResponse authenticate(AppUser user, HttpServletResponse response) {
         return setAuthenticationResponse(user, response);
     }
 
     @Override
-    public AuthenticationUserObject authenticateAccessToken(String accessToken) {
-        Collection<? extends GrantedAuthority> authorities = extractAuthorities(accessToken);
-        Long userId = extractUserId(accessToken);
-        String userEmail = extractUserEmail(accessToken);
-        String username = extractUsername(accessToken);
+    public AuthenticationUserObject authenticateToken(String token) {
+        String decryptedAccessToken = tokenEncryption.decrypt(token);
+        Collection<? extends GrantedAuthority> authorities = extractAuthorities(decryptedAccessToken);
+        Long userId = extractUserId(decryptedAccessToken);
+        String userEmail = extractUserEmail(decryptedAccessToken);
+        String username = extractUsername(decryptedAccessToken);
         Role userRole = extractUserRole(authorities);
-        Date accessTokenExpiration = extractExpiration(accessToken);
+        Date accessTokenExpiration = extractExpiration(decryptedAccessToken);
 
         return AuthenticationUserObject.builder()
                 .username(username)
@@ -57,8 +58,8 @@ class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public AuthenticationUserObject authenticateRefreshToken(String token, ServerWebExchange response) {
-        AuthenticationUserObject authenticationUserObject = authenticateAccessToken(token);
+    public RefreshTokenAuthResponse authenticateRefreshToken(String refreshToken, HttpServletResponse response) {
+        AuthenticationUserObject authenticationUserObject = authenticateToken(refreshToken);
         AppUser user = UserMapper.mapToUserEntity(authenticationUserObject);
         return setRefreshTokenAuthenticationResponse(user, response);
     }
@@ -67,22 +68,23 @@ class JwtServiceImpl implements JwtService {
     public LogoutResponse logout(HttpServletResponse response) {
         HttpHeaders httpHeaders = buildHttpTokenHeaders("", "", 0, 0);
         applyHttpHeaders(response, httpHeaders);
-        return new LogoutResponse("/login?logout=true","SUCCESFULLY_LOGGED_OUT");
+        return new LogoutResponse("/login?logout=true","SUCCESSFULLY_LOGGED_OUT");
     }
 
-    private AuthenticationUserObject setRefreshTokenAuthenticationResponse(AppUser user, ServerWebExchange exchange) {
+    private RefreshTokenAuthResponse setRefreshTokenAuthenticationResponse(AppUser user, HttpServletResponse response) {
         TokenHeaders result = buildAndGetTokenHeaders(user);
-        exchange.getResponse().getHeaders().addAll(result.httpHeaders);
-        return UserMapper.mapUserEntityToAuthObject(user);
+        applyHttpHeaders(response,result.httpHeaders);
+        AuthenticationUserObject authenticationUserObject = UserMapper.mapUserEntityToAuthObject(user);
+        return new RefreshTokenAuthResponse(authenticationUserObject,result.httpHeaders);
     }
 
-    private TokenResponse setAuthenticationResponse(AppUser user, HttpServletResponse response) {
+    private AuthenticationResponse setAuthenticationResponse(AppUser user, HttpServletResponse response) {
         TokenHeaders result = buildAndGetTokenHeaders(user);
         //        revokeAllUserTokens(user);
         //        saveUserToken(user, encryptedRefreshToken);
         applyHttpHeaders(response, result.httpHeaders());
         response.setStatus(HttpServletResponse.SC_OK);
-        return new TokenResponse(result.encryptedAccessToken(), result.encryptedRefreshToken());
+        return new AuthenticationResponse(result.encryptedAccessToken(), result.encryptedRefreshToken());
     }
 
     private TokenHeaders buildAndGetTokenHeaders(AppUser user) {

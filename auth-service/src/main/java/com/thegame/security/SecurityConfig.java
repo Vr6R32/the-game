@@ -32,6 +32,8 @@ class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
+                                .requestMatchers("api/v1/auth/validate-token/**").permitAll()
+                                .requestMatchers("api/v1/auth/refresh-token/**").permitAll()
                                 .requestMatchers("api/v1/auth/logout").permitAll()
                                 .requestMatchers("api/v1/auth/login").permitAll()
                                 .anyRequest().hasRole(Role.ROLE_ADMIN.toString())

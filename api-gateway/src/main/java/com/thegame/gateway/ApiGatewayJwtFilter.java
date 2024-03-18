@@ -2,13 +2,9 @@ package com.thegame.gateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thegame.clients.AuthServiceClient;
 import com.thegame.dto.AuthenticationUserObject;
-import com.thegame.security.jwt.JwtFacade;
-import com.thegame.security.jwt.TokenEncryption;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.SignatureException;
+import com.thegame.dto.RefreshTokenAuthResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -27,9 +23,8 @@ import java.util.List;
 class ApiGatewayJwtFilter implements GatewayFilter {
 
     private final RouteValidator routeValidator;
-    private final TokenEncryption tokenEncryption;
-    private final JwtFacade jwtFacade;
     private final ObjectMapper objectMapper;
+    private final AuthServiceClient authServiceClient;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -60,14 +55,10 @@ class ApiGatewayJwtFilter implements GatewayFilter {
     }
 
     private Mono<Void> authenticateRefreshToken(ServerWebExchange exchange, GatewayFilterChain chain, String refreshToken) {
-        String decryptedRefreshToken = tokenEncryption.decrypt(refreshToken);
 
-        AuthenticationUserObject appUser = null;
-
-        try {
-            appUser = jwtFacade.authenticateRefreshToken(decryptedRefreshToken, exchange);
-
-            String jsonUserAuthObject = mapUserToJsonObject(appUser);
+            RefreshTokenAuthResponse appUser = authServiceClient.refreshToken(refreshToken);
+            exchange.getResponse().getHeaders().addAll(appUser.httpHeaders());
+            String jsonUserAuthObject = mapUserToJsonObject(appUser.authenticationUserObject());
 
             ServerHttpRequest request = exchange.getRequest()
                     .mutate()
@@ -76,10 +67,6 @@ class ApiGatewayJwtFilter implements GatewayFilter {
             ServerWebExchange newExchange = exchange.mutate().request(request).build();
 
             return chain.filter(newExchange);
-        } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            log.warn(e.getMessage() + appUser);
-            return missingTokenResponse(exchange, HttpStatus.FORBIDDEN);
-        }
     }
 
     private Mono<Void> processBearerTokenAuthorization(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -95,11 +82,8 @@ class ApiGatewayJwtFilter implements GatewayFilter {
     }
 
     private Mono<Void> authenticateToken(ServerWebExchange exchange, GatewayFilterChain chain, String token) {
-        String decryptedAccessToken = tokenEncryption.decrypt(token);
-        AuthenticationUserObject appUser = null;
-        try {
-            appUser = jwtFacade.authenticateAccessToken(decryptedAccessToken);
 
+            AuthenticationUserObject appUser = authServiceClient.validateToken(token);
             String jsonUserAuthObject = mapUserToJsonObject(appUser);
 
             ServerHttpRequest request = exchange.getRequest()
@@ -109,12 +93,6 @@ class ApiGatewayJwtFilter implements GatewayFilter {
             ServerWebExchange newExchange = exchange.mutate().request(request).build();
 
             return chain.filter(newExchange);
-        } catch (ExpiredJwtException e) {
-            return processHttpCookieAuthorization(exchange, chain);
-        } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            log.warn(e.getMessage() + appUser);
-            return missingTokenResponse(exchange, HttpStatus.FORBIDDEN);
-            }
         }
 
     private String mapUserToJsonObject(AuthenticationUserObject appUser) {

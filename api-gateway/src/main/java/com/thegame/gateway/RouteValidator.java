@@ -28,6 +28,7 @@ public class RouteValidator {
 
     private final List<String> openEndpointPrefixes = List.of(
 //                "/websocket/",
+                "/api/v1/auth/refresh-token/**",
                 "/css/",
                 "/js/"
         );

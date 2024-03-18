@@ -1,23 +1,26 @@
 package com.thegame.gateway;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thegame.security.jwt.JwtFacade;
-import com.thegame.security.jwt.TokenEncryption;
-import lombok.RequiredArgsConstructor;
+import com.thegame.clients.AuthServiceClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 @Configuration
-@RequiredArgsConstructor
 class ApiGatewayJwtFilterConfig {
 
-    private final JwtFacade jwtFacade;
     private final ObjectMapper objectMapper;
+    private final AuthServiceClient authServiceClient;
+
+
+    public ApiGatewayJwtFilterConfig(ObjectMapper objectMapper, @Lazy AuthServiceClient authServiceClient) {
+        this.objectMapper = objectMapper;
+        this.authServiceClient = authServiceClient;
+    }
 
     @Bean
     ApiGatewayJwtFilter gatewayFilter(){
-        TokenEncryption tokenEncryption = new TokenEncryption();
         RouteValidator routeValidator = new RouteValidator();
-        return new ApiGatewayJwtFilter(routeValidator,tokenEncryption,jwtFacade,objectMapper);
+        return new ApiGatewayJwtFilter(routeValidator,objectMapper,authServiceClient);
     }
 }

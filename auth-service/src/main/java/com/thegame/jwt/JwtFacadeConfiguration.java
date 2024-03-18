@@ -1,4 +1,4 @@
-package com.thegame.security.jwt;
+package com.thegame.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

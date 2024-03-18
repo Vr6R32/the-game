@@ -1,9 +1,11 @@
 package com.thegame.authentication;
 
 import com.thegame.AppUser;
+import com.thegame.dto.AuthenticationUserObject;
+import com.thegame.dto.RefreshTokenAuthResponse;
+import com.thegame.jwt.AuthenticationResponse;
+import com.thegame.jwt.JwtFacade;
 import com.thegame.response.LogoutResponse;
-import com.thegame.security.jwt.JwtFacade;
-import com.thegame.security.jwt.TokenResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +33,8 @@ class AuthServiceImpl implements AuthService {
                     )
             );
             AppUser user = (AppUser) authentication.getPrincipal();
-            TokenResponse tokenResponse = jwtFacade.authenticate(user, response);
-            return new AuthResponse("AUTHENTICATED",HttpStatus.OK, tokenResponse.accessToken(), tokenResponse.refreshToken());
+            AuthenticationResponse authenticationResponse = jwtFacade.authenticate(user, response);
+            return new AuthResponse("AUTHENTICATED",HttpStatus.OK, authenticationResponse.accessToken(), authenticationResponse.refreshToken());
         } catch (AuthenticationException e) {
             log.info("[AUTHENTICATION-SERVICE] -> {} FOR {} ",e.getMessage(),request);
             return new AuthResponse(e.getMessage(), HttpStatus.UNAUTHORIZED,null,null);
@@ -42,5 +44,15 @@ class AuthServiceImpl implements AuthService {
     @Override
     public LogoutResponse logout(HttpServletResponse response) {
         return jwtFacade.logout(response);
+    }
+
+    @Override
+    public AuthenticationUserObject validateToken(String accessToken) {
+        return jwtFacade.authenticateAccessToken(accessToken);
+    }
+
+    @Override
+    public RefreshTokenAuthResponse refreshToken(String refreshToken, HttpServletResponse response) {
+        return jwtFacade.authenticateRefreshToken(refreshToken, response);
     }
 }

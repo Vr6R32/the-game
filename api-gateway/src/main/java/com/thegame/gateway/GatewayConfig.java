@@ -1,13 +1,11 @@
 package com.thegame.gateway;
 
-import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.socket.server.RequestUpgradeStrategy;
 import org.springframework.web.reactive.socket.server.upgrade.TomcatRequestUpgradeStrategy;
@@ -27,11 +25,12 @@ public class GatewayConfig {
     public RequestUpgradeStrategy requestUpgradeStrategy() {
         return new TomcatRequestUpgradeStrategy();
     }
-    @Bean
-    @Order(-2)
-    public ErrorWebExceptionHandler errorWebExceptionHandler() {
-        return new CustomErrorWebExceptionHandler();
-    }
+
+//    @Bean
+//    @Order(-2)
+//    public ErrorWebExceptionHandler errorWebExceptionHandler() {
+//        return new CustomErrorWebExceptionHandler();
+//    }
 
     @Bean
     public GatewayFilter corsFilter() {
