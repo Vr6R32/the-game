@@ -1,0 +1,93 @@
+body {
+    display: flex; /* Use flexbox to center the child elements */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    min-height: 100vh; /* At least full viewport height */
+    margin: 0; /* Remove default margin */
+    background-color: #000; /* Optional: Set background color */
+}
+
+
+@media screen and (max-width: 1000px) {
+    .login-container input {
+        font-size: 22px;
+    }
+}
+
+@media screen and (min-width: 1001px) {
+    .login-container input {
+        font-size: 22px;
+    }
+}
+
+.login-container {
+    background-color: #333; /* Dark background */
+    border-radius: 15px; /* Rounded corners */
+    padding: 20px;
+    width: 35vh; /* Adjust as necessary */
+    height: 50vh; /* Adjust as necessary */
+    margin: 50px auto; /* Center the form */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+    color: white; /* White text */
+}
+
+.login-container label {
+    display: block; /* Stack the label and input */
+    margin-bottom: 10px; /* Space out elements */
+}
+
+.login-container input {
+    width: calc(100% - 22px); /* Full width minus padding and border */
+    height: 2vh;
+    padding: 10px;
+    margin-bottom: 15px; /* Space below each input */
+    border: 1px solid #555; /* Slightly lighter border for input */
+    background-color: #222; /* Even darker background for input */
+    border-radius: 8px; /* Rounded corners for inputs */
+    color: white; /* White text */
+}
+
+/*.login-container button {*/
+/*    width: calc(100%); !* Full width minus padding *!*/
+/*    padding: 10px;*/
+/*    border: 1px solid #555; !* Slightly lighter border for button *!*/
+/*    background-color: #444; !* Dark background for button *!*/
+/*    border-radius: 8px; !* Rounded corners for buttons *!*/
+/*    color: white; !* White text *!*/
+/*    margin-bottom: 10px; !* Space below each button *!*/
+/*    transition: background-color 0.3s; !* Transition for button background *!*/
+/*}*/
+
+/*.login-container button:hover {*/
+/*    cursor: pointer;*/
+/*    background-color: #555; !* Slightly lighter background on hover *!*/
+/*}*/
+
+
+.login-container button {
+    margin: 20px 0;
+    width: 100%;
+    height: 40px;
+    border: none;
+    color: #FFF; /* White text color */
+    font-family: "IBM Plex Mono", monospace;
+    background: #FFD700; /* Gold button background */
+    border-radius: 20px;
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.login-container button:hover {
+    transform: scale(0.9);
+    background: #FFC700; /* Darker shade for hover effect */
+}
+
+
+/* Clearing floats */
+.login-container::after {
+    content: "";
+    display: table;
+    clear: both;
+}

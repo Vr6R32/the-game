@@ -1,5 +1,6 @@
-package com.thegame.config;
+package com.thegame.conversation.config;
 
+import com.thegame.model.Role;
 import com.thegame.service.ServiceAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +31,8 @@ class SecurityConfig {
                 .addFilterBefore(serviceAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .anyRequest().permitAll()
+                                .requestMatchers("api/v1/users/generate").permitAll()
+                                .anyRequest().hasRole(Role.ROLE_USER.toString())
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
         return http.build();

@@ -3,13 +3,12 @@ let blockUntil = 0;
 let messageTimes = [];
 
 document.addEventListener("DOMContentLoaded", function () {
-    connectSocket(); // Initial connection
+    connectSocket();
 
-    // Set interval for reconnecting every minute
     setInterval(function() {
         console.log('Reconnecting...');
         connectSocket();
-    }, 11000); // 60000 milliseconds = 1 minute
+    }, 110000);
 
     document.getElementById('message').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
@@ -20,14 +19,12 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function connectSocket(){
-    // Disconnect existing connection if any
     if (stompClient && stompClient.connected) {
         stompClient.disconnect(function() {
             console.log('Disconnected');
         });
     }
 
-    // Create a new connection
     let socketUrl = document.getElementById('websocketUrl').value;
     const socket = new SockJS(socketUrl);
     stompClient = Stomp.over(socket);
@@ -42,13 +39,13 @@ function connectSocket(){
         //     alert("Otrzymano błąd: " + error.body);
         // });
 
-        stompClient.subscribe('/user/'+ userId +'/errors', function (message) {
+        stompClient.subscribe('/user/'+ username +'/errors', function (message) {
             const chatMessage = JSON.parse(message.body);
             appendMessage(chatMessage);
             // console.log(chatMessage)
         });
 
-        stompClient.subscribe('/conversation/1', function (message) {
+        stompClient.subscribe('/user/' + username + '/messages', function (message) {
             const chatMessage = JSON.parse(message.body);
             appendMessage(chatMessage);
         });
@@ -61,7 +58,8 @@ function appendMessage(chatMessage) {
     const messageContainer = document.getElementById('messageContainer');
     const isScrolledToBottom = messageContainer.scrollHeight - messageContainer.clientHeight <= messageContainer.scrollTop + 1;
 
-    messageContainer.innerHTML += `<p><strong>${chatMessage.sender}:</strong> ${chatMessage.payload}</p>`;
+    messageContainer.innerHTML += `<p style="color: whitesmoke;"><strong>${chatMessage.sender}:</strong> ${chatMessage.payload}</p>`;
+
 
     if (isScrolledToBottom) {
         messageContainer.scrollTop = messageContainer.scrollHeight;
@@ -125,9 +123,77 @@ function sendMessage() {
     }
     const message = {
         sender: usernameInput,
+        receiver: usernameInput,
         payload: trimmedMessage
     };
-    stompClient.send("/chat/sendMessage/1", {}, JSON.stringify(message));
+    stompClient.send("/chat/private/message", {}, JSON.stringify(message));
     messageInput.value = '';
     messageInput.focus();
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    createChatIcon();
+    let chatIcon = document.getElementById('chatIcon');
+    dragElement(chatIcon);
+    chatIcon.addEventListener('click', function(event) {
+        if (!chatIcon.wasDragged) {
+            maximizeChat();
+        }
+        chatIcon.wasDragged = false;
+    });
+
+    let chatWrapper = document.getElementById('chatWrapper');
+    chatWrapper.style.display = 'none';
+
+});
+
+function createChatIcon() {
+    const chatIcon = document.createElement('div');
+    chatIcon.id = 'chatIcon';
+    chatIcon.textContent = 'C';
+    document.body.appendChild(chatIcon);
+}
+
+function maximizeChat() {
+    document.getElementById('chatWrapper').style.display = 'block';
+    document.getElementById('chatIcon').style.display = 'none';
+}
+
+function minimizeChat() {
+    document.getElementById('chatWrapper').style.display = 'none';
+    document.getElementById('chatIcon').style.display = 'flex';
+}
+
+function dragElement(element) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    element.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+        element.wasDragged = false;
+    }
+
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        element.style.top = (element.offsetTop - pos2) + "px";
+        element.style.left = (element.offsetLeft - pos1) + "px";
+        element.wasDragged = true; // Set the flag to indicate dragging
+    }
+
+    function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
 }

@@ -2,14 +2,12 @@ package com.thegame.controller;
 
 import com.netflix.appinfo.EurekaInstanceConfig;
 import com.thegame.dto.AuthenticationUserObject;
-import com.thegame.model.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.Date;
 
 @Controller
 public class FrontViewController {
@@ -33,7 +31,6 @@ public class FrontViewController {
     @GetMapping("/messages")
     public String getChat(Model model, Authentication authentication){
         AuthenticationUserObject user = (AuthenticationUserObject) authentication.getPrincipal();
-//        model.addAttribute("user", new AuthenticationUserObject(1L,"karacz","Karacz@htimna.pl", Role.ROLE_USER, new Date()));
         model.addAttribute("user", user);
         model.addAttribute("websocketUrl", websocketUrl);
         return "chat.html";

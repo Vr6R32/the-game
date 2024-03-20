@@ -1,0 +1,163 @@
+
+html {
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: black;
+  color: #fff;
+  font-family: 'Oswald', sans-serif;
+}
+
+a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  background-color: transparent;
+}
+
+.p-menu1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 15px;
+  padding-left: 15px;
+  position: relative;
+  background-color: transparent;
+  height: 145px;
+}
+
+
+.logo img {
+  max-height: 145px;
+  max-width: 400px;
+  width: auto;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+
+.hamburger1 {
+  display: none;
+  grid-template-rows: repeat(3, 1fr);
+  justify-items: center;
+  z-index: 120;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.hamburger1 div {
+  background-color: rgb(61, 61, 61);
+  position: relative;
+  width: 40px;
+  height: 5px;
+  margin-top: 7px;
+  transition: all 0.2s ease-in-out;
+}
+
+
+#toggle1 {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+
+
+#toggle1:checked ~ .hamburger1 .top {
+  transform: scale(0);
+}
+
+#toggle1:checked ~ .hamburger1 .meat {
+  transform: rotate(-45deg);
+  margin-top: 22.5px;
+
+}
+
+#toggle1:checked ~ .hamburger1 .bottom {
+  transform: rotate(45deg);
+  margin-top: -18px;
+
+}
+
+#toggle1:checked ~ .menu1 {
+  display: block;
+}
+
+
+.menu1 {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 160px;
+  width: 100%;
+  background-color: black;
+  transition: all 0.8s ease;
+  z-index: 100;
+}
+
+.menu1 a {
+  padding: 10px 15px;
+  display: block;
+  font-size: 20px;
+}
+
+.menu1 a:hover {
+  background-color: darkgoldenrod;
+  color: rgb(61, 61, 61);
+  border-radius: 10px;
+}
+
+@media screen and (min-width: 1001px) {
+  .menu1 {
+    display: flex;
+    position: static;
+    width: auto;
+    height: auto;
+    margin-left: auto;
+    background-color: transparent;
+    grid-row-gap: 0;
+  }
+
+  .menu1 a {
+    padding: 10px 15px;
+    display: inline-block;
+    margin: 0 10px;
+  }
+
+  .hamburger1 {
+    display: none;
+  }
+}
+
+
+@media screen and (max-width: 1000px) {
+  .hamburger1 {
+    display: grid;
+  }
+  .hamburger1 div {
+
+    width: 80px;
+    height: 10px;
+    margin-bottom: 10px;
+    margin-right: 30px;
+    border-radius: 10px;
+
+  }
+  .link1 {
+    font-size: 80px !important;
+  }
+
+  .menu1 {
+    display: none;
+    text-align: center !important;
+
+  }
+}

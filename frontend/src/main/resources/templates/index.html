@@ -1,69 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+    <link rel="preload" href="/css/emailchaterlogo.png" as="image">
+    <link rel="preload" href="/js/background-effect.js" as="script">
+
+    <link rel="stylesheet" type="text/css" href="../static/css/navbar.css"> <!-- style dla ws intellij --->
+    <link rel="stylesheet" type="text/css" href="../static/css/new-login.css"> <!-- style dla ws intellij --->
+    <link rel="stylesheet" type="text/css" href="../static/css/background-effect.css"> <!-- style dla ws intellij --->
+    <script type="text/javascript" src="../static/js/background-effect.js"></script> <!-- js dla ws IntelliJ -->
+    <script type="text/javascript" src="../static/js/login.js"></script> <!-- js dla ws IntelliJ -->
+
+
+
+    <link rel="stylesheet" type="text/css" th:href="@{/css/background-effect.css}" /><!-- style dla app context -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/navbar.css}" /><!-- style dla app context -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/new-login.css}" /><!-- style dla app context -->
+    <script type="text/javascript" th:src="@{/js/background-effect.js}" ></script> <!-- style dla app context -->
+    <script type="text/javascript" th:src="@{/js/login.js}" ></script> <!-- style dla app context -->
+
 </head>
 <body>
+<section class="p-menu1">
+    <div class="logo">
+        <a href="/">
+<!--            <img src="../static/css/logo.png" alt="Logo"> &lt;!&ndash; logo dla ws intellij -&ndash;&gt;-->
+            <img src="/css/emailchaterlogo.png" alt="Logo"> <!-- logo dla app context -->
+        </a>
+    </div>
+    <nav id="navbar" class="navigation" role="navigation">
+        <input id="toggle1" type="checkbox"/>
+        <label class="hamburger1" for="toggle1">
+            <div class="top"></div>
+            <div class="meat"></div>
+            <div class="bottom"></div>
+        </label>
+        <div class="menu1">
+            <a class="link1" href="">Profile</a>
+            <a class="link1" href="">Contacts</a>
+            <a class="link1" href="/messages">Messages</a>
+            <a class="link1" href="">Settings</a>
+<!--            <a class="lin1 kbutton-nav" href="">Contact</a>-->
+        </div>
+    </nav>
+</section>
 
-<label for="username">Username:</label>
-<input type="text" id="username" name="username" required>
+<div class="main-container">
+<div id="login-form-wrapper" class="form-wrapper">
+</div>
+</div>
 
-<label for="password">Password:</label>
-<input type="password" id="password" name="password" required>
-
-<button onclick="submitForm()">Login</button>
-<button onclick="logout()">Logout</button>
-
-<script type="text/javascript">
-
-
-    function submitForm() {
-        let username = document.getElementById("username").value;
-        let password = document.getElementById("password").value;
-
-        const data = {
-            username: username,
-            password: password
-        };
-
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        };
-
-        fetch('/api/v1/auth/login', requestOptions)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Odpowiedź z serwera:', data);
-            })
-            .catch(error => {
-                console.error('Wystąpił błąd:', error);
-            });
-    }
-
-    function logout() {
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-
-        fetch('/api/v1/auth/logout', requestOptions)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Odpowiedź z serwera po wylogowaniu:', data);
-                window.location.href = data.location;
-            })
-            .catch(error => {
-                console.error('Wystąpił błąd podczas wylogowywania:', error);
-            });
-    }
-</script>
+<div id="background-animation" class="background-animation"></div>
 
 </body>
 </html>
