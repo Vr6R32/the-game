@@ -6,5 +6,5 @@ interface UserSessionService {
 
     void createSession(WebsocketUserPrincipal principal);
     void deleteSession(WebsocketUserPrincipal principal);
-    UserSession findUserSessionByUsername(String username);
+    UserSession findUserSessionByUsername(Long userId);
 }

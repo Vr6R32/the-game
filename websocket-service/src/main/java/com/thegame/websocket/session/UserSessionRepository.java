@@ -10,6 +10,6 @@ interface UserSessionRepository extends MongoRepository<UserSession, String> {
 
     void deleteUserSessionByUsername(String username);
 
-    Optional<UserSession> findUserSessionByUsername(String username);
+    Optional<UserSession> findUserSessionByUserId(Long userId);
 
 }

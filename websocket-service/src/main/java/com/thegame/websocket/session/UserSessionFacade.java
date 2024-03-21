@@ -18,8 +18,8 @@ public class UserSessionFacade {
         userSessionService.deleteSession(user);
     }
 
-    public UserSession findUserSessionByUsername(String username) {
-        return userSessionService.findUserSessionByUsername(username);
+    public UserSession findActiveUserSessionByUserId(Long userId) {
+        return userSessionService.findUserSessionByUsername(userId);
     }
 
 }

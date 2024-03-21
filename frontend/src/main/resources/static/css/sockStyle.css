@@ -10,19 +10,64 @@
 /*}*/
 
 #chatWrapper {
+    display: flex;
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
     padding: 20px;
     background-color: transparent;
     max-width: 80vh;
     min-width: 50vh;
-    width: 90%;
+    width: 100%;
     margin: 2vh auto;
 }
 
+.conversation-container {
+    height: 5vh;
+    width: auto;
+    border: 1px solid darkviolet;
+    border-radius: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    word-wrap: break-word;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: transparent;
+}
+
+
+.conversation-message {
+    height: auto;
+    width: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    word-wrap: break-word;
+    display: inline-block;
+    clear: both;
+    margin-bottom: 5px;
+}
+
+.message-sent {
+    max-width: 50%;
+    text-align: right;
+    float: right;
+    background-color: deepskyblue;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.message-received {
+    max-width: 50%;
+    text-align: left;
+    float: left;
+    background-color: lightslategray;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+
 #messageContainer {
     height: 50vh;
-    width: inherit;
+    width: auto;
     border: 1px solid darkgoldenrod;
     border-radius: 10px;
     overflow-y: auto;

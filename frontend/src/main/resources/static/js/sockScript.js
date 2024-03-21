@@ -39,13 +39,13 @@ function connectSocket(){
         //     alert("Otrzymano błąd: " + error.body);
         // });
 
-        stompClient.subscribe('/user/'+ username +'/errors', function (message) {
+        stompClient.subscribe('/user/'+ userId +'/errors', function (message) {
             const chatMessage = JSON.parse(message.body);
-            appendMessage(chatMessage);
-            // console.log(chatMessage)
+            // appendMessage(chatMessage);
+            console.log(chatMessage)
         });
 
-        stompClient.subscribe('/user/' + username + '/messages', function (message) {
+        stompClient.subscribe('/user/' + userId + '/messages', function (message) {
             const chatMessage = JSON.parse(message.body);
             appendMessage(chatMessage);
         });
@@ -57,8 +57,18 @@ function connectSocket(){
 function appendMessage(chatMessage) {
     const messageContainer = document.getElementById('messageContainer');
     const isScrolledToBottom = messageContainer.scrollHeight - messageContainer.clientHeight <= messageContainer.scrollTop + 1;
+    
+    let loggedUser = document.getElementById('username').value;
+    let newMessage = document.createElement('div');
+    newMessage.classList.add('conversation-message');
+    newMessage.textContent = `${chatMessage.sender}:${chatMessage.payload}`;
+    messageContainer.append(newMessage)
 
-    messageContainer.innerHTML += `<p style="color: whitesmoke;"><strong>${chatMessage.sender}:</strong> ${chatMessage.payload}</p>`;
+    if(chatMessage.sender === loggedUser){
+        newMessage.classList.add('message-sent');
+    } else {
+        newMessage.classList.add('message-received');
+    }
 
 
     if (isScrolledToBottom) {
@@ -126,7 +136,7 @@ function sendMessage() {
         receiver: usernameInput,
         payload: trimmedMessage
     };
-    stompClient.send("/chat/private/message", {}, JSON.stringify(message));
+    stompClient.send("/chat/private/message/"+ currentConversationId , {}, JSON.stringify(message));
     messageInput.value = '';
     messageInput.focus();
 }

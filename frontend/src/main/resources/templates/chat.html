@@ -15,12 +15,14 @@
 <!--    <link rel="stylesheet" type="text/css" href="../static/css/background-effect.css"> &lt;!&ndash; style dla ws intellij -&ndash;&gt;-->
 <!--    <script type="text/javascript" src="../static/js/background-effect.js"></script> &lt;!&ndash; js dla ws IntelliJ &ndash;&gt;-->
 <!--    <script type="text/javascript" src="../static/js/sockScript.js"></script> &lt;!&ndash; js dla ws IntelliJ &ndash;&gt;-->
+<!--    <script type="text/javascript" src="../static/js/conversation.js"></script> &lt;!&ndash; js dla ws IntelliJ &ndash;&gt;-->
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/navbar.css}" /><!-- style dla app context -->
     <link rel="stylesheet" type="text/css" th:href="@{/css/background-effect.css}" /><!-- style dla app context -->
     <link rel="stylesheet" type="text/css" th:href="@{/css/sockStyle.css}" />
     <script type="text/javascript" th:src="@{/js/background-effect.js}" ></script> <!-- style dla app context -->
     <script type="text/javascript" th:src="@{/js/sockScript.js}" ></script>
+    <script type="text/javascript" th:src="@{/js/conversation.js}" ></script>
 
 </head>
 <body>
@@ -28,7 +30,7 @@
 <section class="p-menu1">
     <div class="logo">
         <a href="/">
-            <!--            <img src="../static/css/logo.png" alt="Logo"> &lt;!&ndash; logo dla ws intellij -&ndash;&gt;-->
+<!--                        <img src="../static/css/logo.png" alt="Logo"> &lt;!&ndash; logo dla ws intellij -&ndash;&gt;-->
             <img src="/css/emailchaterlogo.png" alt="Logo"> <!-- logo dla app context -->
         </a>
     </div>
@@ -63,14 +65,19 @@
 
 <div class="main-container">
 <div id="chatWrapper">
-    <button onclick="minimizeChat()">X</button>
-<div id="messageContainer"></div>
-<div id="messageForm">
-    <input type="text" id="message" class="message-input" placeholder="Type your message">
-    <button onclick="sendMessage()" class="btn btn-primary">Send Message</button>
+<!--    <button onclick="minimizeChat()">X</button>-->
+<div id="messageContainer">
+
+</div>
+    <div id="messageForm">
+        <input type="text" id="message" class="message-input" placeholder="Type your message">
+        <button onclick="sendMessage()" class="btn btn-primary">Send Message</button>
+    </div>
 </div>
 </div>
-</div>
+
+
+
 
 <div id="background-animation" class="background-animation"></div>
 

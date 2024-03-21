@@ -24,9 +24,7 @@ class UserSessionServiceImpl implements UserSessionService {
         userSessionRepository.deleteUserSessionByUsername(user.name());
     }
 
-    public UserSession findUserSessionByUsername(String username){
-
-
-        return userSessionRepository.findUserSessionByUsername(username).orElse(null);
+    public UserSession findUserSessionByUsername(Long userId){
+        return userSessionRepository.findUserSessionByUserId(userId).orElse(null);
     }
 }

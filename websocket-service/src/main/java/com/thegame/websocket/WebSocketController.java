@@ -1,19 +1,28 @@
 package com.thegame.websocket;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thegame.clients.ConversationServiceClient;
 import com.thegame.dto.AuthenticationUserObject;
+import com.thegame.dto.ConversationDTO;
+import com.thegame.request.ConversationMessageRequest;
 import com.thegame.websocket.session.Status;
 import com.thegame.websocket.session.UserSession;
 import com.thegame.websocket.session.UserSessionFacade;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.UUID;
+
+import static com.thegame.websocket.WebSocketManager.extractDestinationPathVariable;
 import static com.thegame.websocket.WebSocketManager.extractUserFromSession;
+import static com.thegame.websocket.validator.ConversationAccessValidator.validateConversationAccess;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,6 +32,9 @@ public class WebSocketController {
 
     private final UserSessionFacade userSessionFacade;
 
+    private final ConversationServiceClient conversationServiceClient;
+
+    private final ObjectMapper objectMapper;
 //    @MessageMapping("/conversation/{id}")
 //    public ChatMessage sendMessage(@PathVariable String id, @Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
 //        AuthenticationUserObject user = extractUserFromSession(headerAccessor);
@@ -40,25 +52,45 @@ public class WebSocketController {
 
 
     @MessageMapping("/sendMessage/{id}")
+
     public void sendMessage(@Payload ChatMessage chatMessage, @PathVariable String id) {
         messagingTemplate.convertAndSend("/conversation/" + id, chatMessage);
     }
 
-    @MessageMapping("/private/message")
-    public ChatMessage sendPrivateMessage(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
+    @MessageMapping("/private/message/{conversationId}")
+    public void sendPrivateMessage(@Payload ChatMessage chatMessage,SimpMessageHeaderAccessor headerAccessor) {
         AuthenticationUserObject senderUser = extractUserFromSession(headerAccessor);
-        String senderUsername = senderUser.username();
-        ChatMessage validatedMsg = new ChatMessage(senderUsername, chatMessage.receiver(), chatMessage.payload());
+        UUID conversationId = extractDestinationPathVariable(headerAccessor);
+
+        ChatMessage validatedMsg = new ChatMessage(conversationId,senderUser.username(),chatMessage.payload());
+        ConversationDTO conversation = conversationServiceClient
+                .findConversationById(mapUserToJsonObject(senderUser), conversationId);
+
+        if(validateConversationAccess(conversation,senderUser)) {
+            ConversationMessageRequest newMessageRequest = new ConversationMessageRequest(chatMessage.payload());
+            conversationServiceClient.sendAndSaveNewConversationMessage((mapUserToJsonObject(senderUser)),conversationId, newMessageRequest);
 
 
+            messagingTemplate.convertAndSendToUser(String.valueOf(senderUser.id()), "/messages", validatedMsg);
+            Long receiverId = senderUser.id().equals(conversation.firstUserId()) ? conversation.secondUserId() : conversation.firstUserId();
 
-        messagingTemplate.convertAndSendToUser(senderUsername, "/messages", validatedMsg);
-
-        UserSession receiverSession = userSessionFacade.findUserSessionByUsername(chatMessage.receiver());
-        if(receiverSession!=null && receiverSession.getStatus().equals(Status.ONLINE)) {
-            messagingTemplate.convertAndSendToUser(chatMessage.receiver(), "/messages", validatedMsg);
+            UserSession receiverSession = userSessionFacade.findActiveUserSessionByUserId(receiverId);
+            if(receiverSession != null && receiverSession.getStatus().equals(Status.ONLINE)) {
+                messagingTemplate.convertAndSendToUser(String.valueOf(receiverId), "/messages", validatedMsg);
+            }
+        } else {
+            throw new MessagingException("403 UNAUTHORIZED");
         }
-        return chatMessage;
+    }
+
+    private String mapUserToJsonObject(AuthenticationUserObject appUser) {
+        String jsonUserObject = null;
+        try {
+            jsonUserObject = objectMapper.writeValueAsString(appUser);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return jsonUserObject;
     }
 
 

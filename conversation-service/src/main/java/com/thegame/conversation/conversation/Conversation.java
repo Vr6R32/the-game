@@ -1,13 +1,11 @@
 package com.thegame.conversation.conversation;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,11 +18,13 @@ import java.util.UUID;
 public class Conversation {
 
     @Id
+    @UuidGenerator
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String ownerName;
+    private Long firstUserId;
 
-    private String subOwnerName;
+    private Long secondUserId;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "conversation")
     private List<ConversationMessage> messageList;

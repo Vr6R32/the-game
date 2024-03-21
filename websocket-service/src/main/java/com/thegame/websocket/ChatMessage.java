@@ -1,4 +1,6 @@
 package com.thegame.websocket;
 
-public record ChatMessage(String sender, String receiver, String payload) {
+import java.util.UUID;
+
+public record ChatMessage(UUID conversationId, String sender, String payload) {
 }

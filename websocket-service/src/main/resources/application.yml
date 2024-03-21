@@ -12,17 +12,6 @@ spring:
     mongodb:
       uri: mongodb://mongo:dontgotosql@localhost:27017/user_session
       auto-index-creation: true
-#  cloud:
-#    gateway:
-#      discovery:
-#        locator:
-#          enabled: true
-
-
-#broker:
-#  relay:
-#    host: ${BROKER_HOST:localhost}
-
 eureka:
   client:
     service-url:

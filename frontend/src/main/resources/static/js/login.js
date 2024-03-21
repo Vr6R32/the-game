@@ -92,7 +92,15 @@ function submitForm() {
     fetch('/api/v1/auth/login', requestOptions)
         .then(response => response.json())
         .then(data => {
+            document.getElementById("username").value = '';
+            document.getElementById("password").value = '';
+
             console.log('Odpowiedź z serwera:', data);
+            if(data.message === 'AUTHENTICATED') {
+                window.location.href = '/messages';
+            } else {
+                // MAKE AUTH ERROR
+            }
         })
         .catch(error => {
             console.error('Wystąpił błąd:', error);

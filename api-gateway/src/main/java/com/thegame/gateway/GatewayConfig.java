@@ -64,13 +64,13 @@ public class GatewayConfig {
                         .filters(f -> f.filter(gatewayFilter))
                         .uri("lb://AUTH-SERVICE"))
 
-                .route("robbery-service", r -> r.path("/api/v1/robberies/**")
+                .route("conversation-service", r -> r.path("/api/v1/conversation/**")
                         .filters(f -> f.filter(gatewayFilter))
-                        .uri("lb://ROBBERIES-SERVICE"))
+                        .uri("lb://CONVERSATION-SERVICE"))
 
-                .route("frontend", r -> r.path("/messages")
-                        .filters(f -> f.filter(gatewayFilter))
-                        .uri("lb://FRONTEND"))
+//                .route("frontend", r -> r.path("/messages")
+//                        .filters(f -> f.filter(gatewayFilter))
+//                        .uri("lb://FRONTEND"))
 
                 .route("frontend", r -> r.path("/**")
                         .filters(f -> f.filter(gatewayFilter))
