@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.02" />
+
     <title>WebSocket Chat</title>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
@@ -10,19 +12,26 @@
 
 
 
-<!--    <link rel="stylesheet" type="text/css" href="../static/css/navbar.css"> &lt;!&ndash; style dla ws intellij -&ndash;&gt;-->
-<!--    <link rel="stylesheet" type="text/css" href="../static/css/sockStyle.css"> &lt;!&ndash; style dla ws intellij -&ndash;&gt;-->
-<!--    <link rel="stylesheet" type="text/css" href="../static/css/background-effect.css"> &lt;!&ndash; style dla ws intellij -&ndash;&gt;-->
-<!--    <script type="text/javascript" src="../static/js/background-effect.js"></script> &lt;!&ndash; js dla ws IntelliJ &ndash;&gt;-->
-<!--    <script type="text/javascript" src="../static/js/sockScript.js"></script> &lt;!&ndash; js dla ws IntelliJ &ndash;&gt;-->
-<!--    <script type="text/javascript" src="../static/js/conversation.js"></script> &lt;!&ndash; js dla ws IntelliJ &ndash;&gt;-->
 
-    <link rel="stylesheet" type="text/css" th:href="@{/css/navbar.css}" /><!-- style dla app context -->
-    <link rel="stylesheet" type="text/css" th:href="@{/css/background-effect.css}" /><!-- style dla app context -->
-    <link rel="stylesheet" type="text/css" th:href="@{/css/sockStyle.css}" />
-    <script type="text/javascript" th:src="@{/js/background-effect.js}" ></script> <!-- style dla app context -->
-    <script type="text/javascript" th:src="@{/js/sockScript.js}" ></script>
-    <script type="text/javascript" th:src="@{/js/conversation.js}" ></script>
+
+    <!--------------------------------------------------style dla ws intellij ------------------------------------------>
+<!--    <link rel="stylesheet" type="text/css" href="../static/css/index/navbar.css">-->
+<!--    <link rel="stylesheet" type="text/css" href="../static/css/messages/sockStyle.css">-->
+<!--    <link rel="stylesheet" type="text/css" href="../static/css/index/background-effect.css">-->
+<!--    <link rel="stylesheet" type="text/css" href="../static/css/messages/hover-button.css">-->
+<!--    <script type="text/javascript" src="../static/js/index/background-effect.js"></script>-->
+<!--    <script type="text/javascript" src="../static/js/messages/sockScript.js"></script>-->
+<!--    <script type="text/javascript" src="../static/js/messages/conversation.js"></script>-->
+
+    <!-------------------------------------------------- style dla app context ------------------------------------------>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index/navbar.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index/background-effect.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/messages/sockStyle.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/messages/hover-button.css}" />
+    <script type="text/javascript" th:src="@{/js/index/background-effect.js}" ></script>
+    <script type="text/javascript" th:src="@{/js/messages/sockScript.js}" ></script>
+    <script type="text/javascript" th:src="@{/js/messages/conversation.js}" ></script>
 
 </head>
 <body>
@@ -30,8 +39,8 @@
 <section class="p-menu1">
     <div class="logo">
         <a href="/">
-<!--                        <img src="../static/css/logo.png" alt="Logo"> &lt;!&ndash; logo dla ws intellij -&ndash;&gt;-->
-            <img src="/css/emailchaterlogo.png" alt="Logo"> <!-- logo dla app context -->
+<!--            <img src="../static/css/index/emailchaterlogo.png" alt="Logo"> &lt;!&ndash; logo dla ws intellij -&ndash;&gt;-->
+            <img src="/css/index/emailchaterlogo.png" alt="Logo"> <!-- logo dla app context -->
         </a>
     </div>
     <nav id="navbar" class="navigation" role="navigation">
@@ -64,18 +73,28 @@
 </div>
 
 <div class="main-container">
-<div id="chatWrapper">
-<!--    <button onclick="minimizeChat()">X</button>-->
-<div id="messageContainer">
 
+<div id="contactsWrapper">
+    <div id="contactsContainer"></div>
 </div>
-    <div id="messageForm">
-        <input type="text" id="message" class="message-input" placeholder="Type your message">
-        <button onclick="sendMessage()" class="btn btn-primary">Send Message</button>
+
+<div id="chatWrapper">
+    <div id="messageContainer">
+        <div id="conversationMessages">
+
+        </div>
+        <div id="messageForm">
+            <input type="text" id="message" class="message-input" placeholder="Type your message">
+            <button onclick="sendMessage()" class="hover-button">⮉</button>
+        </div>
     </div>
 </div>
+
 </div>
 
+
+<!--        ⍋⮉⮙-->
+<!--    <button onclick="minimizeChat()">X</button>-->
 
 
 

@@ -1,5 +1,7 @@
 package com.thegame.conversation.conversation;
 
+import com.thegame.conversation.entity.Conversation;
+import com.thegame.conversation.entity.ConversationMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

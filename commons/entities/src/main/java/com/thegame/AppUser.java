@@ -36,6 +36,7 @@ public class AppUser implements UserDetails {
     private String name;
     private String surname;
     private String phoneNumber;
+    private String avatarUrl;
     private boolean accountEnabled;
     private boolean accountNotLocked;
     private boolean accountNotExpired;

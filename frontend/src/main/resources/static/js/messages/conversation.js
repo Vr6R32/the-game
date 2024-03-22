@@ -1,9 +1,11 @@
 let currentConversationId;
-
+let conversationsDivs = [];
 document.addEventListener("DOMContentLoaded", function () {
-    let messageContainer = document.getElementById("messageContainer");
+    let contactsContainer = document.getElementById("contactsContainer");
     fetchConversations().then(conversationsDivs => {
-        messageContainer.append(...conversationsDivs);
+        Object.values(conversationsDivs).forEach(div => {
+            contactsContainer.appendChild(div);
+        });
     });
 });
 
@@ -11,18 +13,21 @@ function fetchConversations() {
     return fetch('/api/v1/conversation')
         .then(response => response.json())
         .then(data => {
-            const conversationsDivs = [];
-            let messageContainer = document.getElementById("messageContainer");
+            let conversationMessagesContainer = document.getElementById("conversationMessages");
             data.forEach(conversation => {
                 const div = document.createElement('div');
                 div.textContent = `Konwersacja ${conversation.id}`;
                 div.classList.add('conversation-container');
                 div.onclick = () => loadMessages(conversation.id).then(messages => {
+                    conversationMessagesContainer.innerHTML = "";
                     currentConversationId = conversation.id;
-                    messageContainer.innerHTML = "";
-                    messageContainer.append(...messages);
+                    conversationMessagesContainer.append(...messages);
+                    conversationMessagesContainer.scrollTop = conversationMessagesContainer.scrollHeight;
+
+                }).catch(error => {
+                    console.error('Error loading messages:', error);
                 });
-                conversationsDivs.push(div);
+                conversationsDivs[conversation.id] = div;
             });
             return conversationsDivs;
         });
@@ -32,24 +37,18 @@ function loadMessages(conversationId) {
     return fetch('/api/v1/conversation/messages/' + conversationId)
         .then(response => response.json())
         .then(data => {
-            const conversationsDivs = [];
             let loggedUser = document.getElementById('username').value;
-            data.forEach(message => {
+            return data.map(message => {
                 const div = document.createElement('div');
-                div.textContent = `${message.sender}:${message.payload}`;
+                div.textContent = message.payload;
                 div.classList.add('conversation-message');
 
-                console.log(message.sender);
-                console.log(loggedUser);
-                
-                if(message.sender === loggedUser){
+                if (message.sender === loggedUser) {
                     div.classList.add('message-sent');
                 } else {
                     div.classList.add('message-received');
                 }
-
-                conversationsDivs.push(div);
+                return div;
             });
-            return conversationsDivs;
         });
 }

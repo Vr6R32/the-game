@@ -1,0 +1,154 @@
+
+#chatWrapper {
+    display: flex;
+    border-radius: 10px;
+    flex-direction: row;
+    align-items: stretch;
+    background-color: transparent;
+    max-width: 65vh;
+    min-width: 30vh;
+    width: 65vh;
+    box-sizing: border-box;
+}
+
+#contactsWrapper {
+    display: flex;
+    border-radius: 10px;
+    flex-direction: row;
+    align-items: stretch;
+    background-color: transparent;
+    max-width: 35vh;
+    width: 20vh;
+    min-width: 18vh;
+}
+
+#messageContainer,#contactsContainer {
+    /*display: flex;*/
+    /*flex-direction: column; !* Stack children vertically *!*/
+    /*justify-content: space-between; !* Align children with space between them *!*/
+    height: 60vh;
+    width: 100%;
+    border: 1px solid darkgoldenrod;
+    border-radius: 10px;
+
+    overflow: visible;
+    word-wrap: break-word;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: transparent;
+}
+
+#conversationMessages {
+    height: 48vh;
+    width: 100%;
+    border-radius: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    word-wrap: break-word;
+    margin-bottom: 10px;
+    background-color: transparent;
+}
+
+
+.conversation-container {
+    height: 5vh;
+    width: auto;
+    border: 1px solid darkviolet;
+    border-radius: 10px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    word-wrap: break-word;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: transparent;
+}
+
+
+.conversation-message {
+    height: auto;
+    width: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    word-wrap: break-word;
+    display: inline-block;
+    clear: both;
+    margin-bottom: 5px;
+}
+
+.message-sent {
+    max-width: 50%;
+    text-align: right;
+    float: right;
+    background-color: deepskyblue;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.message-received {
+    max-width: 50%;
+    text-align: left;
+    float: left;
+    background-color: lightslategray;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+#conversationMessages::-webkit-scrollbar {
+    width: 5px;
+}
+
+#conversationMessages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#conversationMessages::-webkit-scrollbar-thumb {
+    background-color: darkgoldenrod;
+    border-radius: 20px;
+    border: transparent;
+}
+
+#conversationMessages {
+    scrollbar-width: thin;
+    scrollbar-color: darkgoldenrod transparent;
+}
+
+
+#conversationMessages {
+    scrollbar-color: darkgoldenrod transparent;
+}
+
+#messageForm {
+    display: flex;
+    gap: 10px;
+    height: 8vh;
+    width: auto;
+}
+
+#message {
+    flex-grow: 1;
+    border-radius: 5px;
+}
+
+.message-input {
+    height: auto;
+    color: white;
+    border-radius: 30px;
+    border: 1px;
+    background-color: transparent;
+}
+
+#chatIcon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: gold;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    z-index: 1000;
+}

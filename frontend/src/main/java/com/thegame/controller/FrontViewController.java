@@ -28,6 +28,14 @@ public class FrontViewController {
         return "index.html";
     }
 
+
+    @GetMapping("/login")
+    public String getLoginPage(Model model){
+        String instanceId = eurekaInstanceConfig.getInstanceId();
+        model.addAttribute("instanceId", instanceId);
+        return "login.html";
+    }
+
     @GetMapping("/messages")
     public String getChat(Model model, Authentication authentication){
         AuthenticationUserObject user = (AuthenticationUserObject) authentication.getPrincipal();

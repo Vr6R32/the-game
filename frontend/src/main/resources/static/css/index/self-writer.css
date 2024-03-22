@@ -1,0 +1,28 @@
+
+#typewriter {
+    color: limegreen;
+    max-width: 80%;
+    font-family: 'Consolas', 'Courier New', monospace;
+    padding: 10px;
+    background-color: transparent;
+    border: 1px solid #FFFFFF;
+    border-radius: 5px;
+    overflow-wrap: normal;
+    line-height: 1.5;
+    margin: 20px auto;
+    box-sizing: border-box;
+}
+
+#typewriter p {
+    font-size: 1rem;
+}
+
+span {
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}

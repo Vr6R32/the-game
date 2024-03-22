@@ -16,7 +16,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.UUID;
 
@@ -49,15 +48,14 @@ public class WebSocketController {
 //        AuthenticationUserObject userSender = extractUserFromSession(headerAccessor);
 //        return new ChatMessage(userSender.username(), chatMessage.payload());
 //    }
+//
+//
+//    @MessageMapping("/sendMessage/{id}")
+//    public void sendMessage(@Payload ChatMessage chatMessage, @PathVariable String id) {
+//        messagingTemplate.convertAndSend("/conversation/" + id, chatMessage);
+//    }
 
-
-    @MessageMapping("/sendMessage/{id}")
-
-    public void sendMessage(@Payload ChatMessage chatMessage, @PathVariable String id) {
-        messagingTemplate.convertAndSend("/conversation/" + id, chatMessage);
-    }
-
-    @MessageMapping("/private/message/{conversationId}")
+    @MessageMapping("/private/message/{id}")
     public void sendPrivateMessage(@Payload ChatMessage chatMessage,SimpMessageHeaderAccessor headerAccessor) {
         AuthenticationUserObject senderUser = extractUserFromSession(headerAccessor);
         UUID conversationId = extractDestinationPathVariable(headerAccessor);

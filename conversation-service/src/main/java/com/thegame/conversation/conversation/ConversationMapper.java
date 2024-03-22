@@ -1,5 +1,7 @@
 package com.thegame.conversation.conversation;
 
+import com.thegame.conversation.entity.Conversation;
+import com.thegame.conversation.entity.ConversationMessage;
 import com.thegame.dto.ConversationDTO;
 import com.thegame.dto.ConversationMessageDTO;
 

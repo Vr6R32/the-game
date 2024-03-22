@@ -19,6 +19,7 @@ a {
 
 .main-container {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   background-color: transparent;
 }
@@ -98,8 +99,8 @@ a {
   right: 0;
   top: 160px;
   width: 100%;
-  background-color: black;
   transition: all 0.8s ease;
+  background-color: transparent;
   z-index: 100;
 }
 
@@ -107,11 +108,15 @@ a {
   padding: 10px 15px;
   display: block;
   font-size: 20px;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10%;
 }
 
 .menu1 a:hover {
-  background-color: darkgoldenrod;
-  color: rgb(61, 61, 61);
+  background-color: rgba(184, 134, 11, 0.5);
+  color: rgb(0, 0, 0);
+  z-index: 100;
   border-radius: 10px;
 }
 

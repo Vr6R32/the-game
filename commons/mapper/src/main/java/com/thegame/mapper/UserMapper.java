@@ -1,7 +1,9 @@
 package com.thegame.mapper;
 
 import com.thegame.AppUser;
+import com.thegame.dto.AppUserDTO;
 import com.thegame.dto.AuthenticationUserObject;
+
 
 public class UserMapper {
 
@@ -16,6 +18,15 @@ public class UserMapper {
                 .role(userObject.role())
                 .build();
     }
+
+    public static AppUserDTO mapUserToDTO(AppUser user) {
+        return AppUserDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .avatarUrl(user.getAvatarUrl())
+                .build();
+    }
+
     public static AuthenticationUserObject mapUserEntityToAuthObject(AppUser user) {
         return AuthenticationUserObject.builder()
                 .id(user.getId())

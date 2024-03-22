@@ -256,16 +256,19 @@ class JwtServiceImpl implements JwtService {
 
         ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
+//                .domain("localhost")
+//                .sameSite("None")
                 .path("/")
                 .maxAge(jwtExpiration / 1000)
                 .build();
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
+//                .domain("localhost")
+//                .sameSite("None")
                 .path("/")
-//                .maxAge(refreshExpiration / 7 * 24 * 60 * 60)
                 .maxAge(refreshExpiration / 1000)
                 .build();
         return getHttpHeaders(accessTokenCookie, refreshTokenCookie);

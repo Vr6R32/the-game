@@ -54,25 +54,35 @@ function connectSocket(){
     });
 }
 
-function appendMessage(chatMessage) {
-    const messageContainer = document.getElementById('messageContainer');
-    const isScrolledToBottom = messageContainer.scrollHeight - messageContainer.clientHeight <= messageContainer.scrollTop + 1;
-    
+function appendMessage(message) {
+    const conversationMessages = document.getElementById('conversationMessages');
+    const isScrolledToBottom = conversationMessages.scrollHeight - conversationMessages.clientHeight <= conversationMessages.scrollTop + 1;
+
     let loggedUser = document.getElementById('username').value;
     let newMessage = document.createElement('div');
-    newMessage.classList.add('conversation-message');
-    newMessage.textContent = `${chatMessage.sender}:${chatMessage.payload}`;
-    messageContainer.append(newMessage)
 
-    if(chatMessage.sender === loggedUser){
-        newMessage.classList.add('message-sent');
+    if (currentConversationId === message.conversationId) {
+        newMessage.classList.add('conversation-message');
+        newMessage.textContent = `${message.payload}`;
+        conversationMessages.append(newMessage)
+
+        if (message.sender === loggedUser) {
+            newMessage.classList.add('message-sent');
+        } else {
+            newMessage.classList.add('message-received');
+        }
+
+        if (isScrolledToBottom) {
+            conversationMessages.scrollTop = conversationMessages.scrollHeight;
+        }
     } else {
-        newMessage.classList.add('message-received');
-    }
+        let conversationDiv = conversationsDivs[message.conversationId];
+        if (conversationDiv) {
 
+            conversationDiv.style.backgroundColor = 'red';
 
-    if (isScrolledToBottom) {
-        messageContainer.scrollTop = messageContainer.scrollHeight;
+            // conversationDiv.classList.add('new-message');
+        }
     }
 }
 
@@ -119,6 +129,9 @@ function loadSpamProtectionData() {
 
 function sendMessage() {
 
+    adjustLinesInterval(100, 2000);
+
+
     if(!spamCheck()){
         return;
     }
@@ -139,8 +152,8 @@ function sendMessage() {
     stompClient.send("/chat/private/message/"+ currentConversationId , {}, JSON.stringify(message));
     messageInput.value = '';
     messageInput.focus();
-}
 
+}
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -155,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     let chatWrapper = document.getElementById('chatWrapper');
-    chatWrapper.style.display = 'none';
+    chatWrapper.style.display = 'block';
 
 });
 

@@ -1,4 +1,4 @@
-package com.thegame.conversation.conversation;
+package com.thegame.conversation.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -14,20 +15,18 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConversationMessage {
+public class Conversation {
 
     @Id
     @UuidGenerator
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String sender;
+    private Long firstUserId;
 
-    private String payload;
+    private Long secondUserId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "conversation_id")
-    private Conversation conversation;
-
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "conversation")
+    private List<ConversationMessage> messageList;
 
 }
