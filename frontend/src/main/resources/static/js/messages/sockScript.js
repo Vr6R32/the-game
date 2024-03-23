@@ -120,18 +120,14 @@ function loadSpamProtectionData() {
     messageTimes = messageTimes.filter(time => now - time < 2000);
 }
 
-function sendMessage() {
-
+function sendMessageNormal() {
     adjustLinesInterval(100, 2000);
-
     if(!spamCheck()){
         return;
     }
-
     const usernameInput = document.getElementById('username').value;
     const messageInput = document.getElementById('message');
     const trimmedMessage = messageInput.value.trim();
-
     if (trimmedMessage === '') {
         alert("Message cannot be empty.");
         return;
@@ -141,10 +137,31 @@ function sendMessage() {
         receiver: usernameInput,
         payload: trimmedMessage
     };
-    stompClient.send("/chat/private/message/"+ currentConversationId , {}, JSON.stringify(message));
     messageInput.value = '';
     messageInput.focus();
+    stompClient.send("/chat/private/message/"+ currentConversationId , {}, JSON.stringify(message));
+}
 
+function sendMessageLinux() {
+    adjustLinesInterval(100, 2000);
+    if(!spamCheck()){
+        return;
+    }
+    const usernameInput = document.getElementById('username').value;
+    const messageInput = document.getElementById('message');
+    const trimmedMessage = messageInput.textContent.trim();
+    if (trimmedMessage === '') {
+        alert("Message cannot be empty.");
+        return;
+    }
+    const message = {
+        sender: usernameInput,
+        receiver: usernameInput,
+        payload: trimmedMessage
+    };
+    messageInput.textContent = '';
+    messageInput.focus();
+    stompClient.send("/chat/private/message/"+ currentConversationId , {}, JSON.stringify(message));
 }
 
 document.addEventListener("DOMContentLoaded", function () {

@@ -233,6 +233,9 @@
     border: 1px;
     background-color: transparent;
 }
+.message-input:focus {
+    outline: none;
+}
 
 #chatIcon {
     width: 50px;

@@ -23,7 +23,7 @@
     font-family: "Raleway", sans-serif;
     font-size: 1em;
     font-weight: 10000;
-    letter-spacing: 0.9em;
+    letter-spacing: 0.6em;
 
     -webkit-box-shadow: inset 0px 0px 0.5em 0px var(--glow-color),
     0px 0px 0.5em 0px var(--glow-color);

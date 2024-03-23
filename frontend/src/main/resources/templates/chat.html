@@ -21,7 +21,9 @@
     <link rel="stylesheet" type="text/css" href="../static/css/messages/block-border.css">
     <link rel="stylesheet" type="text/css" href="../static/css/messages/gradient.css">
     <link rel="stylesheet" type="text/css" href="../static/css/messages/pull-down-effect.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/messages/ubuntu-terminal.css">
     <script type="text/javascript" src="../static/js/index/background-effect.js"></script>
+    <script type="text/javascript" src="../static/js/messages/ubuntu-terminal.js"></script>
     <script type="text/javascript" src="../static/js/messages/sockScript.js"></script>
     <script type="text/javascript" src="../static/js/messages/conversation.js"></script>
 
@@ -35,9 +37,11 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/block-border.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/gradient.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/pull-down-effect.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/messages/ubuntu-terminal.css}" />
     <script type="text/javascript" th:src="@{/js/index/background-effect.js}" ></script>
     <script type="text/javascript" th:src="@{/js/messages/sockScript.js}" ></script>
     <script type="text/javascript" th:src="@{/js/messages/conversation.js}" ></script>
+    <script type="text/javascript" th:src="@{/js/messages/ubuntu-terminal.js}" ></script>
 
 </head>
 <body>
@@ -74,6 +78,10 @@
 </div>
 
 <div>
+    <input type="hidden" id="userEmail" th:value="${user.email}">
+</div>
+
+<div>
     <input type="hidden" id="websocketUrl" th:value="${websocketUrl}">
 </div>
 
@@ -89,7 +97,7 @@
         </div>
         <div id="contactsList"></div>
         <div id="createContact">
-            <button class='glowing-btn'>
+            <button class='glowing-btn' id="createContactButton">
                 <span class='glowing-txt'><span class='faulty-letter'>🞧</span>CONTACT</span></button>
         </div>
     </div>

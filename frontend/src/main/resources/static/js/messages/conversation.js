@@ -129,13 +129,13 @@ function createConversationDiv(conversation) {
         }).catch(error => {
             console.error('Error loading messages:', error);
         });
-        createMessageInputDiv();
+        createLinuxInputMessageDiv();
     }
     conversationsDivs[conversation.id] = conversationDiv;
     return conversationDiv;
 }
 
-function createMessageInputDiv() {
+function createNormalMessageInputDiv() {
     if(document.getElementById('messageForm')===null) {
         const messageContainer = document.getElementById('messageContainer');
 
@@ -151,7 +151,7 @@ function createMessageInputDiv() {
         messageInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                sendMessage();
+                sendMessageNormal();
             }
         });
         messageInput.addEventListener("input", function () {
@@ -159,7 +159,7 @@ function createMessageInputDiv() {
         });
 
         const sendButton = document.createElement('button');
-        sendButton.onclick = sendMessage;
+        sendButton.onclick = sendMessageNormal;
         sendButton.className = 'hover-button';
         sendButton.textContent = '⮉';
 
@@ -168,6 +168,124 @@ function createMessageInputDiv() {
         messageContainer.appendChild(messageFormDiv);
     }
 }
+
+
+function createLinuxInputMessageDiv() {
+    const messageContainer = document.getElementById('messageContainer');
+
+    const messageFormDiv = document.createElement('div');
+    messageFormDiv.id = 'messageForm';
+
+    const terminal = document.createElement('div');
+    terminal.id = 'terminal';
+
+    const terminalBar = document.createElement('section');
+    terminalBar.id = 'terminal__bar';
+
+    const barButtons = document.createElement('div');
+    barButtons.id = 'bar__buttons';
+
+    const closeButton = document.createElement('button');
+    closeButton.className = 'bar__button';
+    closeButton.id = 'bar__button--exit';
+    closeButton.innerHTML = '&#10005;';
+
+    const minimizeButton = document.createElement('button');
+    minimizeButton.className = 'bar__button';
+    minimizeButton.innerHTML = '&#9472;';
+
+    const maximizeButton = document.createElement('button');
+    maximizeButton.className = 'bar__button';
+    maximizeButton.innerHTML = '&#9723;';
+
+    barButtons.appendChild(closeButton);
+    barButtons.appendChild(minimizeButton);
+    barButtons.appendChild(maximizeButton);
+
+
+    const userEmailUbuntuLogin = document.createElement('p');
+    let userEmail = document.getElementById('userEmail').value;
+    userEmailUbuntuLogin.id = 'bar__user';
+    userEmailUbuntuLogin.textContent = userEmail;
+
+    terminalBar.appendChild(barButtons);
+    terminalBar.appendChild(userEmailUbuntuLogin);
+
+    // Tworzenie ciała terminala
+    const terminalBody = document.createElement('section');
+    terminalBody.id = 'terminal__body';
+    terminalBody.addEventListener('click', focusInputArea);
+
+    const terminalPrompt = document.createElement('div');
+    terminalPrompt.id = 'terminal__prompt';
+
+    // const userSpan = document.createElement('span');
+    // userSpan.id = 'terminal__prompt--user';
+    // userSpan.textContent = 'fobabs@ubuntu' + ':';
+    // userSpan.textContent = 'karacz@hitman.pl' + ':';
+
+    const userSpan = document.createElement('span');
+    userSpan.id = 'terminal__prompt--user';
+    // userSpan.textContent = userEmail + ':';
+    userSpan.textContent = 'e-chat@ubuntu:';
+
+    const locationSpan = document.createElement('span');
+    locationSpan.id = 'terminal__prompt--location';
+    locationSpan.textContent = '~';
+
+    const blingSpan = document.createElement('span');
+    blingSpan.id = 'terminal__prompt--bling';
+    blingSpan.textContent = '$';
+
+    const cursorSpan = document.createElement('span');
+    cursorSpan.id = 'terminal__prompt--cursor';
+
+    const inputDiv = document.createElement('div');
+    inputDiv.className = 'terminal__input';
+    inputDiv.id = 'message';
+    inputDiv.setAttribute('contenteditable', 'true');
+    inputDiv.setAttribute('role', 'textbox');
+    inputDiv.setAttribute('aria-multiline', 'false');
+    inputDiv.addEventListener('keyup', handleKeydown);
+    inputDiv.addEventListener('click', updateCursor);
+    inputDiv.addEventListener('input', updateCursor)
+    inputDiv.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMessageLinux();
+            updateCursor();
+        }
+    });
+
+    terminalPrompt.appendChild(userSpan);
+    terminalPrompt.appendChild(locationSpan);
+    terminalPrompt.appendChild(blingSpan);
+    terminalPrompt.appendChild(cursorSpan);
+    terminalPrompt.appendChild(inputDiv);
+
+    terminalBody.appendChild(terminalPrompt);
+
+    terminal.appendChild(terminalBar);
+    terminal.appendChild(terminalBody);
+
+    const sendButton = document.createElement('button');
+    sendButton.onclick = sendMessageLinux;
+    sendButton.className = 'hover-button';
+    sendButton.textContent = '⮉';
+
+    messageFormDiv.appendChild(terminal);
+    messageFormDiv.appendChild(sendButton);
+    messageContainer.appendChild(messageFormDiv);
+
+}
+
+
+function handleKeydown(e) {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+        setTimeout(updateCursor(), 0);
+    }
+}
+
 
 
 function loadMessages(conversationId) {
