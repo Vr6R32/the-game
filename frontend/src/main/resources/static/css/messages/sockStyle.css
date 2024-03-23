@@ -1,10 +1,10 @@
 
 #chatWrapper {
+    background-color: transparent;
     display: flex;
     border-radius: 10px;
     flex-direction: row;
     align-items: stretch;
-    background-color: transparent;
     max-width: 65vh;
     min-width: 30vh;
     width: 65vh;
@@ -12,11 +12,11 @@
 }
 
 #contactsWrapper {
+    background-color: transparent;
     display: flex;
     border-radius: 10px;
     flex-direction: row;
     align-items: stretch;
-    background-color: transparent;
     max-width: 25vh;
     width: 25vh;
     min-width: 18vh;
@@ -30,30 +30,45 @@
 }
 
 #contactsList {
-    height: 90%;
+    height: 83%;
     border-radius: 10px;
     /*border: 1px solid darkgoldenrod;*/
 }
 
-#searchInput{
-
+#createContact {
+    height:7%;
+    justify-content: center;
+    /*border: 1px solid darkgoldenrod;*/
 }
 
 
-#messageContainer,#contactsContainer {
-    /*display: flex;*/
-    /*flex-direction: column; !* Stack children vertically *!*/
-    /*justify-content: space-between; !* Align children with space between them *!*/
+#contactsContainer {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(39, 39, 39, 0.7));
+    /*background-color: transparent;*/
+    /*border-right: 1px dashed white;*/
+    box-shadow: 5px 0px 0px 0px rgba(255, 255, 255, 0.4);
     height: 60vh;
     width: 100%;
-    border: 1px solid darkgoldenrod;
-    border-radius: 10px;
-
+    border-radius: 10px 0 0 10px;
     overflow: visible;
     word-wrap: break-word;
     padding: 10px;
     margin-bottom: 10px;
-    background-color: transparent;
+}
+
+
+#messageContainer {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(39, 39, 39, 0.7));
+    /*background-color: transparent;*/
+
+    height: 60vh;
+    width: 100%;
+    border-radius: 0 10px 10px 0 ;
+    overflow: visible;
+    word-wrap: break-word;
+    padding: 10px;
+    margin-bottom: 10px;
+
 }
 
 #conversationMessages {

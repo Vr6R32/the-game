@@ -129,10 +129,44 @@ function createConversationDiv(conversation) {
         }).catch(error => {
             console.error('Error loading messages:', error);
         });
-    };
-
+        createMessageInputDiv();
+    }
     conversationsDivs[conversation.id] = conversationDiv;
     return conversationDiv;
+}
+
+function createMessageInputDiv() {
+    if(document.getElementById('messageForm')===null) {
+        const messageContainer = document.getElementById('messageContainer');
+
+        const messageFormDiv = document.createElement('div');
+        messageFormDiv.id = 'messageForm';
+
+        const messageInput = document.createElement('input');
+        messageInput.type = 'text';
+        messageInput.id = 'message';
+        messageInput.className = 'message-input';
+        messageInput.placeholder = 'Type your message';
+        
+        messageInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        messageInput.addEventListener("input", function () {
+            adjustLinesInterval(100, 1000);
+        });
+
+        const sendButton = document.createElement('button');
+        sendButton.onclick = sendMessage;
+        sendButton.className = 'hover-button';
+        sendButton.textContent = '⮉';
+
+        messageFormDiv.appendChild(messageInput);
+        messageFormDiv.appendChild(sendButton);
+        messageContainer.appendChild(messageFormDiv);
+    }
 }
 
 
@@ -141,8 +175,6 @@ function loadMessages(conversationId) {
         .then(response => response.json())
         .then(data => {
             let loggedUser = document.getElementById('username').value;
-            setMessageInputListener();
-
             return data.map(message => {
                 const div = document.createElement('div');
                 div.textContent = message.payload;
@@ -155,11 +187,4 @@ function loadMessages(conversationId) {
                 return div;
             });
         });
-}
-
-function setMessageInputListener() {
-    let messageInput = document.getElementById("message");
-    messageInput.addEventListener("input", function () {
-        adjustLinesInterval(100, 1000);
-    });
 }

@@ -12,13 +12,13 @@
 
 
 
-
-
     <!--------------------------------------------------style dla ws intellij ------------------------------------------>
     <link rel="stylesheet" type="text/css" href="../static/css/index/navbar.css">
     <link rel="stylesheet" type="text/css" href="../static/css/messages/sockStyle.css">
     <link rel="stylesheet" type="text/css" href="../static/css/index/background-effect.css">
     <link rel="stylesheet" type="text/css" href="../static/css/messages/hover-button.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/messages/glow-button.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/messages/block-border.css">
     <link rel="stylesheet" type="text/css" href="../static/css/messages/gradient.css">
     <link rel="stylesheet" type="text/css" href="../static/css/messages/pull-down-effect.css">
     <script type="text/javascript" src="../static/js/index/background-effect.js"></script>
@@ -31,6 +31,8 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/index/background-effect.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/sockStyle.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/hover-button.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/messages/glow-button.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/messages/block-border.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/gradient.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/pull-down-effect.css}" />
     <script type="text/javascript" th:src="@{/js/index/background-effect.js}" ></script>
@@ -43,7 +45,7 @@
 <section class="p-menu1">
     <div class="logo">
         <a href="/">
-<!--            <img src="../static/css/index/emailchaterlogo.png" alt="Logo"> &lt;!&ndash; logo dla ws intellij -&ndash;&gt;-->
+            <img src="../static/css/index/emailchaterlogo.png" alt="Logo"> <!-- logo dla ws intellij --->
             <img src="/css/index/emailchaterlogo.png" alt="Logo"> <!-- logo dla app context -->
         </a>
     </div>
@@ -59,7 +61,6 @@
             <a class="link1" href="">Contacts</a>
             <a class="link1" href="">Messages</a>
             <a class="link1" href="">Settings</a>
-            <!--            <a class="lin1 kbutton-nav" href="">Contact</a>-->
         </div>
     </nav>
 </section>
@@ -87,6 +88,10 @@
             </div>
         </div>
         <div id="contactsList"></div>
+        <div id="createContact">
+            <button class='glowing-btn'>
+                <span class='glowing-txt'><span class='faulty-letter'>🞧</span>CONTACT</span></button>
+        </div>
     </div>
 </div>
 
@@ -94,10 +99,6 @@
     <div id="messageContainer">
         <div id="conversationMessages">
 
-        </div>
-        <div id="messageForm">
-            <input type="text" id="message" class="message-input" placeholder="Type your message">
-            <button onclick="sendMessage()" class="hover-button">⮉</button>
         </div>
     </div>
 </div>

@@ -2,6 +2,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     let loginWrapper = document.getElementById("login-form-wrapper");
     loginWrapper.appendChild(createLoginForm());
+    document.getElementById("username").focus();
 });
 
 
