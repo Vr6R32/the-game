@@ -35,14 +35,14 @@ function connectSocket(){
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
 
-        // stompClient.subscribe('/user/'+ usernameInput +'/errors', function (error) {
-        //     alert("Otrzymano błąd: " + error.body);
-        // });
+        stompClient.subscribe('/user/'+ userId +'/errors', function (error) {
+            const errorMessage = JSON.parse(error.body);
+            console.log(errorMessage)
+        });
 
-        stompClient.subscribe('/user/'+ userId +'/errors', function (message) {
-            const chatMessage = JSON.parse(message.body);
-            // appendMessage(chatMessage);
-            console.log(chatMessage)
+        stompClient.subscribe('/user/'+ userId +'/notifications', function (notification) {
+            const notificationMessage = JSON.parse(notification.body);
+            console.log(notificationMessage)
         });
 
         stompClient.subscribe('/user/' + userId + '/messages', function (message) {
@@ -130,7 +130,6 @@ function loadSpamProtectionData() {
 function sendMessage() {
 
     adjustLinesInterval(100, 2000);
-
 
     if(!spamCheck()){
         return;

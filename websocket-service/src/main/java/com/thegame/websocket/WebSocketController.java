@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thegame.clients.ConversationServiceClient;
 import com.thegame.dto.AuthenticationUserObject;
 import com.thegame.dto.ConversationDTO;
+import com.thegame.dto.UserSessionDTO;
 import com.thegame.request.ConversationMessageRequest;
-import com.thegame.websocket.session.Status;
-import com.thegame.websocket.session.UserSession;
+import com.thegame.model.Status;
 import com.thegame.websocket.session.UserSessionFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.MessagingException;
@@ -72,8 +72,8 @@ public class WebSocketController {
             messagingTemplate.convertAndSendToUser(String.valueOf(senderUser.id()), "/messages", validatedMsg);
             Long receiverId = senderUser.id().equals(conversation.firstUserId()) ? conversation.secondUserId() : conversation.firstUserId();
 
-            UserSession receiverSession = userSessionFacade.findActiveUserSessionByUserId(receiverId);
-            if(receiverSession != null && receiverSession.getStatus().equals(Status.ONLINE)) {
+            UserSessionDTO receiverSession = userSessionFacade.findUserSessionByUserId(receiverId);
+            if(receiverSession != null && receiverSession.status().equals(Status.ONLINE)) {
                 messagingTemplate.convertAndSendToUser(String.valueOf(receiverId), "/messages", validatedMsg);
             }
         } else {

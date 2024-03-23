@@ -1,6 +1,14 @@
 package com.thegame.dto;
 
+import com.thegame.model.Status;
+
+import java.util.Date;
 import java.util.UUID;
 
-public record DetailedConversationDTO(UUID id, Long secondUserId, String secondUserAvatarUrl, String secondUserEmail) {
+public record DetailedConversationDTO(UUID id,
+                                      Long userId,
+                                      String userAvatarUrl,
+                                      String userEmail,
+                                      Status userStatus,
+                                      Date userLogoutDate) {
 }

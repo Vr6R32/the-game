@@ -17,10 +17,28 @@
     flex-direction: row;
     align-items: stretch;
     background-color: transparent;
-    max-width: 35vh;
-    width: 20vh;
+    max-width: 25vh;
+    width: 25vh;
     min-width: 18vh;
 }
+
+#contactsSearch {
+    height: 10%;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    /*border: 1px solid darkgoldenrod;*/
+}
+
+#contactsList {
+    height: 90%;
+    border-radius: 10px;
+    /*border: 1px solid darkgoldenrod;*/
+}
+
+#searchInput{
+
+}
+
 
 #messageContainer,#contactsContainer {
     /*display: flex;*/
@@ -51,16 +69,80 @@
 
 
 .conversation-container {
-    height: 5vh;
+    display: flex;
+    height: 6vh;
     width: auto;
-    border: 1px solid darkviolet;
+    /*border: 1px solid darkviolet;*/
     border-radius: 10px;
     overflow-y: hidden;
     overflow-x: hidden;
     word-wrap: break-word;
-    padding: 10px;
+    padding: 5px;
     margin-bottom: 10px;
+    justify-content: left;
+    /*align-content: center;*/
     background-color: transparent;
+}
+
+.avatar-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.user-name {
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.activity-status {
+    margin-top: 1vh;
+    margin-left: 0.5vh;
+    color: #ccccdd;
+    font-size: 10px;
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.email-address {
+    color: darkgoldenrod;
+    margin-left: 0.5vh;
+    font-size: 12px;
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid #555555;
+}
+
+.status-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-sizing: border-box;
+}
+
+.status-dot.offline {
+    background-color: red;
+}
+
+.status-dot.online {
+    background-color: green;
 }
 
 

@@ -3,38 +3,32 @@ package com.thegame.conversation.conversation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thegame.clients.UserServiceClient;
+import com.thegame.clients.WebSocketSessionClient;
 import com.thegame.conversation.entity.Conversation;
 import com.thegame.conversation.entity.ConversationMessage;
 import com.thegame.dto.*;
+import com.thegame.model.Status;
 import com.thegame.request.ConversationMessageRequest;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public record ConversationServiceImpl(ConversationRepository conversationRepository,
                                       ConversationMessageRepository messageRepository,
                                       UserServiceClient userServiceClient,
+                                      WebSocketSessionClient webSocketSessionClient,
                                       ObjectMapper objectMapper) implements ConversationService {
 
 
     @Override
     public List<DetailedConversationDTO> getAllUserConversations(AuthenticationUserObject user) {
 
-        List<ConversationDTO> allConversationsByUserId = conversationRepository.findAllConversationsByUserId(user.id()).stream().map(ConversationMapper::mapConversationToDTO).toList();
+        Map<UUID, Long> conversationIdSecondUserIdMap = getConversationUserIdMap(user);
 
-        Map<UUID, Long> conversationIdSecondUserIdMap = new HashMap<>();
+        Map<UUID, AppUserDTO> conversationsUsersDetails =
+                userServiceClient.getConversationsUsersDetails(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
 
-        for (ConversationDTO conversation : allConversationsByUserId) {
-            if (!conversation.firstUserId().equals(user.id())) {
-                conversationIdSecondUserIdMap.put(conversation.id(), conversation.firstUserId());
-            } else if (!conversation.secondUserId().equals(user.id())) {
-                conversationIdSecondUserIdMap.put(conversation.id(), conversation.secondUserId());
-            }
-        }
-
-        Map<UUID, AppUserDTO> conversationsUsersDetails = userServiceClient.getConversationsUsersDetails(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
+        Map<UUID, UserSessionDTO> conversationUsersSessionDetails =
+                webSocketSessionClient.findConversationUserSessionsByIdMap(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
 
         return conversationIdSecondUserIdMap.entrySet().stream()
                 .map(entry -> {
@@ -43,20 +37,16 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
                     AppUserDTO userDto = conversationsUsersDetails.get(conversationId);
                     String secondUserAvatarUrl = userDto.avatarUrl();
                     String secondUserEmail = userDto.email();
-                    return new DetailedConversationDTO(conversationId, secondUserId, secondUserAvatarUrl, secondUserEmail);
+                    UserSessionDTO userSessionDTO = conversationUsersSessionDetails.get(conversationId);
+                    Status userStatus = null;
+                    Date logoutTime = null;
+                    if(userSessionDTO!=null) {
+                        userStatus = userSessionDTO.status();
+                        logoutTime = userSessionDTO.logoutTime();
+                    }
+                    return new DetailedConversationDTO(conversationId, secondUserId, secondUserAvatarUrl, secondUserEmail, userStatus, logoutTime);
                 })
                 .toList();
-    }
-
-
-    private String mapUserToJsonObject(AuthenticationUserObject appUser) {
-        String jsonUserObject = null;
-        try {
-            jsonUserObject = objectMapper.writeValueAsString(appUser);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        return jsonUserObject;
     }
 
 
@@ -97,4 +87,32 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
                 .build();
         return conversationRepository.save(newConversation);
     }
+
+
+    private Map<UUID, Long> getConversationUserIdMap(AuthenticationUserObject user) {
+        List<ConversationDTO> allConversationsByUserId =
+                conversationRepository.findAllConversationsByUserId(user.id()).stream().map(ConversationMapper::mapConversationToDTO).toList();
+        Map<UUID, Long> conversationIdSecondUserIdMap = new HashMap<>();
+
+        for (ConversationDTO conversation : allConversationsByUserId) {
+            if (!conversation.firstUserId().equals(user.id())) {
+                conversationIdSecondUserIdMap.put(conversation.id(), conversation.firstUserId());
+            } else if (!conversation.secondUserId().equals(user.id())) {
+                conversationIdSecondUserIdMap.put(conversation.id(), conversation.secondUserId());
+            }
+        }
+        return conversationIdSecondUserIdMap;
+    }
+
+
+    private String mapUserToJsonObject(AuthenticationUserObject appUser) {
+        String jsonUserObject = null;
+        try {
+            jsonUserObject = objectMapper.writeValueAsString(appUser);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return jsonUserObject;
+    }
+
 }

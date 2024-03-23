@@ -1,4 +1,4 @@
-package com.thegame.websocket.session;
+package com.thegame.model;
 
 public enum Status {
     ONLINE,OFFLINE

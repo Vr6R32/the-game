@@ -1,0 +1,16 @@
+
+@keyframes pullDown {
+    0% {
+        padding-top: 0;
+    }
+    50% {
+        padding-top: 90px;
+    }
+    100% {
+        padding-top: 0;
+    }
+}
+
+.pull-down-refresh {
+    animation: pullDown 0.5s ease forwards;
+}

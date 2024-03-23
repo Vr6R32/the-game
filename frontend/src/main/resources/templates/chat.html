@@ -15,13 +15,15 @@
 
 
     <!--------------------------------------------------style dla ws intellij ------------------------------------------>
-<!--    <link rel="stylesheet" type="text/css" href="../static/css/index/navbar.css">-->
-<!--    <link rel="stylesheet" type="text/css" href="../static/css/messages/sockStyle.css">-->
-<!--    <link rel="stylesheet" type="text/css" href="../static/css/index/background-effect.css">-->
-<!--    <link rel="stylesheet" type="text/css" href="../static/css/messages/hover-button.css">-->
-<!--    <script type="text/javascript" src="../static/js/index/background-effect.js"></script>-->
-<!--    <script type="text/javascript" src="../static/js/messages/sockScript.js"></script>-->
-<!--    <script type="text/javascript" src="../static/js/messages/conversation.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="../static/css/index/navbar.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/messages/sockStyle.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/index/background-effect.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/messages/hover-button.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/messages/gradient.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/messages/pull-down-effect.css">
+    <script type="text/javascript" src="../static/js/index/background-effect.js"></script>
+    <script type="text/javascript" src="../static/js/messages/sockScript.js"></script>
+    <script type="text/javascript" src="../static/js/messages/conversation.js"></script>
 
     <!-------------------------------------------------- style dla app context ------------------------------------------>
 
@@ -29,6 +31,8 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/index/background-effect.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/sockStyle.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/hover-button.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/messages/gradient.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/messages/pull-down-effect.css}" />
     <script type="text/javascript" th:src="@{/js/index/background-effect.js}" ></script>
     <script type="text/javascript" th:src="@{/js/messages/sockScript.js}" ></script>
     <script type="text/javascript" th:src="@{/js/messages/conversation.js}" ></script>
@@ -75,7 +79,15 @@
 <div class="main-container">
 
 <div id="contactsWrapper">
-    <div id="contactsContainer"></div>
+    <div id="contactsContainer">
+        <div id="contactsSearch">
+            <div class="input-group">
+                <label class="input-group__label" for="searchInput">Search</label>
+                <input type="text" id="searchInput" class="input-group__input" placeholder="Search for contacts" />
+            </div>
+        </div>
+        <div id="contactsList"></div>
+    </div>
 </div>
 
 <div id="chatWrapper">

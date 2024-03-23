@@ -23,13 +23,12 @@ public class WebSocketSessionListener implements ApplicationListener<AbstractSub
         String sessionId = StompHeaderAccessor.wrap(event.getMessage()).getSessionId();
 
         if (event instanceof SessionConnectedEvent) {
-            userSessionFacade.createSession(user);
+            userSessionFacade.setSessionStatusOnline(user);
             log.debug("SESSION -> [{}] CONNECTED BY USER -> [{}] WITH ID -> [{}]",sessionId,user.name(),user.userId());
 
         } else if (event instanceof SessionDisconnectEvent) {
-            userSessionFacade.deleteSession(user);
+            userSessionFacade.setSessionStatusOffline(user);
             log.debug("SESSION -> [{}] DISCONNECTED BY USER -> [{}] WITH ID -> [{}]",sessionId,user.name(),user.userId());
-
         }
     }
 }

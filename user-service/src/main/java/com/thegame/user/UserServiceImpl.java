@@ -11,7 +11,7 @@ record UserServiceImpl(UserRepository userRepository) implements UserService {
 
     @Override
     public AppUserDTO getAppUserDetails(Long userId) {
-        return userRepository.findById(userId).map(UserMapper::mapUserToDTO).orElseGet(null);
+        return userRepository.findById(userId).map(UserMapper::mapUserToDTO).orElseGet(() -> null);
     }
 
     @Override
@@ -29,7 +29,7 @@ record UserServiceImpl(UserRepository userRepository) implements UserService {
     }
 
 
-    public Map<Long, AppUserDTO> getUserDetailsByIds(Set<Long> userIds) {
+    private Map<Long, AppUserDTO> getUserDetailsByIds(Set<Long> userIds) {
         List<AppUser> users = userRepository.findAllById(userIds);
         return users.stream().collect(Collectors.toMap(AppUser::getId, UserMapper::mapUserToDTO));
     }

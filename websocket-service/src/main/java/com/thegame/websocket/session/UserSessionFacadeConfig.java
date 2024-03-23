@@ -11,7 +11,6 @@ class UserSessionFacadeConfig {
 
     private final UserSessionRepository userSessionRepository;
 
-
     @Bean
     public UserSessionFacade userSessionFacade(){
         UserSessionService userSessionService = new UserSessionServiceImpl(userSessionRepository);
