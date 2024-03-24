@@ -1,5 +1,5 @@
 let activeLines = 0;
-let maxLines = 40;
+let maxLines = 70;
 let activeBackgroundDuration = 5;
 let activeBackgroundDurationCleaner = 4000;
 let activeBackgroundDurationInterval = 500;

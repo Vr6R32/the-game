@@ -22,6 +22,8 @@
     <link rel="stylesheet" type="text/css" href="../static/css/messages/gradient.css">
     <link rel="stylesheet" type="text/css" href="../static/css/messages/pull-down-effect.css">
     <link rel="stylesheet" type="text/css" href="../static/css/messages/ubuntu-terminal.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/messages/custom-boxshadow.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/messages/paralax-hover.css">
     <script type="text/javascript" src="../static/js/index/background-effect.js"></script>
     <script type="text/javascript" src="../static/js/messages/ubuntu-terminal.js"></script>
     <script type="text/javascript" src="../static/js/messages/sockScript.js"></script>
@@ -34,10 +36,11 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/sockStyle.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/hover-button.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/glow-button.css}" />
-    <link rel="stylesheet" type="text/css" th:href="@{/css/messages/block-border.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/gradient.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/pull-down-effect.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/messages/custom-boxshadow.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/ubuntu-terminal.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/messages/paralax-hover.css}" />
     <script type="text/javascript" th:src="@{/js/index/background-effect.js}" ></script>
     <script type="text/javascript" th:src="@{/js/messages/sockScript.js}" ></script>
     <script type="text/javascript" th:src="@{/js/messages/conversation.js}" ></script>
@@ -50,7 +53,7 @@
     <div class="logo">
         <a href="/">
             <img src="../static/css/index/emailchaterlogo.png" alt="Logo"> <!-- logo dla ws intellij --->
-            <img src="/css/index/emailchaterlogo.png" alt="Logo"> <!-- logo dla app context -->
+<!--            <img src="/css/index/emailchaterlogo.png" alt="Logo"> &lt;!&ndash; logo dla app context &ndash;&gt;-->
         </a>
     </div>
     <nav id="navbar" class="navigation" role="navigation">
@@ -86,7 +89,7 @@
 </div>
 
 <div class="main-container">
-
+<figure class="paralax-hover">
 <div id="contactsWrapper">
     <div id="contactsContainer">
         <div id="contactsSearch">
@@ -95,7 +98,8 @@
                 <input type="text" id="searchInput" class="input-group__input" placeholder="Search for contacts" />
             </div>
         </div>
-        <div id="contactsList"></div>
+        <div id="contactsList">
+        </div>
         <div id="createContact">
             <button class='glowing-btn' id="createContactButton">
                 <span class='glowing-txt'><span class='faulty-letter'>🞧</span>CONTACT</span></button>
@@ -110,7 +114,7 @@
         </div>
     </div>
 </div>
-
+</figure>
 </div>
 
 

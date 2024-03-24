@@ -15,7 +15,7 @@
     color: var(--glow-color);
     cursor: pointer;
     width: 100%;
-    padding: 0.35em 1em;
+    padding: 0.35em 0.35em;
     border: 0.15em solid var(--glow-color);
     border-radius: 0.45em;
     background: none;

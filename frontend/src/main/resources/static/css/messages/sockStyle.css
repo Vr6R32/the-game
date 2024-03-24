@@ -72,7 +72,7 @@
 }
 
 #conversationMessages {
-    height: 48vh;
+    height: 75%;
     width: 100%;
     border-radius: 10px;
     overflow-y: auto;
@@ -80,6 +80,13 @@
     word-wrap: break-word;
     margin-bottom: 10px;
     background-color: transparent;
+}
+
+#messageForm {
+    display: flex;
+    gap: 10px;
+    height: 25%;
+    width: auto;
 }
 
 
@@ -101,23 +108,27 @@
 
 .avatar-wrapper {
     position: relative;
+    width: 20%;
     display: inline-block;
 }
 
 .user-name {
     display: block;
     max-width: 100%;
+    font-size: 2vh;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .activity-status {
-    margin-top: 1vh;
+    margin-top: 0.5vh;
     margin-left: 0.5vh;
+    width: 100%;
+    height: 100%;
     color: #ccccdd;
-    font-size: 10px;
-    display: block;
+    font-size: 1.1vh;
+    display: flex;
     max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
@@ -127,7 +138,7 @@
 .email-address {
     color: darkgoldenrod;
     margin-left: 0.5vh;
-    font-size: 12px;
+    font-size: 1.3vh;
     display: block;
     max-width: 100%;
     white-space: nowrap;
@@ -136,20 +147,25 @@
 }
 
 .user-avatar {
-    width: 45px;
-    height: 45px;
+    width: 100%;
+    height: 90%;
     border-radius: 50%;
     border: 2px solid #555555;
 }
 
 .status-dot {
     position: absolute;
-    bottom: 0;
+    bottom: 8%;
     right: 0;
-    width: 12px;
-    height: 12px;
+    width: 20%;
+    height: 20%;
     border-radius: 50%;
     box-sizing: border-box;
+}
+
+.conversation-details {
+    width: 90%;
+    height: 100%;
 }
 
 .status-dot.offline {
@@ -214,12 +230,7 @@
     scrollbar-color: darkgoldenrod transparent;
 }
 
-#messageForm {
-    display: flex;
-    gap: 10px;
-    height: 8vh;
-    width: auto;
-}
+
 
 #message {
     flex-grow: 1;

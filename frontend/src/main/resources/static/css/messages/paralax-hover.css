@@ -1,0 +1,36 @@
+.paralax-hover {
+    width: inherit;
+    height: inherit;
+    border-radius: 10px;
+    transform-style: preserve-3d;
+    position: relative;
+    transition: all 0.3s ease-out;
+    box-shadow: rgba(184, 134, 11, 0.5) 6px 2px 16px 0, rgba(255, 255, 255, 0.5) -6px -2px 16px 0px;
+    display: flex;
+    justify-content: center;
+    background-color: transparent;
+    backface-visibility: hidden;
+    transform: translate3d(0, 0, 0) scale(5, 5);
+    /*animation: zoomAnimation 1s forwards;*/
+    filter: blur(0);
+    -webkit-filter: blur(0);
+    -moz-osx-font-smoothing: grayscale;
+    /*-webkit-font-smoothing: subpixel-antialiased;*/
+    /*-webkit-font-smoothing: antialiased;*/
+    /*display: -webkit-flex;*/
+    /*flex-direction: row;*/
+    /*transform: perspective(1500px) translateZ(0);*/
+    /*transform: perspective(1px) translateZ(0);*/
+    /*transform:translateZ(0);*/
+    /*will-change: transform;*/
+}
+
+
+@keyframes zoomAnimation {
+    from {
+        transform: translate3d(0, 0, 0) scale(3, 3);
+    }
+    to {
+        transform: translate3d(0, 0, 0) scale(1, 1);
+    }
+}

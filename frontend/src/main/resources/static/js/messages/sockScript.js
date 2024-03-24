@@ -4,7 +4,6 @@ let messageTimes = [];
 
 document.addEventListener("DOMContentLoaded", function () {
     connectSocket();
-
     setInterval(function() {
         console.log('Reconnecting...');
         connectSocket();
@@ -142,27 +141,6 @@ function sendMessageNormal() {
     stompClient.send("/chat/private/message/"+ currentConversationId , {}, JSON.stringify(message));
 }
 
-function sendMessageLinux() {
-    adjustLinesInterval(100, 2000);
-    if(!spamCheck()){
-        return;
-    }
-    const usernameInput = document.getElementById('username').value;
-    const messageInput = document.getElementById('message');
-    const trimmedMessage = messageInput.textContent.trim();
-    if (trimmedMessage === '') {
-        alert("Message cannot be empty.");
-        return;
-    }
-    const message = {
-        sender: usernameInput,
-        receiver: usernameInput,
-        payload: trimmedMessage
-    };
-    messageInput.textContent = '';
-    messageInput.focus();
-    stompClient.send("/chat/private/message/"+ currentConversationId , {}, JSON.stringify(message));
-}
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -229,3 +207,34 @@ function dragElement(element) {
         document.onmousemove = null;
     }
 }
+
+function paralaxHover() {
+    const config = {
+        rotation: 0.8,
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    const elementList = document.querySelectorAll('.paralax-hover');
+    
+        function handleMouseMove(e) {
+        elementList.forEach((element) => {
+            if (!e.target.matches('input, textarea, button, a, [onclick]')) {
+                const rect = element.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const deltaX = e.clientX - centerX;
+                const deltaY = e.clientY - centerY;
+                const rotateX = deltaY / (config.rotation * 100);
+                const rotateY = -deltaX / (config.rotation * 100);
+                element.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.0)`;
+            }
+        });
+    }
+}
+
+
+
+
+
+
+

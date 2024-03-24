@@ -6,6 +6,7 @@ function focusInputArea() {
 
 
 function updateCursor() {
+    
     let terminalBody = document.getElementById('terminal__body');
     const cursor = document.getElementById('terminal__prompt--cursor');
     const selection = window.getSelection();
@@ -16,15 +17,15 @@ function updateCursor() {
     if (rect.width === 0 && rect.height === 0) {
         const lastChild = terminalBody.lastChild;
         if (lastChild && lastChild.getBoundingClientRect) {
-            const lastRect = lastChild.getBoundingClientRect();
-            cursor.style.transform = `translate(${lastRect.left}px, ${lastRect.bottom}px)`;
+            cursor.style.transform = ``;
         }
     } else {
-        // let userEmail = document.getElementById('userEmail').value;
-        // let numberOfCharacters = userEmail.length;
 
         const containerRect = terminalBody.getBoundingClientRect();
         const cursorLeft = rect.left - containerRect.left - 128 ;
+        
+        // let userEmail = document.getElementById('userEmail').value;
+        // let numberOfCharacters = userEmail.length;
         // const cursorLeft = rect.left - containerRect.left - (numberOfCharacters * 10) ;
         const cursorTop = rect.top - containerRect.top;
 
@@ -35,40 +36,171 @@ function updateCursor() {
         // } else {
         //     cursor.style.transform = `translate(${cursorLeft}px, ${cursorTop}px)`;
         // }
-
         cursor.style.transform = `translate(${cursorLeft}px, ${cursorTop}px)`;
-
     }
 }
 
 
-// function updateCursor() {
-//     let terminalBody = document.getElementById('terminal__body');
-//     const cursor = document.getElementById('terminal__prompt--cursor');
-//     const selection = window.getSelection();
-//
-//     if (!selection.rangeCount || !terminalBody.textContent.trim()) {
-//         cursor.style.transform = `translate(0px, 0px)`;
-//         return;
-//     }
-//     const range = selection.getRangeAt(0);
-//     const rect = range.getBoundingClientRect();
-//     let cursorLeft, cursorTop;
-//     if (rect.width === 0 && rect.height === 0) {
-//         const children = terminalBody.children;
-//         const firstChildRect = children.length > 0 ? children[0].getBoundingClientRect() : null;
-//
-//         if (firstChildRect) {
-//             cursorLeft = firstChildRect.left;
-//             cursorTop = firstChildRect.top;
-//         } else {
-//             cursorLeft = cursorTop = 0;
-//         }
-//     } else {
-//         const containerRect = terminalBody.getBoundingClientRect();
-//         cursorLeft = rect.left - containerRect.left - 128;
-//         cursorTop = rect.top - containerRect.top;
-//     }
-//
-//     cursor.style.transform = `translate(${cursorLeft}px, ${cursorTop}px)`;
-// }
+function linuxCmdEntryAnimation() {
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                setTimeout(() => {
+                    entry.target.classList.remove('visible');
+                }, 400);
+            }
+        });
+    }, {threshold: 0.1});
+
+    document.querySelectorAll('.glow-box-shadow').forEach(box => {
+        observer.observe(box);
+    });
+}
+
+function sendMessageLinux() {
+    adjustLinesInterval(100, 2000);
+    if(!spamCheck()){
+        return;
+    }
+    const usernameInput = document.getElementById('username').value;
+    const messageInput = document.getElementById('message');
+    const trimmedMessage = messageInput.textContent.trim();
+    if (trimmedMessage === '') {
+        alert("Message cannot be empty.");
+        return;
+    }
+    const message = {
+        sender: usernameInput,
+        receiver: usernameInput,
+        payload: trimmedMessage
+    };
+    stompClient.send("/chat/private/message/"+ currentConversationId , {}, JSON.stringify(message));
+    messageInput.textContent = '';
+    messageInput.focus();
+}
+
+
+
+function createLinuxInputMessageDiv() {
+
+    let existingTerminal = document.getElementById('terminal');
+
+    if(existingTerminal===null) {
+
+        const messageContainer = document.getElementById('messageContainer');
+
+        const messageFormDiv = document.createElement('div');
+        messageFormDiv.id = 'messageForm';
+
+        const terminal = document.createElement('div');
+        terminal.id = 'terminal';
+        terminal.className = 'glow-box-shadow';
+
+        const terminalBar = document.createElement('section');
+        terminalBar.id = 'terminal__bar';
+
+        const barButtons = document.createElement('div');
+        barButtons.id = 'bar__buttons';
+
+        const closeButton = document.createElement('button');
+        closeButton.className = 'bar__button';
+        closeButton.id = 'bar__button--exit';
+        closeButton.innerHTML = '&#10005;';
+
+        const minimizeButton = document.createElement('button');
+        minimizeButton.className = 'bar__button';
+        minimizeButton.innerHTML = '&#9472;';
+
+        const maximizeButton = document.createElement('button');
+        maximizeButton.className = 'bar__button';
+        maximizeButton.innerHTML = '&#9723;';
+
+        barButtons.appendChild(closeButton);
+        barButtons.appendChild(minimizeButton);
+        barButtons.appendChild(maximizeButton);
+
+
+        const userEmailUbuntuLogin = document.createElement('p');
+        let userEmail = document.getElementById('userEmail').value;
+        userEmailUbuntuLogin.id = 'bar__user';
+        userEmailUbuntuLogin.textContent = userEmail;
+
+        terminalBar.appendChild(barButtons);
+        terminalBar.appendChild(userEmailUbuntuLogin);
+
+        // Tworzenie ciała terminala
+        const terminalBody = document.createElement('section');
+        terminalBody.id = 'terminal__body';
+        terminalBody.addEventListener('click', focusInputArea);
+
+        const terminalPrompt = document.createElement('div');
+        terminalPrompt.id = 'terminal__prompt';
+
+        // const userSpan = document.createElement('span');
+        // userSpan.id = 'terminal__prompt--user';
+        // userSpan.textContent = 'fobabs@ubuntu' + ':';
+        // userSpan.textContent = 'karacz@hitman.pl' + ':';
+
+        const userSpan = document.createElement('span');
+        userSpan.id = 'terminal__prompt--user';
+        // userSpan.textContent = userEmail + ':';
+        userSpan.textContent = 'e-chat@ubuntu:';
+
+        const locationSpan = document.createElement('span');
+        locationSpan.id = 'terminal__prompt--location';
+        locationSpan.textContent = '~';
+
+        const blingSpan = document.createElement('span');
+        blingSpan.id = 'terminal__prompt--bling';
+        blingSpan.textContent = '$';
+
+        const cursorSpan = document.createElement('span');
+        cursorSpan.id = 'terminal__prompt--cursor';
+
+        const inputDiv = document.createElement('div');
+        inputDiv.className = 'terminal__input';
+        inputDiv.id = 'message';
+        inputDiv.setAttribute('contenteditable', 'true');
+        inputDiv.setAttribute('role', 'textbox');
+        inputDiv.setAttribute('aria-multiline', 'false');
+        inputDiv.addEventListener('keyup', handleKeydown);
+        inputDiv.addEventListener('click', updateCursor);
+        inputDiv.addEventListener('input', updateCursor)
+        inputDiv.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessageLinux();
+                updateCursor();
+            }
+        });
+
+        terminalPrompt.appendChild(userSpan);
+        terminalPrompt.appendChild(locationSpan);
+        terminalPrompt.appendChild(blingSpan);
+        terminalPrompt.appendChild(cursorSpan);
+        terminalPrompt.appendChild(inputDiv);
+
+        terminalBody.appendChild(terminalPrompt);
+
+        terminal.appendChild(terminalBar);
+        terminal.appendChild(terminalBody);
+
+        messageFormDiv.appendChild(terminal);
+        messageContainer.appendChild(messageFormDiv);
+        
+        // paralaxHover();
+        
+        linuxCmdEntryAnimation();
+
+    }
+
+}
+
+
+function handleKeydown(e) {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+        setTimeout(updateCursor(), 0);
+    }
+}
+

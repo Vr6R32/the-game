@@ -8,9 +8,9 @@
     height: 100vh;
 }
 #terminal {
-    width: 90%;
+    width: 100%;
     /*width: auto;*/
-    height: 10vh;
+    height: auto;
     /*height: auto;*/
     box-shadow: 2px 4px 10px rgba(0,0,0,0.5);
 }
@@ -68,6 +68,7 @@
     height: calc(100% - 30px);
     padding-top: 2px;
     margin-top: -1px;
+    border-radius: 0 0 5px 5px;
     width: 100%;
 }
 
@@ -124,9 +125,11 @@
     overflow-wrap: break-word;
     word-wrap: break-word;
     outline: none;
-    height: 1em;
+    height: auto;
     box-sizing: border-box;
     max-width: calc(100% - 15vh);
+    /*overflow-y: auto;*/
+    max-height: 100%;
 }
 .terminal__input:focus {
     caret-color: transparent;

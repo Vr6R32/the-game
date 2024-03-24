@@ -24,6 +24,12 @@ a {
   background-color: transparent;
 }
 
+.parallax-hover-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background-color: transparent;
+}
 
 .p-menu1 {
   display: flex;
