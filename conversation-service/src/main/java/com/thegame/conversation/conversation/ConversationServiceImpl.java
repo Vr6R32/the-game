@@ -10,7 +10,9 @@ import com.thegame.dto.*;
 import com.thegame.model.Status;
 import com.thegame.request.ConversationMessageRequest;
 
+import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public record ConversationServiceImpl(ConversationRepository conversationRepository,
                                       ConversationMessageRepository messageRepository,
@@ -22,7 +24,11 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
     @Override
     public List<DetailedConversationDTO> getAllUserConversations(AuthenticationUserObject user) {
 
-        Map<UUID, Long> conversationIdSecondUserIdMap = getConversationUserIdMap(user);
+
+        Map<UUID, ConversationInfo> conversationInfoMap = getConversationUserIdMap(user);
+
+        Map<UUID, Long> conversationIdSecondUserIdMap = conversationInfoMap.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().secondUserId()));
 
         Map<UUID, AppUserDTO> conversationsUsersDetails =
                 userServiceClient.getConversationsUsersDetails(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
@@ -30,13 +36,19 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
         Map<UUID, UserSessionDTO> conversationUsersSessionDetails =
                 webSocketSessionClient.findConversationUserSessionsByIdMap(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
 
-        return conversationIdSecondUserIdMap.entrySet().stream()
+        return conversationInfoMap.entrySet().stream()
                 .map(entry -> {
                     UUID conversationId = entry.getKey();
-                    Long secondUserId = entry.getValue();
+
+                    ConversationInfo conversationInfo = entry.getValue();
+                    Long secondUserId = conversationInfo.secondUserId();
+                    Date lastMessageDate = conversationInfo.lastMessageDate();
+                    boolean isUnread = conversationInfo.isUnread();
+
                     AppUserDTO userDto = conversationsUsersDetails.get(conversationId);
                     String secondUserAvatarUrl = userDto.avatarUrl();
                     String secondUserEmail = userDto.email();
+
                     UserSessionDTO userSessionDTO = conversationUsersSessionDetails.get(conversationId);
                     Status userStatus = null;
                     Date logoutTime = null;
@@ -44,7 +56,7 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
                         userStatus = userSessionDTO.status();
                         logoutTime = userSessionDTO.logoutTime();
                     }
-                    return new DetailedConversationDTO(conversationId, secondUserId, secondUserAvatarUrl, secondUserEmail, userStatus, logoutTime);
+                    return new DetailedConversationDTO(conversationId, secondUserId, secondUserAvatarUrl, secondUserEmail, userStatus, logoutTime,lastMessageDate,isUnread);
                 })
                 .toList();
     }
@@ -60,18 +72,28 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
 
     @Override
     public List<ConversationMessageDTO> getAllConversationMessages(UUID conversationId, AuthenticationUserObject user) {
-        return conversationRepository.findAllConversationMessagesByUserAndConversationId(conversationId, user.id())
+        List<ConversationMessageDTO> messageList = conversationRepository.findAllConversationMessagesByUserAndConversationId(conversationId, user.id())
                 .stream()
                 .map(ConversationMapper::mapConversationMessageToDTO)
                 .toList();
+
+        conversationRepository.updateMessagesReadByReceiver(user.id());
+
+        return messageList;
     }
 
     @Override
     public String saveNewConversationMessage(UUID conversationId, AuthenticationUserObject user, ConversationMessageRequest request) {
+
+        Date messageSendDate = Date.from(Instant.now());
+
+        conversationRepository.updateLastMessageInfo(conversationId, messageSendDate, user.id() ,false);
+
         ConversationMessage newMessage = ConversationMessage.builder()
                 .conversation(conversationRepository.getReferenceById(conversationId))
-                .sender(user.username())
+                .senderId(user.id())
                 .payload(request.payload())
+                .messageSendDate(messageSendDate)
                 .build();
 
         ConversationMessage savedMessage = messageRepository.save(newMessage);
@@ -89,19 +111,19 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
     }
 
 
-    private Map<UUID, Long> getConversationUserIdMap(AuthenticationUserObject user) {
+    private Map<UUID, ConversationInfo> getConversationUserIdMap(AuthenticationUserObject user) {
+
         List<ConversationDTO> allConversationsByUserId =
                 conversationRepository.findAllConversationsByUserId(user.id()).stream().map(ConversationMapper::mapConversationToDTO).toList();
-        Map<UUID, Long> conversationIdSecondUserIdMap = new HashMap<>();
 
+        Map<UUID, ConversationInfo> conversationInfoMap = new LinkedHashMap<>();
         for (ConversationDTO conversation : allConversationsByUserId) {
-            if (!conversation.firstUserId().equals(user.id())) {
-                conversationIdSecondUserIdMap.put(conversation.id(), conversation.firstUserId());
-            } else if (!conversation.secondUserId().equals(user.id())) {
-                conversationIdSecondUserIdMap.put(conversation.id(), conversation.secondUserId());
-            }
+            Long secondUserId = conversation.firstUserId().equals(user.id()) ? conversation.secondUserId() : conversation.firstUserId();
+            boolean isUnread = conversation.lastMessageSenderId().equals(secondUserId) && !conversation.isReadByReceiver();
+            conversationInfoMap.put(conversation.id(), new ConversationInfo(secondUserId, conversation.lastMessageDate(),isUnread));
         }
-        return conversationIdSecondUserIdMap;
+
+        return conversationInfoMap;
     }
 
 

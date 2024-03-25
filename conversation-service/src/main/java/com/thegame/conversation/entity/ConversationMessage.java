@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -21,9 +22,13 @@ public class ConversationMessage {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String sender;
+    private Long senderId;
 
     private String payload;
+
+    private Date messageSendDate;
+
+    private Date messageReadDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "conversation_id")

@@ -6,12 +6,17 @@ import com.thegame.dto.ConversationDTO;
 import com.thegame.dto.ConversationMessageDTO;
 import com.thegame.dto.DetailedConversationDTO;
 import com.thegame.request.ConversationMessageRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
 import java.util.UUID;
 
-record ConversationFacade(ConversationService conversationService) {
+@RequiredArgsConstructor
+class ConversationFacade {
+
+    private final ConversationService conversationService;
 
     public List<DetailedConversationDTO> getAllUserConversations(AuthenticationUserObject user) {
         return conversationService.getAllUserConversations(user);
@@ -21,10 +26,11 @@ record ConversationFacade(ConversationService conversationService) {
         return conversationService.getConversationById(uuid,user);
     }
 
+    @Transactional
     public List<ConversationMessageDTO> getAllConversationMessages(UUID conversationId, AuthenticationUserObject user) {
         return conversationService.getAllConversationMessages(conversationId, user);
     }
-
+    @Transactional
     public String saveNewConversationMessage(UUID conversationId, AuthenticationUserObject user, ConversationMessageRequest request) {
         return conversationService.saveNewConversationMessage(conversationId, user, request);
     }

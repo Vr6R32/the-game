@@ -12,9 +12,11 @@
 
 .glowing-btn {
     position: relative;
+    display: flex;
     color: var(--glow-color);
     cursor: pointer;
     width: 100%;
+    height: 100%;
     padding: 0.35em 0.35em;
     border: 0.15em solid var(--glow-color);
     border-radius: 0.45em;
@@ -22,8 +24,14 @@
     perspective: 2em;
     font-family: "Raleway", sans-serif;
     font-size: 1em;
-    font-weight: 10000;
     letter-spacing: 0.6em;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    align-self: center;
+    align-content: center;
+    justify-self: center;
+    justify-items: center;
+    text-align: center; /* Center text horizontally */
 
     -webkit-box-shadow: inset 0px 0px 0.5em 0px var(--glow-color),
     0px 0px 0.5em 0px var(--glow-color);
@@ -35,10 +43,18 @@
 }
 
 .glowing-txt {
+    display: block; /* Ensure this is a block element to center correctly */
     width: 100%;
-
+    height: 100%;
     float: left;
-    margin-right: -0.8em;
+    justify-content: center;
+    justify-items: center;
+    justify-self: center;
+    text-align: center;
+    align-items: center;
+    align-content: center;
+    align-self: center;
+    /*margin-right: -0.8em;*/
     -webkit-text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.3),
     0 0 0.45em var(--glow-color);
     -moz-text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.3),

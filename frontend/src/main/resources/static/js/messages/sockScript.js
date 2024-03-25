@@ -41,6 +41,10 @@ function connectSocket(){
             const chatMessage = JSON.parse(message.body);
             appendMessage(chatMessage);
         });
+        //
+        // const notificationSound = new Audio('C:\\the-game\\frontend\\src\\main\\resources\\static\\sounds\\new-message.wav');
+        // notificationSound.play();
+
     }, function(error) {
         console.log('Connection error: ', error);
     });
@@ -48,35 +52,40 @@ function connectSocket(){
 
 function appendMessage(message) {
     const conversationMessages = document.getElementById('conversationMessages');
-    const isScrolledToBottom = conversationMessages.scrollHeight - conversationMessages.clientHeight <= conversationMessages.scrollTop + 1;
 
-    let loggedUser = document.getElementById('username').value;
     let newMessage = document.createElement('div');
+    newMessage.classList.add('conversation-message');
+    newMessage.textContent = `${message.payload}`;
+
+    let loggedUserId = parseInt(document.getElementById('userId').value);
+
+    setMessageOwnerClass(message, loggedUserId, newMessage);
+
+    let conversationDiv = conversationsDivs[message.conversationId];
+
+    if (conversationDiv) {
+        const conversationsList = conversationDiv.parentNode;
+
+        if (conversationsList) {
+            conversationsList.prepend(conversationDiv);
+        }
+
+        if (currentConversationId !== message.conversationId) {
+            conversationDiv.classList.add('unread-message');
+        }
+    }
+
 
     if (currentConversationId === message.conversationId) {
-        newMessage.classList.add('conversation-message');
-        newMessage.textContent = `${message.payload}`;
-        conversationMessages.append(newMessage)
-
-        if (message.sender === loggedUser) {
-            newMessage.classList.add('message-sent');
-        } else {
-            newMessage.classList.add('message-received');
-        }
+        const isScrolledToBottom = conversationMessages.scrollHeight - conversationMessages.clientHeight <= conversationMessages.scrollTop + 1;
+        conversationMessages.append(newMessage);
 
         if (isScrolledToBottom) {
             conversationMessages.scrollTop = conversationMessages.scrollHeight;
         }
-    } else {
-        let conversationDiv = conversationsDivs[message.conversationId];
-        if (conversationDiv) {
-
-            conversationDiv.style.backgroundColor = 'red';
-
-            // conversationDiv.classList.add('new-message');
-        }
     }
 }
+
 
 function spamCheck() {
     const now = Date.now();
@@ -226,7 +235,7 @@ function paralaxHover() {
                 const deltaY = e.clientY - centerY;
                 const rotateX = deltaY / (config.rotation * 100);
                 const rotateY = -deltaX / (config.rotation * 100);
-                element.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.0)`;
+                element.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(0.99)`;
             }
         });
     }

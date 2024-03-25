@@ -10,5 +10,7 @@ public record DetailedConversationDTO(UUID id,
                                       String userAvatarUrl,
                                       String userEmail,
                                       Status userStatus,
-                                      Date userLogoutDate) {
+                                      Date userLogoutDate,
+                                      Date lastMessageDate,
+                                      boolean isUnread) {
 }

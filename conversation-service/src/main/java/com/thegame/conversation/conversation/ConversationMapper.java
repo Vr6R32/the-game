@@ -11,9 +11,15 @@ public class ConversationMapper {
     }
 
     public static ConversationDTO mapConversationToDTO(Conversation conversation) {
-        return new ConversationDTO(conversation.getId(), conversation.getFirstUserId(), conversation.getSecondUserId());
+        return new ConversationDTO(
+                conversation.getId(),
+                conversation.getFirstUserId(),
+                conversation.getSecondUserId(),
+                conversation.getLastMessageSenderId(),
+                conversation.isReadByReceiver(),
+                conversation.getLastMessageDate());
     }
     public static ConversationMessageDTO mapConversationMessageToDTO(ConversationMessage message) {
-        return new ConversationMessageDTO(message.getId(), message.getSender(), message.getPayload());
+        return new ConversationMessageDTO(message.getId(), message.getSenderId(), message.getPayload());
     }
 }

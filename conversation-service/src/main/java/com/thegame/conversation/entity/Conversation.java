@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +26,12 @@ public class Conversation {
     private Long firstUserId;
 
     private Long secondUserId;
+
+    private Long lastMessageSenderId;
+
+    private Date lastMessageDate;
+
+    private boolean isReadByReceiver;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "conversation")
     private List<ConversationMessage> messageList;

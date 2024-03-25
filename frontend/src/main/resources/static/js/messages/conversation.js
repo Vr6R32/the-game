@@ -1,6 +1,23 @@
 let currentConversationId;
 let conversationsDivs = [];
+
+function createMainMessagesContainer() {
+    let chatWrapper = document.getElementById('chatWrapper');
+    let messageContainer = document.createElement('div');
+    messageContainer.setAttribute('id', 'messageContainer')
+
+
+    chatWrapper.appendChild(messageContainer);
+
+}
+
 document.addEventListener("DOMContentLoaded", function () {
+
+
+    createContactsContainer();
+    createMainMessagesContainer();
+    paralaxHover();
+
 
     let contactsListContainer = document.getElementById("contactsList");
     fetchConversations().then(conversationsDivs => {
@@ -26,24 +43,78 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+function createNewContact() {
+    let messageContainer = document.getElementById('messageContainer');
+    messageContainer.innerHTML = '';
+}
+
+function createContactsContainer() {
+
+    let contactsContainer = document.createElement('div');
+    contactsContainer.id = 'contactsContainer';
+
+    let contactsSearch = document.createElement('div');
+    contactsSearch.id = 'contactsSearch';
+
+    let inputGroup = document.createElement('div');
+    inputGroup.className = 'input-group';
+
+    let label = document.createElement('label');
+    label.className = 'input-group__label';
+    label.setAttribute('for', 'searchInput');
+    label.textContent = 'Search';
+
+    let input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'searchInput';
+    input.className = 'input-group__input';
+    input.placeholder = 'Search for contacts';
+
+    inputGroup.appendChild(label);
+    inputGroup.appendChild(input);
+    contactsSearch.appendChild(inputGroup);
+
+    let contactsList = document.createElement('div');
+    contactsList.id = 'contactsList';
+
+    let createContact = document.createElement('div');
+    createContact.id = 'createContact';
+
+    let createContactButton = document.createElement('button');
+    createContactButton.className = 'glowing-btn';
+    createContactButton.id = 'createContactButton';
+
+    let buttonSpan = document.createElement('span');
+    buttonSpan.className = 'glowing-txt';
+
+    let faultyLetter = document.createElement('span');
+    faultyLetter.className = 'faulty-letter';
+    faultyLetter.textContent = '🞧';
+
+    buttonSpan.appendChild(faultyLetter);
+    buttonSpan.append('CONTACT');
+    createContactButton.appendChild(buttonSpan);
+    createContact.appendChild(createContactButton);
+
+    contactsContainer.appendChild(contactsSearch);
+    contactsContainer.appendChild(contactsList);
+    contactsContainer.appendChild(createContact);
+
+    let contactsWrapperContainer = document.getElementById('contactsWrapper');
+    contactsWrapperContainer.appendChild(contactsContainer);
+
+    createContactButton.addEventListener('click', function() {
+        createNewContact();
+    });
+}
+
+
 function fetchConversations() {
     return fetch('/api/v1/conversation')
         .then(response => response.json())
         .then(data => {
-            let conversationMessagesContainer = document.getElementById("conversationMessages");
-
-            conversationMessagesContainer.addEventListener('scroll', () => {
-                const atTop = conversationMessagesContainer.scrollTop === 0;
-                if (atTop) {
-                    conversationMessagesContainer.classList.add('pull-down-refresh');
-                    conversationMessagesContainer.addEventListener('animationend', () => {
-                        // loadMoreMessagesAtTop();
-                        conversationMessagesContainer.scrollTop = 1;
-                        conversationMessagesContainer.classList.remove('pull-down-refresh');
-                    }, { once: true });
-                }
-            });
-            data.forEach(conversation => {
+            const sortedData = data.sort((a, b) => new Date(b.lastMessageDate) - new Date(a.lastMessageDate));
+            sortedData.forEach(conversation => {
                 createConversationDiv(conversation);
             });
             return conversationsDivs;
@@ -76,9 +147,14 @@ function getActivityElapsedTime(logoutDateString) {
 
 
 function createConversationDiv(conversation) {
+
     const conversationDiv = document.createElement('div');
     conversationDiv.classList.add('conversation-container');
     conversationDiv.id = conversation.id;
+
+    if(conversation.isUnread === true) {
+        conversationDiv.classList.add('unread-message');
+    }
 
 
     const avatarWrapper = document.createElement('div');
@@ -124,20 +200,45 @@ function createConversationDiv(conversation) {
 
     conversationDiv.onclick = () => {
         loadMessages(conversation.id).then(messages => {
+
+            if (conversationDiv.classList.contains('unread-message')) {
+                conversationDiv.classList.remove('unread-message');
+            }
+
             adjustLinesInterval(100, 1000);
-            const conversationMessagesContainer = document.getElementById("conversationMessages");
+            let messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = '';
+
+            const conversationMessagesContainer = document.createElement("div");
+            conversationMessagesContainer.setAttribute('id', 'conversationMessages');
+            conversationMessagesContainer.addEventListener('scroll', () => {
+                const atTop = conversationMessagesContainer.scrollTop === 0;
+                if (atTop) {
+                    conversationMessagesContainer.classList.add('pull-down-refresh');
+                    conversationMessagesContainer.addEventListener('animationend', () => {
+                        // loadMoreMessagesAtTop();
+                        conversationMessagesContainer.scrollTop = 1;
+                        conversationMessagesContainer.classList.remove('pull-down-refresh');
+                    }, { once: true });
+                }
+            });
+
             conversationMessagesContainer.innerHTML = "";
             conversationMessagesContainer.append(...messages);
             currentConversationId = conversation.id;
+            messageContainer.appendChild(conversationMessagesContainer);
+
             conversationMessagesContainer.scrollTop = conversationMessagesContainer.scrollHeight;
+
+            createLinuxInputMessageDiv(messageContainer);
+
         }).catch(error => {
             console.error('Error loading messages:', error);
         });
-        createLinuxInputMessageDiv();
+
     }
 
     conversationsDivs[conversation.id] = conversationDiv;
-    paralaxHover();
     return conversationDiv;
 }
 
@@ -176,22 +277,27 @@ function createNormalMessageInputDiv() {
 }
 
 
+function setMessageOwnerClass(message, loggedUserId, newMessage) {
+    if (message.senderId === loggedUserId) {
+        newMessage.classList.add('message-sent');
+    } else {
+        newMessage.classList.add('message-received');
+    }
+}
 
 function loadMessages(conversationId) {
     return fetch('/api/v1/conversation/messages/' + conversationId)
         .then(response => response.json())
         .then(data => {
-            let loggedUser = document.getElementById('username').value;
+            let loggedUserId = parseInt(document.getElementById('userId').value);
             return data.map(message => {
-                const div = document.createElement('div');
-                div.textContent = message.payload;
-                div.classList.add('conversation-message');
-                if (message.sender === loggedUser) {
-                    div.classList.add('message-sent');
-                } else {
-                    div.classList.add('message-received');
-                }
-                return div;
+                const newMessage = document.createElement('div');
+                newMessage.textContent = message.payload;
+                newMessage.classList.add('conversation-message');
+
+                setMessageOwnerClass(message, loggedUserId, newMessage);
+
+                return newMessage;
             });
         });
 }

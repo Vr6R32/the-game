@@ -60,7 +60,7 @@ public class WebSocketController {
         AuthenticationUserObject senderUser = extractUserFromSession(headerAccessor);
         UUID conversationId = extractDestinationPathVariable(headerAccessor);
 
-        ChatMessage validatedMsg = new ChatMessage(conversationId,senderUser.username(),chatMessage.payload());
+        ChatMessage validatedMsg = new ChatMessage(conversationId,senderUser.id(),chatMessage.payload());
         ConversationDTO conversation = conversationServiceClient
                 .findConversationById(mapUserToJsonObject(senderUser), conversationId);
 

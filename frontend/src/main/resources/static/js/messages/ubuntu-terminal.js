@@ -82,13 +82,12 @@ function sendMessageLinux() {
 
 
 
-function createLinuxInputMessageDiv() {
+function createLinuxInputMessageDiv(messageContainer) {
 
     let existingTerminal = document.getElementById('terminal');
 
     if(existingTerminal===null) {
 
-        const messageContainer = document.getElementById('messageContainer');
 
         const messageFormDiv = document.createElement('div');
         messageFormDiv.id = 'messageForm';

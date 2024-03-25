@@ -110,8 +110,8 @@
 }
 @media (max-width: 600px) {
     #terminal {
-        max-height: 90%;
-        width: 90%;
+        max-height: 100%;
+        width: 100%;
     }
 }
 .terminal__input {
