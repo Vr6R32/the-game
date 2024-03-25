@@ -43,9 +43,75 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-function createNewContact() {
+function createNewContactDiv() {
     let messageContainer = document.getElementById('messageContainer');
     messageContainer.innerHTML = '';
+    
+    const loginBox = document.createElement('div');
+    loginBox.classList.add('new-contact-form');
+
+
+    const invitationHeading = document.createElement('h2');
+    invitationHeading.textContent = 'Send an Invitation for';
+    loginBox.appendChild(invitationHeading);
+
+
+    const form = document.createElement('form');
+
+    const invitationEmailBox = document.createElement('div');
+    invitationEmailBox.classList.add('user-box');
+    
+    const inputEmail = document.createElement('input');
+    inputEmail.setAttribute('id', 'newContactEmail');
+    inputEmail.setAttribute('type', 'text');
+    inputEmail.setAttribute('required', '');
+    
+    const labelEmail = document.createElement('label');
+    labelEmail.textContent = 'Email';
+    invitationEmailBox.appendChild(inputEmail);
+    invitationEmailBox.appendChild(labelEmail);
+    form.appendChild(invitationEmailBox);
+
+
+    const contactDetailsHeading = document.createElement('h2');
+    contactDetailsHeading.textContent = 'Save as';
+    form.appendChild(contactDetailsHeading);
+    
+
+    const saveContactAsBox = document.createElement('div');
+    saveContactAsBox.classList.add('user-box');
+    const contactUsernameInput = document.createElement('input');
+    contactUsernameInput.setAttribute('id', 'newContactName');
+    contactUsernameInput.setAttribute('type', 'text');
+    contactUsernameInput.setAttribute('required', '');
+    const contactUsernameLabel = document.createElement('label');
+    
+    contactUsernameLabel.textContent = 'Contact name';
+    saveContactAsBox.appendChild(contactUsernameInput);
+    saveContactAsBox.appendChild(contactUsernameLabel);
+    form.appendChild(saveContactAsBox);
+
+    const submitButton = document.createElement('button');
+    submitButton.onclick = sendNewContactInvitation;
+    submitButton.innerHTML = '<span></span><span></span><span></span><span></span>Execute';
+
+    form.appendChild(submitButton);
+
+
+    loginBox.appendChild(form);
+    messageContainer.appendChild(loginBox);
+
+}
+
+function sendNewContactInvitation(event) {
+    // Prevent the default form submit action
+    event.preventDefault();
+
+    let newContactEmail = document.getElementById('newContactEmail').value;
+    let newContactName = document.getElementById('newContactName').value;
+
+    console.log(newContactEmail);
+    console.log(newContactName);
 }
 
 function createContactsContainer() {
@@ -104,7 +170,8 @@ function createContactsContainer() {
     contactsWrapperContainer.appendChild(contactsContainer);
 
     createContactButton.addEventListener('click', function() {
-        createNewContact();
+        currentConversationId = null;
+        createNewContactDiv();
     });
 }
 

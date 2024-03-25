@@ -224,11 +224,23 @@
     }
 }
 
+@keyframes unread-message-blink-hover {
+    0%, 100% {
+        box-shadow: rgb(0, 124, 255) 0 20px 30px -10px;
+    }
+    50% {
+        box-shadow: none;
+    }
+}
+
 .unread-message {
     animation: unread-message-blink 1s infinite;
 }
-.unread-message::after {
-    background-color: red;
+
+
+.unread-message:hover {
+    box-shadow: rgba(0, 15, 255, 0.35) 0px 30px 60px -12px inset, rgba(0, 34, 255, 0.45) 0px 18px 36px -18px inset;
+    animation: unread-message-blink-hover 1s infinite;
 }
 
 
