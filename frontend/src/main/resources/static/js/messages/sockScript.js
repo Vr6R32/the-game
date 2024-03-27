@@ -33,10 +33,10 @@ function connectSocket(){
             console.log(errorMessage)
         });
 
-        // stompClient.subscribe('/user/'+ userId +'/notifications', function (notification) {
-        //     const notificationMessage = JSON.parse(notification.body);
-        //     console.log(notificationMessage)
-        // });
+        stompClient.subscribe('/user/'+ userId +'/notifications', function (notification) {
+            const notificationMessage = JSON.parse(notification.body);
+            console.log(notificationMessage)
+        });
 
         stompClient.subscribe('/user/' + userId + '/messages', function (message) {
             const chatMessage = JSON.parse(message.body);

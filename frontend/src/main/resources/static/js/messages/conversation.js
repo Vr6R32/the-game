@@ -14,7 +14,7 @@ function checkIfUserAlreadyLogged() {
         .then(data => {
             if (!data) return;
             loggedUser = data;
-            createContactsContainer();
+            setTimeout(createContactsContainer,1000);
             stabilizeWebSocketConnection();
         })
         .catch(error => {
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     createMainContainer();
 
-    setTimeout(paralaxHover,1000);
+    setTimeout(paralaxHover,1001);
 
     checkIfUserAlreadyLogged();
 
@@ -47,6 +47,7 @@ function createMainContainer() {
 function createSelfWriterLandingPage() {
 
     let messageContainer = document.getElementById('messageContainer');
+    messageContainer.innerHTML = '';
     let typeWriterWelcomeContainer = document.createElement('div');
     typeWriterWelcomeContainer.setAttribute('id', 'typewriter');
 
@@ -213,9 +214,6 @@ function createContactsContainer() {
 
     let buttonSpan = document.createElement('span');
     buttonSpan.className = 'glowing-txt';
-    buttonSpan.style.fontSize = '2vh';
-    buttonSpan.style.width = '100%';
-    buttonSpan.style.height = '100%';
     buttonSpan.appendChild(faultyLetter);
     buttonSpan.append('CONTACT');
     createContactButton.appendChild(buttonSpan);

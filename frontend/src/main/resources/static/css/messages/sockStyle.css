@@ -86,6 +86,7 @@
     word-wrap: break-word;
     padding: 10px;
     margin-bottom: 10px;
+    /*animation: conversationContactFade 1.3s ease forwards;*/
 }
 
 
@@ -134,8 +135,18 @@
     justify-content: left;
     box-shadow: none;
     background-color: transparent;
+
 }
 
+
+@keyframes conversationContactFade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 100%;
+    }
+}
 
 .conversation-container:hover {
     cursor: pointer;
@@ -201,7 +212,7 @@
 }
 
 .conversation-details {
-    width: 90%;
+    width: 80%;
     height: 100%;
 }
 

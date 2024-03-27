@@ -7,8 +7,6 @@ import java.util.List;
 public class RouteValidator {
 
         private final List<String> openEndpoints = List.of(
-                "/api/v1/users/generate",
-                "/api/v1/auth/logout",
                 "/api/v1/auth/login",
                 "/favicon.ico",
                 "/messages",
@@ -28,7 +26,7 @@ public class RouteValidator {
 
     private final List<String> openEndpointPrefixes = List.of(
 //                "/websocket/",
-                "/api/v1/auth/refresh-token/**",
+                "/api/v1/auth/refresh-token/",
                 "/css/",
                 "/js/"
         );
