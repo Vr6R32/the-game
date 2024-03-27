@@ -26,10 +26,17 @@
 <!--    <link rel="stylesheet" type="text/css" href="../static/css/messages/custom-boxshadow.css">-->
 <!--    <link rel="stylesheet" type="text/css" href="../static/css/messages/paralax-hover.css">-->
 <!--    <link rel="stylesheet" type="text/css" href="../static/css/messages/new-contact-form.css">-->
+<!--    <link rel="stylesheet" type="text/css" href="../static/css/index/self-writer.css">-->
+<!--    <link rel="stylesheet" type="text/css" href="../static/css/login/new-login.css">-->
+
 <!--    <script type="text/javascript" src="../static/js/index/background-effect.js"></script>-->
 <!--    <script type="text/javascript" src="../static/js/messages/ubuntu-terminal.js"></script>-->
 <!--    <script type="text/javascript" src="../static/js/messages/sockScript.js"></script>-->
 <!--    <script type="text/javascript" src="../static/js/messages/conversation.js"></script>-->
+
+<!--    <script type="text/javascript" src="../static/js/login/login-utils.js"></script>-->
+<!--    <script type="text/javascript" src="../static/js/login/login.js"></script>-->
+<!--    <script type="text/javascript" src="../static/js/index/self-writer.js"></script>-->
 
     <!-------------------------------------------------- style dla app context ------------------------------------------>
 
@@ -44,10 +51,18 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/ubuntu-terminal.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/paralax-hover.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/messages/new-contact-form.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index/self-writer.css}" /><!-- style dla app context -->
+
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login/new-login.css}" /><!-- style dla app context -->
+
     <script type="text/javascript" th:src="@{/js/index/background-effect.js}" ></script>
     <script type="text/javascript" th:src="@{/js/messages/sockScript.js}" ></script>
     <script type="text/javascript" th:src="@{/js/messages/conversation.js}" ></script>
     <script type="text/javascript" th:src="@{/js/messages/ubuntu-terminal.js}" ></script>
+    <script type="text/javascript" th:src="@{/js/index/self-writer.js}" ></script> <!-- style dla app context -->
+
+    <script type="text/javascript" th:src="@{/js/login/login-utils.js}" ></script> <!-- style dla app context -->
+    <script type="text/javascript" th:src="@{/js/login/login.js}" ></script> <!-- style dla app context -->
 
 </head>
 <body>
@@ -70,37 +85,22 @@
             <a class="link1" href="">Profile</a>
             <a class="link1" href="">Contacts</a>
             <a class="link1" href="">Messages</a>
-            <a class="link1" href="">Settings</a>
+            <a class="link1" href="#" onclick="logout(); return false;">Logout</a>
         </div>
     </nav>
 </section>
 
 <div>
-    <input type="hidden" id="username" th:value="${user.username}">
-</div>
-
-<div>
-    <input type="hidden" id="userId" th:value="${user.id}">
-</div>
-
-<div>
-    <input type="hidden" id="userEmail" th:value="${user.email}">
-</div>
-
-<div>
     <input type="hidden" id="websocketUrl" th:value="${websocketUrl}">
 </div>
 
-<div class="main-container">
-<figure class="paralax-hover">
-
-<div id="contactsWrapper">
-
-</div>
+<div class="main-container" id="main-container">
+<figure class="paralax-hover" id="paralax-hover">
 
 <div id="chatWrapper">
 
 </div>
+
 </figure>
 </div>
 

@@ -11,7 +11,7 @@ public class RouteValidator {
                 "/api/v1/auth/logout",
                 "/api/v1/auth/login",
                 "/favicon.ico",
-//                "/messages",
+                "/messages",
                 "/logout",
                 "/login",
                 "/test",

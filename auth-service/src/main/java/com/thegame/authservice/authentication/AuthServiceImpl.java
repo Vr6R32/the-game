@@ -29,11 +29,18 @@ record AuthServiceImpl(AuthenticationManager authenticationManager, JwtFacade jw
                     )
             );
             AppUser user = (AppUser) authentication.getPrincipal();
+
+            AuthenticationUserObject responseUserObject = AuthenticationUserObject.builder()
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .build();
+
             AuthenticationResponse authenticationResponse = jwtFacade.authenticate(user, response);
-            return new AuthResponse("AUTHENTICATED",HttpStatus.OK, authenticationResponse.accessToken(), authenticationResponse.refreshToken());
+            return new AuthResponse("AUTHENTICATED",HttpStatus.OK, authenticationResponse.accessToken(), authenticationResponse.refreshToken(), responseUserObject);
         } catch (AuthenticationException e) {
             log.info("[AUTHENTICATION-SERVICE] -> {} FOR {} ",e.getMessage(),request);
-            return new AuthResponse(e.getMessage(), HttpStatus.UNAUTHORIZED,null,null);
+            return new AuthResponse(e.getMessage(), HttpStatus.UNAUTHORIZED,null,null,null);
         }
     }
 

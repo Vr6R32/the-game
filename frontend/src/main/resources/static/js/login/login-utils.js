@@ -8,6 +8,7 @@ function createUsernameInput() {
     inputUsername.addEventListener('click', function () {
         divUsername.querySelectorAll('.error-message').forEach(e => e.remove());
     });
+    
 
     inputUsername.addEventListener('input', function () {
         adjustLinesInterval(100, 1000);
@@ -55,12 +56,12 @@ function createFormButton(form) {
     button.setAttribute('type', 'button');
     button.textContent = 'Execute';
     button.onclick = function () {
-        submitForm();
+        submitLoginForm();
     };
     form.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            submitForm();
+            submitLoginForm();
         }
     });
     divButton.appendChild(button);

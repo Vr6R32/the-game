@@ -18,9 +18,38 @@
     flex-direction: row;
     align-items: stretch;
     max-width: 30vh;
-    width: 30vh;
-    min-width: 18vh;
+    width: 0;
+    animation: expandWidth 1s ease forwards;
 }
+
+#contactsWrapper.reduce-width {
+    animation: reduceWidth 1s ease forwards;
+}
+
+@keyframes expandWidth {
+    from {
+        width: 0;
+    }
+    to {
+        width: 30vh;
+    }
+}
+
+@keyframes reduceWidth {
+    from {
+        width: 30vh;
+        opacity: 100%;
+    }
+    to {
+        width: 0;
+        opacity: 0;
+        display: none;
+    }
+}
+
+
+
+
 
 #contactsSearch {
     height: 10%;
@@ -63,7 +92,6 @@
 #messageContainer {
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(39, 39, 39, 0.7));
     /*background-color: transparent;*/
-
     height: 60vh;
     width: 100%;
     border-radius: 0 10px 10px 0 ;

@@ -1,14 +1,13 @@
-
-document.addEventListener("DOMContentLoaded", function() {
-    let loginWrapper = document.getElementById("login-form-wrapper");
-    loginWrapper.appendChild(createLoginForm());
-    document.getElementById("username").focus();
-});
-
-
-
+let loggedUser;
 
 function createLoginForm() {
+
+    let mainContainer = document.getElementById('messageContainer');
+    mainContainer.innerHTML = '';
+
+    let loginWrapper = document.createElement("div");
+    loginWrapper.setAttribute('id', 'login-form-wrapper');
+
     const form = document.createElement('form');
     form.setAttribute('id', 'loginForm');
 
@@ -23,13 +22,15 @@ function createLoginForm() {
     createLabelPassword(divPassword, inputPassword, form);
     
     createFormButton(form);
+    loginWrapper.appendChild(form);
+    mainContainer.appendChild(loginWrapper);
 
-    return form;
+    inputUsername.focus();
 }
 
 
 
-function submitForm() {
+function submitLoginForm() {
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
 
@@ -66,7 +67,10 @@ function submitForm() {
 
             console.log('Odpowiedź z serwera:', data);
             if(data.message === 'AUTHENTICATED') {
-                window.location.href = '/messages';
+                document.getElementById('messageContainer').innerHTML = '';
+                loggedUser = data.user;
+                stabilizeWebSocketConnection();
+                createContactsContainer()
             } else {
                 // MAKE AUTH ERROR
             }
@@ -87,6 +91,7 @@ function displayErrorMessage(inputId, message) {
     input.parentElement.appendChild(errorMessage);
 }
 
+
 function logout() {
     const requestOptions = {
         method: 'GET',
@@ -98,10 +103,27 @@ function logout() {
     fetch('/api/v1/auth/logout', requestOptions)
         .then(response => response.json())
         .then(data => {
-            console.log('Odpowiedź z serwera po wylogowaniu:', data);
-            window.location.href = data.location;
+            console.log(data);
+            stompClient.disconnect();
+            handleLogoutAnimation();
         })
         .catch(error => {
             console.error('Wystąpił błąd podczas wylogowywania:', error);
         });
+}
+
+function handleLogoutAnimation() {
+    let contactsWrapper = document.getElementById('contactsWrapper');
+    contactsWrapper.classList.remove('expandWidth');
+    void contactsWrapper.offsetWidth;
+    contactsWrapper.classList.add('reduce-width');
+
+    setTimeout(() => {
+        let contactsWrapper = document.getElementById('contactsWrapper');
+        if (contactsWrapper) {
+            contactsWrapper.parentNode.removeChild(contactsWrapper);
+        }
+    }, 1007);
+    textPosition = 0;
+    createSelfWriterLandingPage();
 }

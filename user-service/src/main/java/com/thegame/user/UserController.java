@@ -2,6 +2,8 @@ package com.thegame.user;
 
 
 import com.thegame.dto.AppUserDTO;
+import com.thegame.dto.AuthenticationUserObject;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -10,6 +12,11 @@ import java.util.*;
 @RequestMapping("api/v1/users")
 record UserController(UserFacade userFacade) {
 
+
+    @GetMapping
+    public AuthenticationUserObject loggedUserAuthenticationDetails(Authentication authentication) {
+        return (AuthenticationUserObject) authentication.getPrincipal();
+    }
 
     @GetMapping("{id}")
     public AppUserDTO getAppUserDetails(@PathVariable("id") Long userId) {

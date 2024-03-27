@@ -2,13 +2,14 @@ let stompClient;
 let blockUntil = 0;
 let messageTimes = [];
 
-document.addEventListener("DOMContentLoaded", function () {
+
+function stabilizeWebSocketConnection() {
     connectSocket();
     setInterval(function() {
         console.log('Reconnecting...');
         connectSocket();
     }, 110000);
-});
+}
 
 function connectSocket(){
     if (stompClient && stompClient.connected) {
@@ -18,11 +19,11 @@ function connectSocket(){
     }
 
     let socketUrl = document.getElementById('websocketUrl').value;
+
     const socket = new SockJS(socketUrl);
     stompClient = Stomp.over(socket);
 
-    const username = document.getElementById('username').value;
-    const userId = document.getElementById('userId').value;
+    const userId = loggedUser.id;
 
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
@@ -41,6 +42,7 @@ function connectSocket(){
             const chatMessage = JSON.parse(message.body);
             appendMessage(chatMessage);
         });
+
         //
         // const notificationSound = new Audio('C:\\the-game\\frontend\\src\\main\\resources\\static\\sounds\\new-message.wav');
         // notificationSound.play();
@@ -57,9 +59,9 @@ function appendMessage(message) {
     newMessage.classList.add('conversation-message');
     newMessage.textContent = `${message.payload}`;
 
-    let loggedUserId = parseInt(document.getElementById('userId').value);
+    const userId = loggedUser.id;
 
-    setMessageOwnerClass(message, loggedUserId, newMessage);
+    setMessageOwnerClass(message, userId, newMessage);
 
     let conversationDiv = conversationsDivs[message.conversationId];
 
@@ -223,21 +225,18 @@ function paralaxHover() {
     };
 
     document.addEventListener('mousemove', handleMouseMove);
-    const elementList = document.querySelectorAll('.paralax-hover');
-    
-        function handleMouseMove(e) {
-        elementList.forEach((element) => {
-            if (!e.target.matches('input, textarea, button, a, [onclick]')) {
-                const rect = element.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-                const deltaX = e.clientX - centerX;
-                const deltaY = e.clientY - centerY;
-                const rotateX = deltaY / (config.rotation * 100);
-                const rotateY = -deltaX / (config.rotation * 100);
-                element.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(0.99)`;
-            }
-        });
+    let paralaxContainer = document.getElementById('paralax-hover');
+    paralaxContainer.style.animation = 'none';
+
+    function handleMouseMove(e) {
+        const rect = paralaxContainer.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const deltaX = e.clientX - centerX;
+        const deltaY = e.clientY - centerY;
+        const rotateX = deltaY / (config.rotation * 100);
+        const rotateY = -deltaX / (config.rotation * 100);
+        paralaxContainer.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(0.99)`;
     }
 }
 

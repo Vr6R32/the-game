@@ -1,4 +1,7 @@
-let writeText =
+let textPosition = 0;
+
+
+let welcomeText =
     
     'Email Chatter is a backend-driven project harnessing the robust capabilities of \n' +
     'Spring Boot in conjunction with a Spring Cloud API Gateway and Spring Eureka for efficient service discovery. \n ' +
@@ -8,17 +11,17 @@ let writeText =
     'Users can effortlessly write messages and add contacts using email addresses,\n' +
     'Fostering a user-friendly and accessible communication environment. \n' +
     'This innovative application caters to the growing demand for agile and responsive\n' +
-    'Online communication tools that prioritize convenience and connectivity.'
+    'Online communication tools that prioritize convenience and connectivity.';
 
-let textPosition = 0;
+let logoutText =
+    'Successfully logged out';
 
-function typewriter() {
-    let textToShow = writeText.substring(0, textPosition).replace(/\n/g, '<br>');
+function selfWriter() {
+    let textToShow = welcomeText.substring(0, textPosition).replace(/\n/g, '<br>');
     document.querySelector("#quote").innerHTML = textToShow + '<span>\u25AE</span>';
 
-    if (textPosition++ !== writeText.length) {
-        setTimeout(typewriter, 10);
+    if (textPosition++ !== welcomeText.length) {
+        setTimeout(selfWriter, 10);
     }
 }
 
-window.addEventListener('load', typewriter);

@@ -1,46 +1,81 @@
 let currentConversationId;
 let conversationsDivs = [];
 
-function createMainMessagesContainer() {
+
+function checkIfUserAlreadyLogged() {
+    fetch('/api/v1/users')
+        .then(response => {
+            if (response.status === 403) {
+                createSelfWriterLandingPage(welcomeText);
+                return;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data) return;
+            loggedUser = data;
+            createContactsContainer();
+            stabilizeWebSocketConnection();
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+document.addEventListener("DOMContentLoaded", function () {
+
+    createMainContainer();
+
+    setTimeout(paralaxHover,1000);
+
+    checkIfUserAlreadyLogged();
+
+});
+
+
+
+
+function createMainContainer() {
     let chatWrapper = document.getElementById('chatWrapper');
     let messageContainer = document.createElement('div');
     messageContainer.setAttribute('id', 'messageContainer')
-
-
     chatWrapper.appendChild(messageContainer);
 
 }
 
-document.addEventListener("DOMContentLoaded", function () {
 
 
-    createContactsContainer();
-    createMainMessagesContainer();
-    paralaxHover();
+function createSelfWriterLandingPage() {
+
+    let messageContainer = document.getElementById('messageContainer');
+    let typeWriterWelcomeContainer = document.createElement('div');
+    typeWriterWelcomeContainer.setAttribute('id', 'typewriter');
+
+    let paragraphQuote = document.createElement('p');
+    paragraphQuote.setAttribute('id', 'quote');
+    typeWriterWelcomeContainer.appendChild(paragraphQuote);
+
+    let indexButtonsWrapper = document.createElement('div');
+    indexButtonsWrapper.className = 'index-button-wrapper';
+
+    const loginButton = document.createElement('button');
+
+    loginButton.innerHTML = '<span></span><span></span><span></span><span></span>Login';
+    loginButton.onclick = createLoginForm;
+
+    indexButtonsWrapper.appendChild(loginButton);
 
 
-    let contactsListContainer = document.getElementById("contactsList");
-    fetchConversations().then(conversationsDivs => {
-        Object.values(conversationsDivs).forEach(div => {
-            contactsListContainer.appendChild(div);
-        });
-    });
+    const registerButton = document.createElement('button');
+    registerButton.innerHTML = '<span></span><span></span><span></span><span></span>Register';
+    registerButton.onclick;
 
-    // createLinuxInputMessageDiv();
-    // paralaxHover()
+    indexButtonsWrapper.appendChild(registerButton);
 
-    let searchInput = document.getElementById("searchInput");
-    searchInput.addEventListener("input", function() {
-        let searchTerm = searchInput.value.toLowerCase();
-        contactsListContainer.innerHTML = "";
-        adjustLinesInterval(100, 1000);
-        Object.values(conversationsDivs).forEach(div => {
-            if (div.textContent.toLowerCase().includes(searchTerm)) {
-                contactsListContainer.appendChild(div);
-            }
-        });
-    });
-});
+    typeWriterWelcomeContainer.appendChild(indexButtonsWrapper);
+    messageContainer.appendChild(typeWriterWelcomeContainer);
+    selfWriter();
+}
+
 
 
 function createNewContactDiv() {
@@ -92,6 +127,7 @@ function createNewContactDiv() {
     form.appendChild(saveContactAsBox);
 
     const submitButton = document.createElement('button');
+    submitButton.setAttribute('id', 'executeNewContactButton');
     submitButton.onclick = sendNewContactInvitation;
     submitButton.innerHTML = '<span></span><span></span><span></span><span></span>Execute';
 
@@ -107,6 +143,22 @@ function sendNewContactInvitation(event) {
     // Prevent the default form submit action
     event.preventDefault();
 
+    let clickedButton = document.getElementById('executeNewContactButton');
+
+    clickedButton.innerHTML = '<span></span><span></span><span></span><span></span>';
+    clickedButton.style.boxShadow = 'none';
+    clickedButton.style.animation = 'none';
+    clickedButton.style.color = 'transparent';
+    // clickedButton.style.marginBottom = '500px';
+    clickedButton.style.border = 'none';
+    clickedButton.style.position = 'static';
+
+    setTimeout(function() {
+        document.getElementById('executeNewContactButton').style.display = 'none';
+    }, 1000);
+
+
+
     let newContactEmail = document.getElementById('newContactEmail').value;
     let newContactName = document.getElementById('newContactName').value;
 
@@ -115,6 +167,9 @@ function sendNewContactInvitation(event) {
 }
 
 function createContactsContainer() {
+
+
+    document.getElementById('messageContainer').innerHTML = '';
 
     let contactsContainer = document.createElement('div');
     contactsContainer.id = 'contactsContainer';
@@ -150,13 +205,17 @@ function createContactsContainer() {
     createContactButton.className = 'glowing-btn';
     createContactButton.id = 'createContactButton';
 
-    let buttonSpan = document.createElement('span');
-    buttonSpan.className = 'glowing-txt';
 
     let faultyLetter = document.createElement('span');
     faultyLetter.className = 'faulty-letter';
     faultyLetter.textContent = '🞧';
 
+
+    let buttonSpan = document.createElement('span');
+    buttonSpan.className = 'glowing-txt';
+    buttonSpan.style.fontSize = '2vh';
+    buttonSpan.style.width = '100%';
+    buttonSpan.style.height = '100%';
     buttonSpan.appendChild(faultyLetter);
     buttonSpan.append('CONTACT');
     createContactButton.appendChild(buttonSpan);
@@ -166,8 +225,41 @@ function createContactsContainer() {
     contactsContainer.appendChild(contactsList);
     contactsContainer.appendChild(createContact);
 
-    let contactsWrapperContainer = document.getElementById('contactsWrapper');
+    let contactsWrapperContainer = document.createElement('div');
+    contactsWrapperContainer.setAttribute('id', 'contactsWrapper');
     contactsWrapperContainer.appendChild(contactsContainer);
+
+    // if (contactsWrapperContainer.classList.contains('reduce-width')) {
+    //     contactsWrapperContainer.classList.remove('reduce-width');
+    //     void contactsWrapperContainer.offsetWidth;
+    // }
+
+
+
+    let chatWrapper = document.getElementById('chatWrapper');
+
+    let paralaxHoverWrapper = document.getElementById('paralax-hover');
+    paralaxHoverWrapper.insertBefore(contactsWrapperContainer,chatWrapper);
+
+
+    fetchConversations().then(conversationsDivs => {
+        Object.values(conversationsDivs).forEach(div => {
+            contactsList.appendChild(div);
+        });
+    });
+
+    let searchInput = document.getElementById("searchInput");
+    searchInput.addEventListener("input", function() {
+        let searchTerm = searchInput.value.toLowerCase();
+        contactsList.innerHTML = "";
+        adjustLinesInterval(100, 1000);
+        Object.values(conversationsDivs).forEach(div => {
+            if (div.textContent.toLowerCase().includes(searchTerm)) {
+                contactsList.appendChild(div);
+            }
+        });
+    });
+
 
     createContactButton.addEventListener('click', function() {
         currentConversationId = null;
@@ -196,7 +288,6 @@ function getActivityElapsedTime(logoutDateString) {
     const nowUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds()));
 
     const diffMs = nowUtc - logoutDate;
-
     const diffMins = Math.max(0, Math.floor(diffMs / 60000));
     const diffHrs = Math.max(0, Math.floor(diffMins / 60));
     const diffDays = Math.max(0, Math.floor(diffHrs / 24));
@@ -356,14 +447,11 @@ function loadMessages(conversationId) {
     return fetch('/api/v1/conversation/messages/' + conversationId)
         .then(response => response.json())
         .then(data => {
-            let loggedUserId = parseInt(document.getElementById('userId').value);
             return data.map(message => {
                 const newMessage = document.createElement('div');
                 newMessage.textContent = message.payload;
                 newMessage.classList.add('conversation-message');
-
-                setMessageOwnerClass(message, loggedUserId, newMessage);
-
+                setMessageOwnerClass(message, loggedUser.id, newMessage);
                 return newMessage;
             });
         });

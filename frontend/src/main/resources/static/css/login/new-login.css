@@ -23,8 +23,11 @@ h2 {
 
 .input-box {
     position: relative;
+    left: 25%;
+    width: 50%;
     margin: 30px 0px;
     border-bottom: 2px solid darkgoldenrod;
+
 }
 
 .input-box label {
@@ -45,26 +48,23 @@ h2 {
     font-size: 0.8em;
 }
 
-input:-webkit-autofill {
-    -webkit-text-fill-color: #ffffff !important;
-    -webkit-box-shadow: 0 0 0px 1000px #000000 inset !important;
-}
 
 .input-box input:-webkit-autofill,
 .input-box input:-webkit-autofill:hover,
 .input-box input:-webkit-autofill:focus,
-.input-box input:-webkit-autofill:active  {
-    -webkit-box-shadow: 0 0 0 30px black inset !important;
-    box-shadow: 0 0 0 30px black inset !important;
-    -webkit-text-fill-color: #FFD700 !important;
+.input-box input:-webkit-autofill:active{
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: #FFD700;
+    transition: background-color 5000s ease-in-out 0s;
 }
 .input-box input:-moz-autofill,
 .input-box input:-moz-autofill:hover,
 .input-box input:-moz-autofill:focus,
 .input-box input:-moz-autofill:active {
-    box-shadow: 0 0 0 30px black inset !important;
-    text-fill-color: #FFD700 !important;
+    box-shadow: 0 0 0 30px transparent inset !important;
+    -webkit-text-fill-color: #FFD700 !important;
 }
+
 
 .input-box input:-ms-input-placeholder {
     color: #FFD700 !important;
@@ -126,17 +126,5 @@ button:hover {
     background: #FFC700;
 }
 
-.register-link {
-    color: #FFFF;
-    font-size: 13px;
-    text-align: center;
-}
 
-.register-link a {
-    color: #FFFF;
-    text-decoration: none;
-}
 
-.register-link a:hover {
-    text-decoration: underline;
-}

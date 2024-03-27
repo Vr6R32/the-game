@@ -59,11 +59,12 @@ function linuxCmdEntryAnimation() {
 }
 
 function sendMessageLinux() {
+
     adjustLinesInterval(100, 2000);
     if(!spamCheck()){
         return;
     }
-    const usernameInput = document.getElementById('username').value;
+
     const messageInput = document.getElementById('message');
     const trimmedMessage = messageInput.textContent.trim();
     if (trimmedMessage === '') {
@@ -71,8 +72,6 @@ function sendMessageLinux() {
         return;
     }
     const message = {
-        sender: usernameInput,
-        receiver: usernameInput,
         payload: trimmedMessage
     };
     stompClient.send("/chat/private/message/"+ currentConversationId , {}, JSON.stringify(message));
@@ -121,9 +120,8 @@ function createLinuxInputMessageDiv(messageContainer) {
 
 
         const userEmailUbuntuLogin = document.createElement('p');
-        let userEmail = document.getElementById('userEmail').value;
         userEmailUbuntuLogin.id = 'bar__user';
-        userEmailUbuntuLogin.textContent = userEmail;
+        userEmailUbuntuLogin.textContent = loggedUser.email;
 
         terminalBar.appendChild(barButtons);
         terminalBar.appendChild(userEmailUbuntuLogin);
@@ -187,8 +185,7 @@ function createLinuxInputMessageDiv(messageContainer) {
 
         messageFormDiv.appendChild(terminal);
         messageContainer.appendChild(messageFormDiv);
-        
-        // paralaxHover();
+
         
         linuxCmdEntryAnimation();
 

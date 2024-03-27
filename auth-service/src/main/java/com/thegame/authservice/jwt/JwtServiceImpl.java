@@ -68,7 +68,7 @@ class JwtServiceImpl implements JwtService {
     public LogoutResponse logout(HttpServletResponse response) {
         HttpHeaders httpHeaders = buildHttpTokenHeaders("", "", 0, 0);
         applyHttpHeaders(response, httpHeaders);
-        return new LogoutResponse("/login?logout=true","SUCCESSFULLY_LOGGED_OUT");
+        return new LogoutResponse("/?logout=true","SUCCESSFULLY_LOGGED_OUT");
     }
 
     private RefreshTokenAuthResponse setRefreshTokenAuthenticationResponse(AppUser user, HttpServletResponse response) {

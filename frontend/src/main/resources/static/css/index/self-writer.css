@@ -1,11 +1,11 @@
 
 #typewriter {
     color: limegreen;
-    max-width: 80%;
+    max-width: 100%;
+    min-height: 80%;
+    height: 80%;
     font-family: 'Consolas', 'Courier New', monospace;
     padding: 10px;
-    background-color: transparent;
-    border: 1px solid #FFFFFF;
     border-radius: 5px;
     overflow-wrap: normal;
     line-height: 1.5;
@@ -15,10 +15,12 @@
 }
 
 #typewriter p {
-    font-size: 1rem;
+    min-height: 100%;
+    height: 100%;
+    font-size: 1.7vh;
 }
 
-span {
+#typewriter span {
     animation: blinker 1s linear infinite;
 }
 
@@ -27,3 +29,40 @@ span {
         opacity: 0;
     }
 }
+
+.index-button-wrapper {
+    height: 20%;
+    width: 100%;
+}
+
+.index-button-wrapper button {
+    display: inline-block;
+    padding: 10px 20px;
+    color: #03e9f4;
+    border: none;
+    background-color: transparent;
+    font-size: 2vh;
+    text-transform: uppercase;
+    transition: .5s;
+    margin-top: 2vh;
+    letter-spacing: 4px;
+}
+
+.index-button-wrapper button:hover {
+    background: #03e9f4;
+    color: #fff;
+    box-shadow: 0 0 5px #03e9f4,
+    0 0 25px #03e9f4,
+    0 0 50px #03e9f4,
+    0 0 100px #03e9f4;
+}
+
+
+
+
+
+
+
+
+
+
