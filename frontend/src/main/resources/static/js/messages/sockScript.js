@@ -11,6 +11,33 @@ function stabilizeWebSocketConnection() {
     }, 110000);
 }
 
+function handleFriendConversationSessionUpdate(payload) {
+    const conversationDiv = conversationsDivs[payload.conversationId].div;
+
+    const statusDot
+        = conversationDiv.querySelector('.status-dot');
+        statusDot.classList.remove('online', 'offline');
+    const activityStatusSpan
+        = conversationDiv.querySelector('.activity-status');
+
+        if (payload.status === "ONLINE") {
+            statusDot.classList.add('online');
+            activityStatusSpan.textContent = '';
+            conversationsDivs[payload.conversationId].status = payload.status;
+        } else if (payload.status === "OFFLINE") {
+            statusDot.classList.add('offline');
+            conversationsDivs[payload.conversationId].status = payload.status;
+            conversationsDivs[payload.conversationId].userLogoutDate = payload.eventDate;
+            activityStatusSpan.textContent = getActivityElapsedTime(payload.eventDate);
+    }
+}
+
+function handleNotificationEvent(notificationMessage) {
+    if (notificationMessage.type === 'FRIEND_SESSION_UPDATE') {
+        handleFriendConversationSessionUpdate(notificationMessage.payload);
+    }
+}
+
 function connectSocket(){
     if (stompClient && stompClient.connected) {
         stompClient.disconnect(function() {
@@ -35,7 +62,7 @@ function connectSocket(){
 
         stompClient.subscribe('/user/'+ userId +'/notifications', function (notification) {
             const notificationMessage = JSON.parse(notification.body);
-            console.log(notificationMessage)
+            handleNotificationEvent(notificationMessage);
         });
 
         stompClient.subscribe('/user/' + userId + '/messages', function (message) {
@@ -63,7 +90,7 @@ function appendMessage(message) {
 
     setMessageOwnerClass(message, userId, newMessage);
 
-    let conversationDiv = conversationsDivs[message.conversationId];
+    let conversationDiv = conversationsDivs[message.conversationId].div;
 
     if (conversationDiv) {
         const conversationsList = conversationDiv.parentNode;

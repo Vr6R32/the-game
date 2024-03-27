@@ -61,6 +61,11 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
                 .toList();
     }
 
+    @Override
+    public List<ConversationFriendInfo> getAllUserConversationSecondUserIds(AuthenticationUserObject user) {
+        return conversationRepository.findAllOtherUserIdsInConversations(user.id());
+    }
+
 
     @Override
     public ConversationDTO getConversationById(UUID uuid, AuthenticationUserObject user) {
@@ -109,6 +114,8 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
                 .build();
         return conversationRepository.save(newConversation);
     }
+
+
 
 
     private Map<UUID, ConversationInfo> getConversationUserIdMap(AuthenticationUserObject user) {

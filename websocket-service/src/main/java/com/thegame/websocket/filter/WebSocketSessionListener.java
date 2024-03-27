@@ -19,6 +19,7 @@ public class WebSocketSessionListener implements ApplicationListener<AbstractSub
 
     @Override
     public void onApplicationEvent(AbstractSubProtocolEvent event) {
+
         WebsocketUserPrincipal user = (WebsocketUserPrincipal) StompHeaderAccessor.wrap(event.getMessage()).getUser();
         String sessionId = StompHeaderAccessor.wrap(event.getMessage()).getSessionId();
 

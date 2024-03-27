@@ -64,7 +64,7 @@ public class GatewayConfig {
                         .filters(f -> f.filter(gatewayFilter))
                         .uri("lb://AUTH-SERVICE"))
 
-                .route("conversation-service", r -> r.path("/api/v1/conversation/**")
+                .route("conversation-service", r -> r.path("/api/v1/conversations/**")
                         .filters(f -> f.filter(gatewayFilter))
                         .uri("lb://CONVERSATION-SERVICE"))
 

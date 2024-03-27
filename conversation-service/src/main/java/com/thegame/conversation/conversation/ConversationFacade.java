@@ -1,10 +1,7 @@
 package com.thegame.conversation.conversation;
 
 import com.thegame.conversation.entity.Conversation;
-import com.thegame.dto.AuthenticationUserObject;
-import com.thegame.dto.ConversationDTO;
-import com.thegame.dto.ConversationMessageDTO;
-import com.thegame.dto.DetailedConversationDTO;
+import com.thegame.dto.*;
 import com.thegame.request.ConversationMessageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +17,10 @@ class ConversationFacade {
 
     public List<DetailedConversationDTO> getAllUserConversations(AuthenticationUserObject user) {
         return conversationService.getAllUserConversations(user);
+    }
+
+    public List<ConversationFriendInfo> getAllUserConversationSecondUserIds(AuthenticationUserObject user) {
+        return conversationService.getAllUserConversationSecondUserIds(user);
     }
 
     public ConversationDTO getConversationById(UUID uuid, AuthenticationUserObject user) {
@@ -38,4 +39,5 @@ class ConversationFacade {
     public Conversation createNewConversation(AuthenticationUserObject user, ConversationRequest request) {
         return conversationService.createNewConversation(user, request);
     }
+
 }

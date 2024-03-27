@@ -227,12 +227,6 @@ function createContactsContainer() {
     contactsWrapperContainer.setAttribute('id', 'contactsWrapper');
     contactsWrapperContainer.appendChild(contactsContainer);
 
-    // if (contactsWrapperContainer.classList.contains('reduce-width')) {
-    //     contactsWrapperContainer.classList.remove('reduce-width');
-    //     void contactsWrapperContainer.offsetWidth;
-    // }
-
-
 
     let chatWrapper = document.getElementById('chatWrapper');
 
@@ -242,7 +236,7 @@ function createContactsContainer() {
 
     fetchConversations().then(conversationsDivs => {
         Object.values(conversationsDivs).forEach(div => {
-            contactsList.appendChild(div);
+            contactsList.appendChild(div.div);
         });
     });
 
@@ -267,7 +261,7 @@ function createContactsContainer() {
 
 
 function fetchConversations() {
-    return fetch('/api/v1/conversation')
+    return fetch('/api/v1/conversations')
         .then(response => response.json())
         .then(data => {
             const sortedData = data.sort((a, b) => new Date(b.lastMessageDate) - new Date(a.lastMessageDate));
@@ -285,6 +279,9 @@ function getActivityElapsedTime(logoutDateString) {
 
     const nowUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds()));
 
+    console.log(logoutDate);
+    console.log(nowUtc);
+
     const diffMs = nowUtc - logoutDate;
     const diffMins = Math.max(0, Math.floor(diffMs / 60000));
     const diffHrs = Math.max(0, Math.floor(diffMins / 60));
@@ -301,6 +298,24 @@ function getActivityElapsedTime(logoutDateString) {
     }
 }
 
+
+
+function updateLogoutTimes() {
+    Object.keys(conversationsDivs).forEach(conversationId => {
+        const conversationInfo = conversationsDivs[conversationId];
+
+        if (conversationInfo.status === 'OFFLINE' && conversationInfo.userLogoutDate) {
+            const elapsedTime = getActivityElapsedTime(conversationInfo.userLogoutDate);
+            const conversationDiv = conversationInfo.div;
+            const elapsedTimeElement = conversationDiv.querySelector('.activity-status');
+            if (elapsedTimeElement) {
+                elapsedTimeElement.textContent = elapsedTime;
+            }
+        }
+    });
+}
+
+setInterval(updateLogoutTimes, 61000);
 
 function createConversationDiv(conversation) {
 
@@ -338,16 +353,18 @@ function createConversationDiv(conversation) {
     detailsDiv.appendChild(nameSpan);
     detailsDiv.appendChild(emailSpan);
 
+    const activitySpan = document.createElement('span');
+    activitySpan.classList.add('activity-status');
+
     if (conversation.userStatus === "OFFLINE") {
         statusDot.classList.add('offline');
-        const activitySpan = document.createElement('span');
-        activitySpan.classList.add('activity-status');
         activitySpan.textContent = getActivityElapsedTime(conversation.userLogoutDate);
-
-        detailsDiv.appendChild(activitySpan);
     } else if (conversation.userStatus === "ONLINE") {
+        activitySpan.textContent = '';
         statusDot.classList.add('online');
     }
+
+    detailsDiv.appendChild(activitySpan);
     avatarWrapper.appendChild(statusDot);
 
 
@@ -394,7 +411,13 @@ function createConversationDiv(conversation) {
 
     }
 
-    conversationsDivs[conversation.id] = conversationDiv;
+    // conversationsDivs[conversation.id] = conversationDiv;
+    conversationsDivs[conversation.id] = {
+        div: conversationDiv,
+        userStatus: conversation.userStatus,
+        userLogoutDate: conversation.userLogoutDate
+    };
+
     return conversationDiv;
 }
 
@@ -442,7 +465,7 @@ function setMessageOwnerClass(message, loggedUserId, newMessage) {
 }
 
 function loadMessages(conversationId) {
-    return fetch('/api/v1/conversation/messages/' + conversationId)
+    return fetch('/api/v1/conversations/messages/' + conversationId)
         .then(response => response.json())
         .then(data => {
             return data.map(message => {

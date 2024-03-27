@@ -2,6 +2,7 @@ package com.thegame.conversation.conversation;
 
 import com.thegame.conversation.entity.Conversation;
 import com.thegame.conversation.entity.ConversationMessage;
+import com.thegame.dto.ConversationFriendInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,6 +21,16 @@ public interface ConversationRepository extends JpaRepository<Conversation, UUID
 
     @Query("SELECT c FROM Conversation c WHERE c.firstUserId = :userId OR c.secondUserId = :userId")
     List<Conversation> findAllConversationsByUserId(@Param("userId") Long userId);
+
+
+    @Query("SELECT new com.thegame.dto.ConversationFriendInfo(c.id, " +
+            "CASE WHEN c.firstUserId = :userId THEN c.secondUserId ELSE c.firstUserId END) " +
+            "FROM Conversation c " +
+            "WHERE :userId IN (c.firstUserId, c.secondUserId)")
+    List<ConversationFriendInfo> findAllOtherUserIdsInConversations(@Param("userId") Long userId);
+
+
+
 
     @Query("SELECT cm FROM ConversationMessage cm WHERE cm.conversation.id = :conversationId " +
             "AND (cm.conversation.secondUserId = :userId OR cm.conversation.firstUserId = :userId) " +

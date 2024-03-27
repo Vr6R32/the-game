@@ -8,7 +8,7 @@ public class SubscriptionValidator {
     }
 
     public static boolean validateSubscription(String destination, WebsocketUserPrincipal user) {
-        if (destination.startsWith("/user/") && destination.endsWith("/messages") || destination.endsWith("/errors")) {
+        if (destination.startsWith("/user/") && destination.endsWith("/messages") || destination.endsWith("/errors") || destination.endsWith("/notifications") ) {
             String[] parts = destination.split("/");
             Long subscriberUsername = Long.valueOf(parts[2].toLowerCase());
             return subscriberUsername.equals(user.userId());

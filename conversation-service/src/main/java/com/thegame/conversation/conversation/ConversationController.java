@@ -1,10 +1,7 @@
 package com.thegame.conversation.conversation;
 
 import com.thegame.conversation.entity.Conversation;
-import com.thegame.dto.AuthenticationUserObject;
-import com.thegame.dto.ConversationDTO;
-import com.thegame.dto.ConversationMessageDTO;
-import com.thegame.dto.DetailedConversationDTO;
+import com.thegame.dto.*;
 import com.thegame.request.ConversationMessageRequest;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
@@ -15,13 +12,19 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("api/v1/conversation")
+@RequestMapping("api/v1/conversations")
 public record ConversationController(ConversationFacade conversationFacade) {
 
     @GetMapping
     public List<DetailedConversationDTO> getAllDetailedUserConversations(Authentication authentication) {
         AuthenticationUserObject user = (AuthenticationUserObject) authentication.getPrincipal();
         return conversationFacade.getAllUserConversations(user);
+    }
+
+    @GetMapping("users/ids")
+    public List<ConversationFriendInfo> getAllUserConversationFriendIds(Authentication authentication){
+        AuthenticationUserObject user = (AuthenticationUserObject) authentication.getPrincipal();
+        return conversationFacade.getAllUserConversationSecondUserIds(user);
     }
 
     @GetMapping("{uuid}")

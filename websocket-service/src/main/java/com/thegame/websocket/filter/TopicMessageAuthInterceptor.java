@@ -45,7 +45,7 @@ public class TopicMessageAuthInterceptor implements ChannelInterceptor {
             if (accessor != null) {
                 String xAuthUserJsonObject = getAuthUserHeader(accessor);
                 if (xAuthUserJsonObject != null) {
-                    AuthenticationUserObject authUserObject = getAuthenticationUserObject(accessor, xAuthUserJsonObject);
+                    AuthenticationUserObject authUserObject = setAuthenticationUserObject(accessor, xAuthUserJsonObject);
                     if (authUserObject != null && authUserObject.accessTokenExpiration() != null) {
 
                         if (authUserObject.accessTokenExpiration().before(new Date())) {
@@ -80,12 +80,12 @@ public class TopicMessageAuthInterceptor implements ChannelInterceptor {
         return null;
     }
 
-    private AuthenticationUserObject getAuthenticationUserObject(StompHeaderAccessor accessor, String jsonValue) {
+    private AuthenticationUserObject setAuthenticationUserObject(StompHeaderAccessor accessor, String jsonValue) {
         try {
             AuthenticationUserObject authUserObject = objectMapper.readValue(jsonValue, AuthenticationUserObject.class);
             Map<String, Object> sessionAttributes = Objects.requireNonNull(accessor.getSessionAttributes());
 
-            Principal userPrincipal = new WebsocketUserPrincipal(authUserObject.username(),authUserObject.id());
+            Principal userPrincipal = new WebsocketUserPrincipal(authUserObject.username(),authUserObject.id(),authUserObject.role(),authUserObject.email(),authUserObject.accessTokenExpiration());
             sessionAttributes.put("user", authUserObject);
             accessor.setUser(userPrincipal);
             return authUserObject;
