@@ -13,14 +13,6 @@
     justify-content: center;
 }
 
-h2 {
-    margin-top: 5vh;
-    text-align: center;
-    font-size: 2em;
-    color: #03e9f4;
-    font-family: "Lobster", cursive;
-}
-
 .input-box {
     position: relative;
     left: 25%;

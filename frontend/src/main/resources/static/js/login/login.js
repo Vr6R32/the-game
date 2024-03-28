@@ -14,14 +14,18 @@ function createLoginForm() {
     const h2 = document.createElement('h2');
     h2.textContent = 'Log@in';
     form.appendChild(h2);
-    
-    const {divUsername, inputUsername} = createUsernameInput();
-    createUsernameLabel(divUsername, inputUsername, form);
 
-    const {divPassword, inputPassword} = createInputPassword();
-    createLabelPassword(divPassword, inputPassword, form);
-    
-    createFormButton(form);
+    const {divInput: divUsername, inputElement: inputUsername} =
+        createFormInput('username', 'text');
+    createFormLabel(divUsername, inputUsername, form,'Username');
+
+
+    const {divInput: divPassword, inputElement: inputPassword} =
+        createFormInput('password', 'password');
+    createFormLabel(divPassword, inputPassword, form,'Password');
+
+    createFormButton(form, submitLoginForm,'execute');
+
     loginWrapper.appendChild(form);
     mainContainer.appendChild(loginWrapper);
 

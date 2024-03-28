@@ -1,74 +1,48 @@
-function createUsernameInput() {
-    const divUsername = document.createElement('div');
-    divUsername.classList.add('input-box');
-    const inputUsername = document.createElement('input');
-    inputUsername.setAttribute('type', 'text');
-    inputUsername.setAttribute('id', 'username');
-    inputUsername.setAttribute('required', "true");
-    inputUsername.addEventListener('click', function () {
-        divUsername.querySelectorAll('.error-message').forEach(e => e.remove());
-    });
-    
+function createFormInput(id, type) {
+    const divInput = document.createElement('div');
+    divInput.classList.add('input-box');
 
-    inputUsername.addEventListener('input', function () {
+    const inputElement = document.createElement('input');
+    inputElement.setAttribute('type', type);
+    inputElement.setAttribute('id', id);
+    inputElement.setAttribute('required', "true");
+    inputElement.addEventListener('click', function () {
+        divInput.querySelectorAll('.error-message').forEach(e => e.remove());
+    });
+    inputElement.addEventListener('input', function () {
         adjustLinesInterval(100, 1000);
     });
-    return {divUsername, inputUsername};
-}
 
-function createUsernameLabel(divUsername, inputUsername, form) {
+    return {divInput, inputElement};
+}
+function createFormLabel(divUsername, inputUsername, form, textContent) {
     const labelUsername = document.createElement('label');
-    labelUsername.textContent = 'Email';
+    labelUsername.textContent = textContent;
     divUsername.appendChild(inputUsername);
     divUsername.appendChild(labelUsername);
     form.appendChild(divUsername);
 }
 
-function createInputPassword() {
-    const divPassword = document.createElement('div');
-    divPassword.classList.add('input-box');
-    const inputPassword = document.createElement('input');
-    inputPassword.setAttribute('type', 'password');
-    inputPassword.setAttribute('id', 'password');
-    inputPassword.setAttribute('required', "true");
-    inputPassword.addEventListener('click', function () {
-        divPassword.querySelectorAll('.error-message').forEach(e => e.remove());
-    });
-
-    inputPassword.addEventListener('input', function () {
-        adjustLinesInterval(100, 1000);
-    });
-    return {divPassword, inputPassword};
-}
-
-function createLabelPassword(divPassword, inputPassword, form) {
-    const labelPassword = document.createElement('label');
-    labelPassword.textContent = 'Password';
-    divPassword.appendChild(inputPassword);
-    divPassword.appendChild(labelPassword);
-    form.appendChild(divPassword);
-}
-
-function createFormButton(form) {
-
-
-    const divButton = document.createElement('div');
-    divButton.classList.add('index-button-wrapper');
-    divButton.style.display = 'flex';
-    divButton.style.justifyContent = 'center';
+function createFormButton(form, actionFunction, textContent) {
+    const buttonWrapper = document.createElement('div');
+    buttonWrapper.classList.add('index-button-wrapper');
+    buttonWrapper.style.display = 'flex';
+    buttonWrapper.style.justifyContent = 'center';
 
     const button = document.createElement('button');
     button.setAttribute('type', 'button');
-    button.textContent = 'Execute';
+    button.textContent = textContent;
     button.onclick = function () {
-        submitLoginForm();
+        actionFunction();
+        adjustLinesInterval(100, 1000);
     };
     form.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            submitLoginForm();
+            actionFunction();
+            adjustLinesInterval(100, 1000);
         }
     });
-    divButton.appendChild(button);
-    form.appendChild(divButton);
+    buttonWrapper.appendChild(button);
+    form.appendChild(buttonWrapper);
 }

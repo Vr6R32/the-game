@@ -81,57 +81,29 @@ function createSelfWriterLandingPage() {
 function createNewContactDiv() {
     let messageContainer = document.getElementById('messageContainer');
     messageContainer.innerHTML = '';
-    
-    const loginBox = document.createElement('div');
-    loginBox.classList.add('new-contact-form');
 
+    const form = document.createElement('form');
+
+    const loginBox = document.createElement('div');
+    loginBox.setAttribute('id', 'form-wrapper');
 
     const invitationHeading = document.createElement('h2');
     invitationHeading.textContent = 'Send an Invitation for';
     loginBox.appendChild(invitationHeading);
 
-
-    const form = document.createElement('form');
-
-    const invitationEmailBox = document.createElement('div');
-    invitationEmailBox.classList.add('user-box');
-    
-    const inputEmail = document.createElement('input');
-    inputEmail.setAttribute('id', 'newContactEmail');
-    inputEmail.setAttribute('type', 'text');
-    inputEmail.setAttribute('required', '');
-    
-    const labelEmail = document.createElement('label');
-    labelEmail.textContent = 'Email';
-    invitationEmailBox.appendChild(inputEmail);
-    invitationEmailBox.appendChild(labelEmail);
-    form.appendChild(invitationEmailBox);
-
+    const {divInput: divEmail, inputElement: inputEmail} =
+        createFormInput('userEmail', 'text');
+    createFormLabel(divEmail, inputEmail, form,'Email');
 
     const contactDetailsHeading = document.createElement('h2');
     contactDetailsHeading.textContent = 'Save as';
     form.appendChild(contactDetailsHeading);
-    
 
-    const saveContactAsBox = document.createElement('div');
-    saveContactAsBox.classList.add('user-box');
-    const contactUsernameInput = document.createElement('input');
-    contactUsernameInput.setAttribute('id', 'newContactName');
-    contactUsernameInput.setAttribute('type', 'text');
-    contactUsernameInput.setAttribute('required', '');
-    const contactUsernameLabel = document.createElement('label');
-    
-    contactUsernameLabel.textContent = 'Contact name';
-    saveContactAsBox.appendChild(contactUsernameInput);
-    saveContactAsBox.appendChild(contactUsernameLabel);
-    form.appendChild(saveContactAsBox);
+    const {divInput: divUsername, inputElement: inputUsername} =
+        createFormInput('username', 'text');
+    createFormLabel(divUsername, inputUsername, form,'Username');
 
-    const submitButton = document.createElement('button');
-    submitButton.setAttribute('id', 'executeNewContactButton');
-    submitButton.onclick = sendNewContactInvitation;
-    submitButton.innerHTML = '<span></span><span></span><span></span><span></span>Execute';
-
-    form.appendChild(submitButton);
+    createFormButton(form, submitNewContactInvitation, 'invite');
 
 
     loginBox.appendChild(form);
@@ -139,28 +111,10 @@ function createNewContactDiv() {
 
 }
 
-function sendNewContactInvitation(event) {
-    // Prevent the default form submit action
-    event.preventDefault();
+function submitNewContactInvitation() {
 
-    let clickedButton = document.getElementById('executeNewContactButton');
-
-    clickedButton.innerHTML = '<span></span><span></span><span></span><span></span>';
-    clickedButton.style.boxShadow = 'none';
-    clickedButton.style.animation = 'none';
-    clickedButton.style.color = 'transparent';
-    // clickedButton.style.marginBottom = '500px';
-    clickedButton.style.border = 'none';
-    clickedButton.style.position = 'static';
-
-    setTimeout(function() {
-        document.getElementById('executeNewContactButton').style.display = 'none';
-    }, 1000);
-
-
-
-    let newContactEmail = document.getElementById('newContactEmail').value;
-    let newContactName = document.getElementById('newContactName').value;
+    let newContactEmail = document.getElementById('userEmail').value;
+    let newContactName = document.getElementById('username').value;
 
     console.log(newContactEmail);
     console.log(newContactName);

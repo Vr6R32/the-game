@@ -31,7 +31,6 @@ public class ConversationMessage {
     private Date messageReadDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "conversation_id")
     private Conversation conversation;
 
 

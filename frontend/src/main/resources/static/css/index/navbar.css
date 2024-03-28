@@ -12,6 +12,35 @@ body {
   font-family: 'Oswald', sans-serif;
 }
 
+h2 {
+  margin-top: 5vh;
+  text-align: center;
+  font-size: 2em;
+  color: #03e9f4;
+  font-family: "Lobster", cursive;
+}
+
+
+@keyframes colorChange {
+  0% {
+    color: teal;
+  }
+  25% {
+    color: #03e9f4;
+  }
+  50% {
+    color: cyan;
+  }
+  75% {
+    color: aquamarine;
+  }
+  100% {
+    color: darkcyan;
+  }
+}
+
+
+
 a {
   color: #fff;
   text-decoration: none;
