@@ -18,9 +18,14 @@ record UserController(UserFacade userFacade) {
         return (AuthenticationUserObject) authentication.getPrincipal();
     }
 
-    @GetMapping("{id}")
-    public AppUserDTO getAppUserDetails(@PathVariable("id") Long userId) {
-        return userFacade.getAppUserDetails(userId);
+//    @GetMapping("{id}")
+//    public AppUserDTO getAppUserDetails(@PathVariable("id") Long userId) {
+//        return userFacade.getAppUserDetails(userId);
+//    }
+
+    @GetMapping("{email}")
+    public Long getUserIdByEmailAddress(@PathVariable("email") String email) {
+        return userFacade.getUserIdByEmailAddress(email);
     }
 
     @PostMapping("/conversations/users/details")

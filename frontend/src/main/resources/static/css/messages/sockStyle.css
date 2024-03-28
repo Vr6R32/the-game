@@ -52,15 +52,23 @@
 
 
 #contactsSearch {
-    height: 10%;
+    height: 6%;
     border-radius: 10px;
     margin-bottom: 5px;
     /*border: 1px solid darkgoldenrod;*/
 }
 
+#contactsPanel {
+    height: 7%;
+    display: flex;
+    padding-left: 10px;
+    padding-right: 10px;
+    /*border: 1px solid white;*/
+}
+
 #contactsList {
     margin-bottom: 1vh;
-    height: 83%;
+    height: 80%;
     border-radius: 10px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -70,6 +78,7 @@
 #createContact {
     height:7%;
     justify-content: center;
+    padding-bottom: 0.4vh;
     /*border: 1px solid darkgoldenrod;*/
 }
 

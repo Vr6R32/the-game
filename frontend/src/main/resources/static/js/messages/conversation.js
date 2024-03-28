@@ -1,5 +1,8 @@
 let currentConversationId;
+let acceptedCount = 0;
+let invitationsCount = 0;
 let conversationsDivs = [];
+let currentContactsTab = 'ACCEPTED';
 
 
 function checkIfUserAlreadyLogged() {
@@ -113,11 +116,57 @@ function createNewContactDiv() {
 
 function submitNewContactInvitation() {
 
-    let newContactEmail = document.getElementById('userEmail').value;
-    let newContactName = document.getElementById('username').value;
+    fetch('api/v1/conversations', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            secondUserEmail: document.getElementById('userEmail').value,
+            secondUserContactName: document.getElementById('username').value
+        })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
 
-    console.log(newContactEmail);
-    console.log(newContactName);
+function updateContactButtonValues(normalContactsButton, invitesContactsButton) {
+    setTimeout(() => {
+        acceptedCount = 0;
+        invitationsCount = 0;
+
+        Object.values(conversationsDivs).forEach(conversationInfo => {
+            if (conversationInfo.conversationStatus === 'ACCEPTED') {
+                acceptedCount++;
+            } else if (conversationInfo.conversationStatus === 'INVITATION') {
+                invitationsCount++;
+            }
+        });
+
+        normalContactsButton.textContent = 'Contacts (' + acceptedCount + ')';
+        invitesContactsButton.textContent = 'Invites (' + invitationsCount + ')';
+
+    }, 100);
+}
+
+function appendSpecifiedTypeConversations(statusType) {
+    const acceptedConversations = Object.values(conversationsDivs).filter(div => div.conversationStatus === statusType);
+    let contactsList = document.getElementById('contactsList');
+    contactsList.innerHTML = '';
+    currentContactsTab = statusType;
+    acceptedConversations.forEach(div => {
+        contactsList.appendChild(div.div);
+    });
 }
 
 function createContactsContainer() {
@@ -143,7 +192,7 @@ function createContactsContainer() {
     input.type = 'text';
     input.id = 'searchInput';
     input.className = 'input-group__input';
-    input.placeholder = 'Search for contacts';
+    input.placeholder = 'Loop through contacts...';
 
     inputGroup.appendChild(label);
     inputGroup.appendChild(input);
@@ -151,6 +200,38 @@ function createContactsContainer() {
 
     let contactsList = document.createElement('div');
     contactsList.id = 'contactsList';
+
+    fetchConversations().then(conversationsDivs => {
+        const acceptedConversations = Object.values(conversationsDivs).filter(div => div.conversationStatus === 'ACCEPTED');
+        acceptedConversations.forEach(div => {
+            contactsList.appendChild(div.div);
+        });
+    });
+
+
+    let contactsPanel = document.createElement('div');
+    contactsPanel.id = 'contactsPanel'
+
+
+    let acceptedContactsButton = document.createElement('button');
+    acceptedContactsButton.className = 'space-btn';
+    acceptedContactsButton.id = 'normal-contacts';
+    acceptedContactsButton.style.whiteSpace = 'nowrap';
+    acceptedContactsButton.onclick = () => appendSpecifiedTypeConversations('ACCEPTED');
+
+
+    let invitesContactsButton = document.createElement('button');
+    invitesContactsButton.className = 'space-btn';
+    invitesContactsButton.id = 'invite-contacts';
+    invitesContactsButton.style.whiteSpace = 'nowrap';
+    invitesContactsButton.onclick = () => appendSpecifiedTypeConversations('INVITATION');
+
+    updateContactButtonValues(acceptedContactsButton, invitesContactsButton);
+
+
+    contactsPanel.appendChild(acceptedContactsButton);
+    contactsPanel.appendChild(invitesContactsButton);
+
 
     let createContact = document.createElement('div');
     createContact.id = 'createContact';
@@ -173,6 +254,7 @@ function createContactsContainer() {
     createContact.appendChild(createContactButton);
 
     contactsContainer.appendChild(contactsSearch);
+    contactsContainer.appendChild(contactsPanel);
     contactsContainer.appendChild(contactsList);
     contactsContainer.appendChild(createContact);
 
@@ -187,21 +269,20 @@ function createContactsContainer() {
     paralaxHoverWrapper.insertBefore(contactsWrapperContainer,chatWrapper);
 
 
-    fetchConversations().then(conversationsDivs => {
-        Object.values(conversationsDivs).forEach(div => {
-            contactsList.appendChild(div.div);
-        });
-    });
+
 
     let searchInput = document.getElementById("searchInput");
     searchInput.addEventListener("input", function() {
         let searchTerm = searchInput.value.toLowerCase();
         contactsList.innerHTML = "";
         adjustLinesInterval(100, 1000);
-        Object.values(conversationsDivs).forEach(div => {
-            if (div.div.textContent.toLowerCase().includes(searchTerm)) {
-                contactsList.appendChild(div.div);
-            }
+
+        let filteredConversations = Object.values(conversationsDivs).filter(div =>
+            div.conversationStatus === currentContactsTab && div.div.textContent.toLowerCase().includes(searchTerm)
+        );
+
+        filteredConversations.forEach(div => {
+            contactsList.appendChild(div.div);
         });
     });
 
@@ -263,7 +344,6 @@ function getActivityElapsedTime(logoutDateString) {
 function updateLogoutTimes() {
     Object.keys(conversationsDivs).forEach(conversationId => {
         const conversationInfo = conversationsDivs[conversationId];
-
         if (conversationInfo.status === 'OFFLINE' && conversationInfo.userLogoutDate) {
             const elapsedTime = getActivityElapsedTime(conversationInfo.userLogoutDate);
             const conversationDiv = conversationInfo.div;
@@ -304,7 +384,7 @@ function createConversationDiv(conversation) {
 
     const nameSpan = document.createElement('span');
     nameSpan.classList.add('user-name');
-    nameSpan.textContent = "Vincent Porter";
+    nameSpan.textContent = conversation.username;
 
     const emailSpan = document.createElement('span');
     emailSpan.classList.add('email-address');
@@ -373,7 +453,7 @@ function createConversationDiv(conversation) {
 
             const nameSpan = document.createElement('span');
             nameSpan.classList.add('user-name');
-            nameSpan.textContent = "Vincent Porter";
+            nameSpan.textContent = conversation.username;
 
             const emailSpan = document.createElement('span');
             emailSpan.classList.add('email-address');
@@ -387,6 +467,8 @@ function createConversationDiv(conversation) {
 
             if (conversation.userStatus === "OFFLINE") {
                 statusDot.classList.add('offline');
+
+                // TODO THINK HOW TO RESOLVE ELAPSED TIME FOR DOUBLED OBJECT
                 activitySpan.textContent = getActivityElapsedTime(conversation.userLogoutDate);
             } else if (conversation.userStatus === "ONLINE") {
                 activitySpan.textContent = '';
@@ -448,8 +530,12 @@ function createConversationDiv(conversation) {
     conversationsDivs[conversation.id] = {
         div: conversationDiv,
         userStatus: conversation.userStatus,
-        userLogoutDate: conversation.userLogoutDate
+        userLogoutDate: conversation.userLogoutDate,
+        conversationStatus: conversation.status
     };
+
+
+
 
     return conversationDiv;
 }

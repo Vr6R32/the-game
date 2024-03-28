@@ -15,4 +15,8 @@ record UserFacade(UserService userService) {
     public Map<UUID, AppUserDTO> getConversationUserDetails(Map<UUID, Long> conversationIdSecondUserIdMap) {
         return userService.getConversationsUsersDetails(conversationIdSecondUserIdMap);
     }
+
+    public Long getUserIdByEmailAddress(String email) {
+        return userService.getUserIdByEmailAddress(email);
+    }
 }

@@ -10,4 +10,6 @@ public interface UserService {
 
     Map<UUID, AppUserDTO> getConversationsUsersDetails(Map<UUID, Long> conversationIdSecondUserIdMap);
 
+    Long getUserIdByEmailAddress(String email);
+
 }

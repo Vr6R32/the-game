@@ -17,7 +17,9 @@ public class ConversationMapper {
                 conversation.getSecondUserId(),
                 conversation.getLastMessageSenderId(),
                 conversation.isReadByReceiver(),
-                conversation.getLastMessageDate());
+                conversation.getLastMessageDate(),
+                conversation.getSecondUserContactName(),
+                conversation.getStatus());
     }
     public static ConversationMessageDTO mapConversationMessageToDTO(ConversationMessage message) {
         return new ConversationMessageDTO(message.getId(), message.getSenderId(), message.getPayload());

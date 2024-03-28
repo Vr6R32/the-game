@@ -1,5 +1,6 @@
 package com.thegame.dto;
 
+import com.thegame.model.ConversationStatus;
 import com.thegame.model.Status;
 
 import java.util.Date;
@@ -12,5 +13,7 @@ public record DetailedConversationDTO(UUID id,
                                       Status userStatus,
                                       Date userLogoutDate,
                                       Date lastMessageDate,
-                                      boolean isUnread) {
+                                      String username,
+                                      ConversationStatus status,
+                                              boolean isUnread) {
 }

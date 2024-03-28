@@ -1,0 +1,105 @@
+@import url(https://fonts.googleapis.com/css?family=Electrolize);
+.space-btn {
+  width: 50%;
+  height: 80%;
+  position: relative;
+  font-family: "Electrolize", sans-serif;
+  font-size: 1.4vh;
+  text-transform: uppercase;
+  letter-spacing: 0.125em;
+  line-height: 1;
+  color: #FFB902;
+  margin: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  animation: conversationContactFade 1.5s ease forwards;
+}
+.space-btn:hover {
+  color: #ffd568;
+}
+.space-btn:focus {
+  color: #ffc735;
+  outline: none;
+}
+.space-btn:active {
+  color: #FFB902;
+}
+.space-btn:before, .space-btn:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 1px;
+}
+.space-btn:before {
+  top: 0;
+  left: 0;
+  box-shadow: inset 0px 0px 0 0 #FFB902;
+}
+.space-btn:after {
+  right: 0;
+  bottom: 0;
+  box-shadow: inset -1px -1px 0 0 #FFB902;
+}
+
+.space-btn:hover:before {
+  box-shadow: inset 1px 1px 0 0 #FFB902;
+  animation: hoverShadowBefore 1s infinite;
+}
+.space-btn:hover:after {
+  animation: hoverShadowAfter 1s infinite;
+}
+
+@keyframes hoverShadowBefore {
+  0% {
+    width: 100%;
+    height: 1px;
+    top: 0;
+    left: 0;
+  }
+  33% {
+    width: 1px;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+  66% {
+    width: 1px;
+    height: 1px;
+    top: calc(100% - 1px);
+    left: 0;
+  }
+  100% {
+    width: 100%;
+    height: 1px;
+    top: calc(100% - 1px);
+    left: 0;
+  }
+}
+@keyframes hoverShadowAfter {
+  0% {
+    width: 100%;
+    height: 1px;
+  }
+  33% {
+    width: 1px;
+    height: 100%;
+    bottom: 0;
+    right: 0;
+  }
+  66% {
+    width: 1px;
+    height: 1px;
+    bottom: calc(100% - 1px);
+    right: 0;
+  }
+  100% {
+    width: 100%;
+    height: 1px;
+    bottom: calc(100% - 1px);
+    right: 0;
+  }
+}
+
+/*# sourceMappingURL=space-button.css.map */

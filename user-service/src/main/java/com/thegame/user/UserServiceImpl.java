@@ -28,6 +28,11 @@ record UserServiceImpl(UserRepository userRepository) implements UserService {
         return conversationUserDetailsMap;
     }
 
+    @Override
+    public Long getUserIdByEmailAddress(String email) {
+        return userRepository.findUserIdByEmail(email).orElseGet(() -> null);
+    }
+
 
     private Map<Long, AppUserDTO> getUserDetailsByIds(Set<Long> userIds) {
         List<AppUser> users = userRepository.findAllById(userIds);

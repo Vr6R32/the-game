@@ -1,5 +1,6 @@
 package com.thegame.conversation.entity;
 
+import com.thegame.model.ConversationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +29,15 @@ public class Conversation {
     private Long secondUserId;
 
     private Long lastMessageSenderId;
+
+    private Long statusUpdatedByUserId;
+
+    private String firstUserContactName;
+
+    private String secondUserContactName;
+
+    @Enumerated(value = EnumType.STRING)
+    private ConversationStatus status;
 
     private Date lastMessageDate;
 
