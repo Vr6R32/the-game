@@ -6,7 +6,7 @@ function createLoginForm() {
     mainContainer.innerHTML = '';
 
     let loginWrapper = document.createElement("div");
-    loginWrapper.setAttribute('id', 'login-form-wrapper');
+    loginWrapper.setAttribute('id', 'form-wrapper');
 
     const form = document.createElement('form');
     form.setAttribute('id', 'loginForm');

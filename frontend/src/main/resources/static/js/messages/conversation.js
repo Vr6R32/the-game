@@ -39,7 +39,6 @@ function createMainContainer() {
     let messageContainer = document.createElement('div');
     messageContainer.setAttribute('id', 'messageContainer')
     chatWrapper.appendChild(messageContainer);
-
 }
 
 
@@ -246,17 +245,24 @@ function createContactsContainer() {
         contactsList.innerHTML = "";
         adjustLinesInterval(100, 1000);
         Object.values(conversationsDivs).forEach(div => {
-            if (div.textContent.toLowerCase().includes(searchTerm)) {
-                contactsList.appendChild(div);
+            if (div.div.textContent.toLowerCase().includes(searchTerm)) {
+                contactsList.appendChild(div.div);
             }
         });
     });
-
 
     createContactButton.addEventListener('click', function() {
         currentConversationId = null;
         createNewContactDiv();
     });
+
+
+    setTimeout(removeContactsContainerAnimation, 1000);
+}
+
+function removeContactsContainerAnimation(){
+    let contactsContainer = document.getElementById('contactsContainer');
+    contactsContainer.style.animation = 'none'
 }
 
 
@@ -382,10 +388,82 @@ function createConversationDiv(conversation) {
             let messageContainer = document.getElementById('messageContainer');
             messageContainer.innerHTML = '';
 
-            const conversationMessagesContainer = document.createElement("div");
+
+            let conversationSecondUserDiv = document.createElement('div');
+            conversationSecondUserDiv.setAttribute('id', 'secondUserConversationInfo');
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+            //TODO NEED TO BE REFACTORED TO AVOID CODE DUPLICATION
+
+
+
+
+            const avatarWrapper = document.createElement('div');
+            avatarWrapper.classList.add('avatar-wrapper');
+            avatarWrapper.style.width = '10%'
+
+            const avatarImg = document.createElement('img');
+            avatarImg.classList.add('user-avatar');
+            avatarImg.src = conversation.userAvatarUrl;
+            avatarWrapper.appendChild(avatarImg);
+
+            const statusDot = document.createElement('span');
+            statusDot.classList.add('status-dot');
+
+            const detailsDiv = document.createElement('div');
+            detailsDiv.classList.add('conversation-details');
+            detailsDiv.style.width = '50%';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.classList.add('user-name');
+            nameSpan.textContent = "Vincent Porter";
+
+            const emailSpan = document.createElement('span');
+            emailSpan.classList.add('email-address');
+            emailSpan.textContent = conversation.userEmail;
+
+            detailsDiv.appendChild(nameSpan);
+            detailsDiv.appendChild(emailSpan);
+
+            const activitySpan = document.createElement('span');
+            activitySpan.classList.add('activity-status');
+
+            if (conversation.userStatus === "OFFLINE") {
+                statusDot.classList.add('offline');
+                activitySpan.textContent = getActivityElapsedTime(conversation.userLogoutDate);
+            } else if (conversation.userStatus === "ONLINE") {
+                activitySpan.textContent = '';
+                statusDot.classList.add('online');
+            }
+
+            detailsDiv.appendChild(activitySpan);
+            avatarWrapper.appendChild(statusDot);
+
+
+            conversationSecondUserDiv.appendChild(avatarWrapper);
+            conversationSecondUserDiv.appendChild(detailsDiv);
+
+
+            messageContainer.appendChild(conversationSecondUserDiv);
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+            let conversationMessagesContainer = document.createElement("div");
             conversationMessagesContainer.setAttribute('id', 'conversationMessages');
             conversationMessagesContainer.addEventListener('scroll', () => {
-                const atTop = conversationMessagesContainer.scrollTop === 0;
+                let atTop = conversationMessagesContainer.scrollTop === 0;
                 if (atTop) {
                     conversationMessagesContainer.classList.add('pull-down-refresh');
                     conversationMessagesContainer.addEventListener('animationend', () => {
@@ -395,10 +473,11 @@ function createConversationDiv(conversation) {
                     }, { once: true });
                 }
             });
-
             conversationMessagesContainer.innerHTML = "";
             conversationMessagesContainer.append(...messages);
             currentConversationId = conversation.id;
+
+            messageContainer.appendChild(conversationSecondUserDiv);
             messageContainer.appendChild(conversationMessagesContainer);
 
             conversationMessagesContainer.scrollTop = conversationMessagesContainer.scrollHeight;

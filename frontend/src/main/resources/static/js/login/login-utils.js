@@ -50,8 +50,13 @@ function createLabelPassword(divPassword, inputPassword, form) {
 }
 
 function createFormButton(form) {
+
+
     const divButton = document.createElement('div');
-    divButton.classList.add('form-button');
+    divButton.classList.add('index-button-wrapper');
+    divButton.style.display = 'flex';
+    divButton.style.justifyContent = 'center';
+
     const button = document.createElement('button');
     button.setAttribute('type', 'button');
     button.textContent = 'Execute';

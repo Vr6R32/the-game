@@ -86,7 +86,7 @@
     word-wrap: break-word;
     padding: 10px;
     margin-bottom: 10px;
-    /*animation: conversationContactFade 1.3s ease forwards;*/
+    animation: conversationContactFade 1.0s ease forwards;
 }
 
 
@@ -103,8 +103,21 @@
 
 }
 
+#secondUserConversationInfo {
+    height: 10%;
+    width: 100%;
+    display: flex;
+    border-radius: 10px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    word-wrap: break-word;
+    margin-bottom: 10px;
+    border: 1px white;
+    background-color: transparent;
+}
+
 #conversationMessages {
-    height: 75%;
+    height: 70%;
     width: 100%;
     border-radius: 10px;
     overflow-y: auto;
@@ -114,10 +127,11 @@
     background-color: transparent;
 }
 
+
 #messageForm {
     display: flex;
     gap: 10px;
-    height: 25%;
+    height: 20%;
     width: auto;
 }
 
@@ -196,7 +210,7 @@
 
 .user-avatar {
     width: 100%;
-    height: 90%;
+    height: 100%;
     border-radius: 50%;
     border: 2px solid #555555;
 }

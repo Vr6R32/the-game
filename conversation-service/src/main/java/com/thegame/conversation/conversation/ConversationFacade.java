@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-class ConversationFacade {
+public class ConversationFacade {
 
     private final ConversationService conversationService;
 

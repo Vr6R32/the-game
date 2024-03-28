@@ -1,8 +1,9 @@
-package com.thegame.conversation.conversation;
+package com.thegame.conversation.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thegame.clients.UserServiceClient;
 import com.thegame.clients.WebSocketSessionClient;
+import com.thegame.conversation.conversation.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
