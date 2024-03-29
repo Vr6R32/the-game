@@ -303,18 +303,83 @@ function getActivityElapsedTime(logoutDateString) {
 function updateLogoutTimes() {
     Object.keys(conversationsDivs).forEach(conversationId => {
         const conversationInfo = conversationsDivs[conversationId];
-        if (conversationInfo.status === 'OFFLINE' && conversationInfo.userLogoutDate) {
+        if (conversationInfo.userStatus === 'OFFLINE' && conversationInfo.userLogoutDate) {
             const elapsedTime = getActivityElapsedTime(conversationInfo.userLogoutDate);
             const conversationDiv = conversationInfo.div;
             const elapsedTimeElement = conversationDiv.querySelector('.activity-status');
             if (elapsedTimeElement) {
                 elapsedTimeElement.textContent = elapsedTime;
             }
+            if(currentConversationId === conversationId) {
+                const openConversationDiv = document.getElementById('secondUserConversationInfo');
+                let activityStatusOpenedConversation = openConversationDiv.querySelector('.activity-status');
+                activityStatusOpenedConversation.textContent = elapsedTime;
+            }
         }
     });
 }
 
 setInterval(updateLogoutTimes, 61000);
+
+function createSpecifiedConversationMessagesBox(conversation, conversationDiv) {
+    loadMessages(conversation.id).then(messages => {
+
+        if (conversationDiv.classList.contains('unread-message')) {
+            conversationDiv.classList.remove('unread-message');
+        }
+
+        adjustLinesInterval(100, 1000);
+        let messageContainer = document.getElementById('messageContainer');
+        messageContainer.innerHTML = '';
+
+        let conversationSecondUserDiv = document.createElement('div');
+        conversationSecondUserDiv.setAttribute('id', 'secondUserConversationInfo');
+
+        const avatarWrapper = createAvatarWrapper(conversation.userAvatarUrl);
+        const detailsDiv = createUserDetailsDiv(conversation.username, conversation.userEmail);
+        const statusDot = createStatusDot(conversation.userStatus);
+
+        const conversationInfo = conversationsDivs[conversation.id];
+        const activitySpan = createActivityStatusSpan(conversationInfo.userStatus, conversationInfo.userLogoutDate);
+
+        detailsDiv.style.width = '50%';
+        detailsDiv.appendChild(activitySpan);
+        avatarWrapper.style.width = '10%'
+        avatarWrapper.appendChild(statusDot);
+
+        conversationSecondUserDiv.appendChild(avatarWrapper);
+        conversationSecondUserDiv.appendChild(detailsDiv);
+        messageContainer.appendChild(conversationSecondUserDiv);
+
+
+        let conversationMessagesContainer = document.createElement("div");
+        conversationMessagesContainer.setAttribute('id', 'conversationMessages');
+        conversationMessagesContainer.addEventListener('scroll', () => {
+            let atTop = conversationMessagesContainer.scrollTop === 0;
+            if (atTop) {
+                conversationMessagesContainer.classList.add('pull-down-refresh');
+                conversationMessagesContainer.addEventListener('animationend', () => {
+                    // loadMoreMessagesAtTop();
+                    conversationMessagesContainer.scrollTop = 1;
+                    conversationMessagesContainer.classList.remove('pull-down-refresh');
+                }, {once: true});
+            }
+        });
+        conversationMessagesContainer.innerHTML = "";
+        conversationMessagesContainer.append(...messages);
+        currentConversationId = conversation.id;
+
+        messageContainer.appendChild(conversationSecondUserDiv);
+        messageContainer.appendChild(conversationMessagesContainer);
+
+        conversationMessagesContainer.scrollTop = conversationMessagesContainer.scrollHeight;
+
+        createLinuxInputMessageDiv(messageContainer);
+
+    }).catch(error => {
+        console.error('Error loading messages:', error);
+    });
+}
 
 function createConversationDiv(conversation) {
 
@@ -338,62 +403,7 @@ function createConversationDiv(conversation) {
     conversationDiv.appendChild(detailsDiv);
 
     conversationDiv.onclick = () => {
-        loadMessages(conversation.id).then(messages => {
-
-            if (conversationDiv.classList.contains('unread-message')) {
-                conversationDiv.classList.remove('unread-message');
-            }
-
-            adjustLinesInterval(100, 1000);
-            let messageContainer = document.getElementById('messageContainer');
-            messageContainer.innerHTML = '';
-
-            let conversationSecondUserDiv = document.createElement('div');
-            conversationSecondUserDiv.setAttribute('id', 'secondUserConversationInfo');
-
-            const avatarWrapper = createAvatarWrapper(conversation.userAvatarUrl);
-            const detailsDiv = createUserDetailsDiv(conversation.username, conversation.userEmail);
-            const statusDot = createStatusDot(conversation.userStatus);
-            const activitySpan = createActivityStatusSpan(conversation.userStatus, conversation.userLogoutDate);
-
-            detailsDiv.style.width = '50%';
-            detailsDiv.appendChild(activitySpan);
-            avatarWrapper.style.width = '10%'
-            avatarWrapper.appendChild(statusDot);
-
-            conversationSecondUserDiv.appendChild(avatarWrapper);
-            conversationSecondUserDiv.appendChild(detailsDiv);
-            messageContainer.appendChild(conversationSecondUserDiv);
-
-
-            let conversationMessagesContainer = document.createElement("div");
-            conversationMessagesContainer.setAttribute('id', 'conversationMessages');
-            conversationMessagesContainer.addEventListener('scroll', () => {
-                let atTop = conversationMessagesContainer.scrollTop === 0;
-                if (atTop) {
-                    conversationMessagesContainer.classList.add('pull-down-refresh');
-                    conversationMessagesContainer.addEventListener('animationend', () => {
-                        // loadMoreMessagesAtTop();
-                        conversationMessagesContainer.scrollTop = 1;
-                        conversationMessagesContainer.classList.remove('pull-down-refresh');
-                    }, { once: true });
-                }
-            });
-            conversationMessagesContainer.innerHTML = "";
-            conversationMessagesContainer.append(...messages);
-            currentConversationId = conversation.id;
-
-            messageContainer.appendChild(conversationSecondUserDiv);
-            messageContainer.appendChild(conversationMessagesContainer);
-
-            conversationMessagesContainer.scrollTop = conversationMessagesContainer.scrollHeight;
-
-            createLinuxInputMessageDiv(messageContainer);
-
-        }).catch(error => {
-            console.error('Error loading messages:', error);
-        });
-
+        createSpecifiedConversationMessagesBox(conversation, conversationDiv);
     }
 
     conversationsDivs[conversation.id] = {
