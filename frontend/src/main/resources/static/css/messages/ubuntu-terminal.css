@@ -17,7 +17,7 @@
 #terminal__bar {
     display: flex;
     width: 100%;
-    height: 30px;
+    height: 25%;
     align-items: center;
     padding: 0 8px;
     box-sizing: border-box;
@@ -28,6 +28,8 @@
 #bar__buttons {
     display: flex;
     align-items: center;
+    width: 10%;
+    height: 100%;
 }
 .bar__button {
     display: flex;
@@ -36,8 +38,8 @@
     padding: 0;
     margin-right: 5px;
     font-size: 8px;
-    height: 12px;
-    width: 12px;
+    height: 40%;
+    width: 20%;
     box-sizing: border-box;
     border: none;
     border-radius: 100%;
@@ -58,7 +60,7 @@
 #bar__user {
     color: #d5d0ce;
     margin-left: 6px;
-    font-size: 14px;
+    font-size: 1.3vh;
     line-height: 15px;
 }
 
@@ -75,10 +77,13 @@
 #terminal__prompt {
     display: flex;
     align-items: center;
-    height: 1em;
+    /*height: 1em;*/
+    height: 2vh;
+    width: 100%;
 }
 #terminal__prompt--user {
     color: #7eda28;
+    white-space: nowrap;
 }
 #terminal__prompt--location {
     color: #4878c0;

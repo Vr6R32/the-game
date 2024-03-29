@@ -1,5 +1,6 @@
 package com.thegame.clients;
 
+import com.thegame.config.FeignClientConfig;
 import com.thegame.dto.UserSessionDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import java.util.Map;
 import java.util.UUID;
 
-@FeignClient(value = "websocket-service")
+@FeignClient(value = "websocket-service", configuration = FeignClientConfig.class)
 public interface WebSocketSessionClient {
 
     @PostMapping("api/v1/sessions")

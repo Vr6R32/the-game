@@ -203,6 +203,7 @@ function createContactsContainer() {
 
     fetchConversations().then(conversationsDivs => {
         const acceptedConversations = Object.values(conversationsDivs).filter(div => div.conversationStatus === 'ACCEPTED');
+        updateContactButtonValues(acceptedContactsButton, invitesContactsButton);
         acceptedConversations.forEach(div => {
             contactsList.appendChild(div.div);
         });
@@ -226,7 +227,6 @@ function createContactsContainer() {
     invitesContactsButton.style.whiteSpace = 'nowrap';
     invitesContactsButton.onclick = () => appendSpecifiedTypeConversations('INVITATION');
 
-    updateContactButtonValues(acceptedContactsButton, invitesContactsButton);
 
 
     contactsPanel.appendChild(acceptedContactsButton);

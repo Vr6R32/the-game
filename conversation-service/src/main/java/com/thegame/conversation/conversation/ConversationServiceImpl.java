@@ -3,7 +3,7 @@ package com.thegame.conversation.conversation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thegame.clients.UserServiceClient;
-import com.thegame.clients.WebSocketSessionClient;
+import com.thegame.clients.WebSocketSessionClientProxy;
 import com.thegame.conversation.entity.Conversation;
 import com.thegame.conversation.entity.ConversationMessage;
 import com.thegame.model.ConversationStatus;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public record ConversationServiceImpl(ConversationRepository conversationRepository,
                                       ConversationMessageRepository messageRepository,
                                       UserServiceClient userServiceClient,
-                                      WebSocketSessionClient webSocketSessionClient,
+                                      WebSocketSessionClientProxy webSocketSessionClient,
                                       ObjectMapper objectMapper) implements ConversationService {
 
 
@@ -36,6 +36,7 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
 
         Map<UUID, UserSessionDTO> conversationUsersSessionDetails =
                 webSocketSessionClient.findConversationUserSessionsByIdMap(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
+
 
         return conversationInfoMap.entrySet().stream()
                 .map(entry -> {
