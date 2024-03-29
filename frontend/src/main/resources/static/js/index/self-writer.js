@@ -25,3 +25,36 @@ function selfWriter() {
     }
 }
 
+function createSelfWriterLandingPage() {
+
+    let messageContainer = document.getElementById('messageContainer');
+    messageContainer.innerHTML = '';
+    let typeWriterWelcomeContainer = document.createElement('div');
+    typeWriterWelcomeContainer.setAttribute('id', 'typewriter');
+
+    let paragraphQuote = document.createElement('p');
+    paragraphQuote.setAttribute('id', 'quote');
+    typeWriterWelcomeContainer.appendChild(paragraphQuote);
+
+    let indexButtonsWrapper = document.createElement('div');
+    indexButtonsWrapper.className = 'index-button-wrapper';
+
+    const loginButton = document.createElement('button');
+
+    loginButton.innerHTML = '<span></span><span></span><span></span><span></span>Login';
+    loginButton.onclick = createLoginForm;
+
+    indexButtonsWrapper.appendChild(loginButton);
+
+
+    const registerButton = document.createElement('button');
+    registerButton.innerHTML = '<span></span><span></span><span></span><span></span>Register';
+    registerButton.onclick;
+
+    indexButtonsWrapper.appendChild(registerButton);
+
+    typeWriterWelcomeContainer.appendChild(indexButtonsWrapper);
+    messageContainer.appendChild(typeWriterWelcomeContainer);
+    selfWriter();
+}
+

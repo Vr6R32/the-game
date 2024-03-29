@@ -45,6 +45,6 @@ public interface ConversationRepository extends JpaRepository<Conversation, UUID
                                @Param("isReadByReceiver") boolean isReadByReceiver);
 
     @Modifying
-    @Query("UPDATE Conversation c SET c.isReadByReceiver = true WHERE c.lastMessageSenderId != :receiverId")
-    void updateMessagesReadByReceiver(@Param("receiverId") Long receiverId);
+    @Query("UPDATE Conversation c SET c.isReadByReceiver = true WHERE c.id = :conversationId AND c.isReadByReceiver = false AND c.lastMessageSenderId != :receiverId")
+    void updateMessagesReadByReceiverIfNecessary(@Param("conversationId") UUID conversationId, @Param("receiverId") Long receiverId);
 }

@@ -44,43 +44,6 @@ function createMainContainer() {
     chatWrapper.appendChild(messageContainer);
 }
 
-
-
-function createSelfWriterLandingPage() {
-
-    let messageContainer = document.getElementById('messageContainer');
-    messageContainer.innerHTML = '';
-    let typeWriterWelcomeContainer = document.createElement('div');
-    typeWriterWelcomeContainer.setAttribute('id', 'typewriter');
-
-    let paragraphQuote = document.createElement('p');
-    paragraphQuote.setAttribute('id', 'quote');
-    typeWriterWelcomeContainer.appendChild(paragraphQuote);
-
-    let indexButtonsWrapper = document.createElement('div');
-    indexButtonsWrapper.className = 'index-button-wrapper';
-
-    const loginButton = document.createElement('button');
-
-    loginButton.innerHTML = '<span></span><span></span><span></span><span></span>Login';
-    loginButton.onclick = createLoginForm;
-
-    indexButtonsWrapper.appendChild(loginButton);
-
-
-    const registerButton = document.createElement('button');
-    registerButton.innerHTML = '<span></span><span></span><span></span><span></span>Register';
-    registerButton.onclick;
-
-    indexButtonsWrapper.appendChild(registerButton);
-
-    typeWriterWelcomeContainer.appendChild(indexButtonsWrapper);
-    messageContainer.appendChild(typeWriterWelcomeContainer);
-    selfWriter();
-}
-
-
-
 function createNewContactDiv() {
     let messageContainer = document.getElementById('messageContainer');
     messageContainer.innerHTML = '';
@@ -115,7 +78,6 @@ function createNewContactDiv() {
 }
 
 function submitNewContactInvitation() {
-
     fetch('api/v1/conversations', {
         method: 'POST',
         headers: {
@@ -320,9 +282,6 @@ function getActivityElapsedTime(logoutDateString) {
 
     const nowUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds()));
 
-    console.log(logoutDate);
-    console.log(nowUtc);
-
     const diffMs = nowUtc - logoutDate;
     const diffMins = Math.max(0, Math.floor(diffMs / 60000));
     const diffHrs = Math.max(0, Math.floor(diffMins / 60));
@@ -367,46 +326,13 @@ function createConversationDiv(conversation) {
         conversationDiv.classList.add('unread-message');
     }
 
+    const avatarWrapper = createAvatarWrapper(conversation.userAvatarUrl);
+    const detailsDiv = createUserDetailsDiv(conversation.username, conversation.userEmail);
+    const statusDot = createStatusDot(conversation.userStatus);
+    const activitySpan = createActivityStatusSpan(conversation.userStatus, conversation.userLogoutDate);
 
-    const avatarWrapper = document.createElement('div');
-    avatarWrapper.classList.add('avatar-wrapper');
-
-    const avatarImg = document.createElement('img');
-    avatarImg.classList.add('user-avatar');
-    avatarImg.src = conversation.userAvatarUrl;
-    avatarWrapper.appendChild(avatarImg);
-
-    const statusDot = document.createElement('span');
-    statusDot.classList.add('status-dot');
-
-    const detailsDiv = document.createElement('div');
-    detailsDiv.classList.add('conversation-details');
-
-    const nameSpan = document.createElement('span');
-    nameSpan.classList.add('user-name');
-    nameSpan.textContent = conversation.username;
-
-    const emailSpan = document.createElement('span');
-    emailSpan.classList.add('email-address');
-    emailSpan.textContent = conversation.userEmail;
-
-    detailsDiv.appendChild(nameSpan);
-    detailsDiv.appendChild(emailSpan);
-
-    const activitySpan = document.createElement('span');
-    activitySpan.classList.add('activity-status');
-
-    if (conversation.userStatus === "OFFLINE") {
-        statusDot.classList.add('offline');
-        activitySpan.textContent = getActivityElapsedTime(conversation.userLogoutDate);
-    } else if (conversation.userStatus === "ONLINE") {
-        activitySpan.textContent = '';
-        statusDot.classList.add('online');
-    }
-
-    detailsDiv.appendChild(activitySpan);
     avatarWrapper.appendChild(statusDot);
-
+    detailsDiv.appendChild(activitySpan);
 
     conversationDiv.appendChild(avatarWrapper);
     conversationDiv.appendChild(detailsDiv);
@@ -422,78 +348,22 @@ function createConversationDiv(conversation) {
             let messageContainer = document.getElementById('messageContainer');
             messageContainer.innerHTML = '';
 
-
             let conversationSecondUserDiv = document.createElement('div');
             conversationSecondUserDiv.setAttribute('id', 'secondUserConversationInfo');
 
+            const avatarWrapper = createAvatarWrapper(conversation.userAvatarUrl);
+            const detailsDiv = createUserDetailsDiv(conversation.username, conversation.userEmail);
+            const statusDot = createStatusDot(conversation.userStatus);
+            const activitySpan = createActivityStatusSpan(conversation.userStatus, conversation.userLogoutDate);
 
-
-
-/////////////////////////////////////////////////////////////////////////////////////
-            //TODO NEED TO BE REFACTORED TO AVOID CODE DUPLICATION
-
-
-
-
-            const avatarWrapper = document.createElement('div');
-            avatarWrapper.classList.add('avatar-wrapper');
-            avatarWrapper.style.width = '10%'
-
-            const avatarImg = document.createElement('img');
-            avatarImg.classList.add('user-avatar');
-            avatarImg.src = conversation.userAvatarUrl;
-            avatarWrapper.appendChild(avatarImg);
-
-            const statusDot = document.createElement('span');
-            statusDot.classList.add('status-dot');
-
-            const detailsDiv = document.createElement('div');
-            detailsDiv.classList.add('conversation-details');
             detailsDiv.style.width = '50%';
-
-            const nameSpan = document.createElement('span');
-            nameSpan.classList.add('user-name');
-            nameSpan.textContent = conversation.username;
-
-            const emailSpan = document.createElement('span');
-            emailSpan.classList.add('email-address');
-            emailSpan.textContent = conversation.userEmail;
-
-            detailsDiv.appendChild(nameSpan);
-            detailsDiv.appendChild(emailSpan);
-
-            const activitySpan = document.createElement('span');
-            activitySpan.classList.add('activity-status');
-
-            if (conversation.userStatus === "OFFLINE") {
-                statusDot.classList.add('offline');
-
-                // TODO THINK HOW TO RESOLVE ELAPSED TIME FOR DOUBLED OBJECT
-                activitySpan.textContent = getActivityElapsedTime(conversation.userLogoutDate);
-            } else if (conversation.userStatus === "ONLINE") {
-                activitySpan.textContent = '';
-                statusDot.classList.add('online');
-            }
-
             detailsDiv.appendChild(activitySpan);
+            avatarWrapper.style.width = '10%'
             avatarWrapper.appendChild(statusDot);
-
 
             conversationSecondUserDiv.appendChild(avatarWrapper);
             conversationSecondUserDiv.appendChild(detailsDiv);
-
-
             messageContainer.appendChild(conversationSecondUserDiv);
-
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////
-
-
-
 
 
             let conversationMessagesContainer = document.createElement("div");
@@ -526,7 +396,6 @@ function createConversationDiv(conversation) {
 
     }
 
-    // conversationsDivs[conversation.id] = conversationDiv;
     conversationsDivs[conversation.id] = {
         div: conversationDiv,
         userStatus: conversation.userStatus,
@@ -534,54 +403,9 @@ function createConversationDiv(conversation) {
         conversationStatus: conversation.status
     };
 
-
-
-
     return conversationDiv;
 }
 
-function createNormalMessageInputDiv() {
-    if(document.getElementById('messageForm')===null) {
-        const messageContainer = document.getElementById('messageContainer');
-
-        const messageFormDiv = document.createElement('div');
-        messageFormDiv.id = 'messageForm';
-
-        const messageInput = document.createElement('input');
-        messageInput.type = 'text';
-        messageInput.id = 'message';
-        messageInput.className = 'message-input';
-        messageInput.placeholder = 'Type your message';
-        
-        messageInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                sendMessageNormal();
-            }
-        });
-        messageInput.addEventListener("input", function () {
-            adjustLinesInterval(100, 1000);
-        });
-
-        const sendButton = document.createElement('button');
-        sendButton.onclick = sendMessageNormal;
-        sendButton.className = 'hover-button';
-        sendButton.textContent = '⮉';
-
-        messageFormDiv.appendChild(messageInput);
-        messageFormDiv.appendChild(sendButton);
-        messageContainer.appendChild(messageFormDiv);
-    }
-}
-
-
-function setMessageOwnerClass(message, loggedUserId, newMessage) {
-    if (message.senderId === loggedUserId) {
-        newMessage.classList.add('message-sent');
-    } else {
-        newMessage.classList.add('message-received');
-    }
-}
 
 function loadMessages(conversationId) {
     return fetch('/api/v1/conversations/messages/' + conversationId)

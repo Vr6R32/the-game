@@ -7,11 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.thegame.model.Role.ROLE_ADMIN;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -32,15 +31,10 @@ class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/css/**").permitAll()
                                 .requestMatchers("/js/**").permitAll()
-                                .requestMatchers("/**").permitAll()
-//                                .anyRequest().hasRole(Role.ROLE_USER.toString())
+                                .requestMatchers("/").permitAll()
+                                .anyRequest().hasRole(ROLE_ADMIN.toString())
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
         return http.build();
-    }
-
-    @Bean
-    public static PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

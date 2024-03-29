@@ -87,7 +87,7 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
                 .map(ConversationMapper::mapConversationMessageToDTO)
                 .toList();
 
-        conversationRepository.updateMessagesReadByReceiver(user.id());
+        conversationRepository.updateMessagesReadByReceiverIfNecessary(conversationId,user.id());
 
         return messageList;
     }
@@ -112,7 +112,7 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
 
     @Override
     public Conversation createNewConversation(AuthenticationUserObject user, ConversationRequest request) {
-        // TODO USER SERVICE FIND BY EMAIL , IF NOT EXISTS SEND AN INVITATION
+        // TODO USER SERVICE FIND BY EMAIL , IF NOT EXISTS SEND AN EMAIL INVITATION
         Long secondUserId = userServiceClient.getUserIdByEmailAddress(mapUserToJsonObject(user), request.secondUserEmail());
 
         Conversation newConversation = Conversation.builder()
