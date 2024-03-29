@@ -1,23 +1,18 @@
 .form-wrapper {
-    margin-top: 50px;
-    z-index: 1;
-    position: relative;
-    width: 35vh;
-    height: 50vh;
-    background: rgba(0, 0, 0, 0.3);
-    box-shadow: 0 18px 32px rgba(255, 215, 0, 0.5);
-    border: 2px solid darkgoldenrod;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    animation: fadeIn 1s ease forwards;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+
+    100% { opacity: 1; }
 }
 
 .input-box {
     position: relative;
     left: 25%;
     width: 50%;
-    margin: 30px 0px;
+    margin: 30px 0;
     border-bottom: 1px solid white;
 }
 
@@ -69,11 +64,11 @@
     outline: none;
     color: #FFD700;
     font-size: 1em;
-    padding: 0px 10px;
+    padding: 0 10px;
 }
 
 .remember-forgot {
-    margin: 15px 0px 15px;
+    margin: 15px 0 15px;
     display: flex;
     justify-content: space-between;
 }

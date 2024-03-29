@@ -50,12 +50,12 @@ function createNewContactDiv() {
 
     const form = document.createElement('form');
 
-    const loginBox = document.createElement('div');
-    loginBox.setAttribute('id', 'form-wrapper');
+    const loginFormWrapper = document.createElement('div');
+    loginFormWrapper.classList.add('form-wrapper');
 
     const invitationHeading = document.createElement('h2');
     invitationHeading.textContent = 'Send an Invitation for';
-    loginBox.appendChild(invitationHeading);
+    loginFormWrapper.appendChild(invitationHeading);
 
     const {divInput: divEmail, inputElement: inputEmail} =
         createFormInput('userEmail', 'text');
@@ -72,8 +72,8 @@ function createNewContactDiv() {
     createFormButton(form, submitNewContactInvitation, 'invite');
 
 
-    loginBox.appendChild(form);
-    messageContainer.appendChild(loginBox);
+    loginFormWrapper.appendChild(form);
+    messageContainer.appendChild(loginFormWrapper);
 
 }
 
