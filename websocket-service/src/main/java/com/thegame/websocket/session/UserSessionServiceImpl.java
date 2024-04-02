@@ -1,5 +1,6 @@
 package com.thegame.websocket.session;
 
+import com.thegame.dto.AuthenticationUserObject;
 import com.thegame.dto.UserSessionDTO;
 import com.thegame.model.Status;
 import com.thegame.websocket.filter.WebsocketUserPrincipal;
@@ -41,11 +42,21 @@ class UserSessionServiceImpl implements UserSessionService {
     @Override
     public void setSessionStatusOffline(WebsocketUserPrincipal user) {
         UserSession userSession = userSessionRepository.findUserSessionByUserId(user.userId()).orElseGet(() -> null);
-        notificationFacade.sendUpdateSessionStatusEventToConversationFriends(user, Status.OFFLINE);
+
+        if(userSession != null && !userSession.getStatus().equals(Status.RECONNECTING)) {
+            notificationFacade.sendUpdateSessionStatusEventToConversationFriends(user, Status.OFFLINE);
+            userSession.setStatus(Status.OFFLINE);
+            userSession.setLogoutTime(Date.from(Instant.now().plus(Duration.ofHours(2))));
+            userSessionRepository.save(userSession);
+        }
+    }
+
+    @Override
+    public void setSessionStatusReconnect(AuthenticationUserObject user) {
+        UserSession userSession = userSessionRepository.findUserSessionByUserId(user.id()).orElseGet(() -> null);
 
         if(userSession!=null) {
-            userSession.setStatus(Status.OFFLINE);
-            userSession.setLogoutTime(Date.from(Instant.now().plus(Duration.ofHours(1))));
+            userSession.setStatus(Status.RECONNECTING);
             userSessionRepository.save(userSession);
         }
     }
@@ -71,6 +82,7 @@ class UserSessionServiceImpl implements UserSessionService {
         }
         return conversationUserSessionDetailsMap;
     }
+
 
     private Map<Long, UserSessionDTO> getUserDetailsByIds(Set<Long> userIds) {
         List<UserSession> users = userSessionRepository.findAllByUserIdIn(userIds);

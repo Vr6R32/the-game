@@ -10,6 +10,8 @@ import java.util.UUID;
 @RequestMapping("api/v1/sessions")
 record UserSessionController(UserSessionFacade sessionFacade) {
 
+
+
     @PostMapping
     public Map<UUID, UserSessionDTO>  findUserSessionDetailsByIdsMap(@RequestBody Map<UUID, Long> conversationIdSecondUserIdMap) {
         return sessionFacade.findUserSessionDetailsByIdsMap(conversationIdSecondUserIdMap);

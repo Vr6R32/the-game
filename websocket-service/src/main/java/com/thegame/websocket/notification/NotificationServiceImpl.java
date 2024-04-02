@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +32,7 @@ class NotificationServiceImpl implements NotificationService {
     public void sendUpdateSessionStatusEventToConversationFriends(WebsocketUserPrincipal user, Status status) {
         AuthenticationUserObject authenticationUserObject = WebSocketPrincipalMapper.mapWebSocketPrincipalToAuthUserObject(user);
         List<ConversationFriendInfo> allUserConversationSecondUserIds = conversationServiceClient.getAllUserConversationSecondUserIds(mapUserToJsonObject(authenticationUserObject));
-        Date eventDate = Date.from(Instant.now().plusSeconds(3600));
+        Date eventDate = Date.from(Instant.now().plus(Duration.ofHours(2)));
         for (ConversationFriendInfo conversationFriend : allUserConversationSecondUserIds) {
             messagingTemplate.convertAndSendToUser(
                     String.valueOf(conversationFriend.secondUserId()),

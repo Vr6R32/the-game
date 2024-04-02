@@ -1,5 +1,6 @@
 package com.thegame.websocket.session;
 
+import com.thegame.dto.AuthenticationUserObject;
 import com.thegame.dto.UserSessionDTO;
 import com.thegame.websocket.filter.WebsocketUserPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,10 @@ public class UserSessionFacade {
     public void setSessionStatusOffline(WebsocketUserPrincipal user){
         userSessionService.setSessionStatusOffline(user);
     }
+
+    public void setSessionStatusReconnect(AuthenticationUserObject user) {
+        userSessionService.setSessionStatusReconnect(user);
+    }
     public UserSessionDTO findUserSessionByUserId(Long userId) {
         return userSessionService.findUserSessionByUserId(userId);
     }
@@ -25,5 +30,6 @@ public class UserSessionFacade {
     public Map<UUID, UserSessionDTO> findUserSessionDetailsByIdsMap(Map<UUID, Long> conversationIdSecondUserIdMap) {
         return userSessionService.findUserSessionDetailsByIdsMap(conversationIdSecondUserIdMap);
     }
+
 
 }

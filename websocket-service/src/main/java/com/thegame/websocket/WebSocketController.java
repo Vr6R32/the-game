@@ -34,26 +34,13 @@ public class WebSocketController {
     private final ConversationServiceClient conversationServiceClient;
 
     private final ObjectMapper objectMapper;
-//    @MessageMapping("/conversation/{id}")
-//    public ChatMessage sendMessage(@PathVariable String id, @Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-//        AuthenticationUserObject user = extractUserFromSession(headerAccessor);
-////        return new ChatMessage(user.username(), chatMessage.payload());
-//        System.out.println(chatMessage);
-//        return chatMessage;
-//    }
-//
-//    @MessageMapping("/user/{username}/messages")
-//    @SendTo("/user/{username}/messages")
-//    public ChatMessage sendPrivateMessage(@PathVariable String username, @Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-//        AuthenticationUserObject userSender = extractUserFromSession(headerAccessor);
-//        return new ChatMessage(userSender.username(), chatMessage.payload());
-//    }
-//
-//
-//    @MessageMapping("/sendMessage/{id}")
-//    public void sendMessage(@Payload ChatMessage chatMessage, @PathVariable String id) {
-//        messagingTemplate.convertAndSend("/conversation/" + id, chatMessage);
-//    }
+
+
+    @MessageMapping("/status/reconnect")
+    public void handleReconnectingStatus(SimpMessageHeaderAccessor headerAccessor) {
+        AuthenticationUserObject user = extractUserFromSession(headerAccessor);
+        userSessionFacade.setSessionStatusReconnect(user);
+    }
 
     @MessageMapping("/private/message/{id}")
     public void sendPrivateMessage(@Payload ChatMessage chatMessage,SimpMessageHeaderAccessor headerAccessor) {

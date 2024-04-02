@@ -5,10 +5,15 @@ let messageTimes = [];
 
 function stabilizeWebSocketConnection() {
     connectSocket();
+
+    setInterval(function() {
+        stompClient.send("/chat/status/reconnect", {}, JSON.stringify({ status: "RECONNECTING" }));
+    }, 10000);
+
     setInterval(function() {
         console.log('Reconnecting...');
         connectSocket();
-    }, 110000);
+    }, 11000);
 }
 
 function connectSocket(){

@@ -6,7 +6,7 @@ function focusInputArea() {
 
 
 function updateCursor() {
-    
+
     let terminalBody = document.getElementById('terminal__body');
     const cursor = document.getElementById('terminal__prompt--cursor');
     const selection = window.getSelection();
@@ -23,11 +23,11 @@ function updateCursor() {
 
         const containerRect = terminalBody.getBoundingClientRect();
         const cursorLeft = rect.left - containerRect.left - 128 ;
-        
+
         // let userEmail = document.getElementById('userEmail').value;
         // let numberOfCharacters = userEmail.length;
         // const cursorLeft = rect.left - containerRect.left - (numberOfCharacters * 10) ;
-        const cursorTop = rect.top - containerRect.top;
+        const cursorTop = rect.top - containerRect.top - 6;
 
         // const messageInput = document.getElementById('message');
         // if(messageInput.textContent.trim() === '') {
