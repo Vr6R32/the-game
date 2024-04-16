@@ -8,12 +8,10 @@ import com.thegame.conversation.entity.Conversation;
 import com.thegame.conversation.entity.ConversationMessage;
 import com.thegame.model.ConversationStatus;
 import com.thegame.dto.*;
-import com.thegame.model.Status;
 import com.thegame.request.ConversationMessageRequest;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public record ConversationServiceImpl(ConversationRepository conversationRepository,
                                       ConversationMessageRepository messageRepository,
@@ -25,45 +23,34 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
     @Override
     public List<DetailedConversationDTO> getAllUserConversations(AuthenticationUserObject user) {
 
-
         Map<UUID, ConversationInfo> conversationInfoMap = getConversationUserIdMap(user);
 
-        Map<UUID, Long> conversationIdSecondUserIdMap = conversationInfoMap.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().secondUserId()));
+        Map<UUID, Long> conversationIdSecondUserIdMap = new HashMap<>();
+        conversationInfoMap.forEach((conversationId, conversationInfo) -> conversationIdSecondUserIdMap.put(conversationId, conversationInfo.secondUserId()));
 
-        Map<UUID, AppUserDTO> conversationsUsersDetails =
-                userServiceClient.getConversationsUsersDetails(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
+        Map<UUID, AppUserDTO> conversationsUsersDetails = userServiceClient.getConversationsUsersDetails(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
+        Map<UUID, UserSessionDTO> conversationUsersSessionDetails = webSocketSessionClient.findConversationUserSessionsByIdMap(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
 
-        Map<UUID, UserSessionDTO> conversationUsersSessionDetails =
-                webSocketSessionClient.findConversationUserSessionsByIdMap(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
+        return conversationInfoMap.entrySet().stream().map(entry -> {
+            UUID conversationId = entry.getKey();
+            ConversationInfo conversationInfo = entry.getValue();
 
+            AppUserDTO userDto = conversationsUsersDetails.get(conversationId);
+            UserSessionDTO userSessionDTO = conversationUsersSessionDetails.get(conversationId);
 
-        return conversationInfoMap.entrySet().stream()
-                .map(entry -> {
-                    UUID conversationId = entry.getKey();
-
-                    ConversationInfo conversationInfo = entry.getValue();
-                    Long secondUserId = conversationInfo.secondUserId();
-                    Date lastMessageDate = conversationInfo.lastMessageDate();
-                    String secondUserContactName = conversationInfo.secondUserContactName();
-                    ConversationStatus status = conversationInfo.status();
-                    boolean isUnread = conversationInfo.isUnread();
-
-                    AppUserDTO userDto = conversationsUsersDetails.get(conversationId);
-                    String secondUserAvatarUrl = userDto.avatarUrl();
-                    String secondUserEmail = userDto.email();
-
-                    UserSessionDTO userSessionDTO = conversationUsersSessionDetails.get(conversationId);
-                    Status userStatus = null;
-                    Date logoutTime = null;
-                    if(userSessionDTO!=null) {
-                        userStatus = userSessionDTO.status();
-                        logoutTime = userSessionDTO.logoutTime();
-                    }
-                    return new DetailedConversationDTO(conversationId, secondUserId, secondUserAvatarUrl,
-                            secondUserEmail, userStatus, logoutTime, lastMessageDate, secondUserContactName, status, isUnread);
-                })
-                .toList();
+            return new DetailedConversationDTO(
+                    conversationId,
+                    conversationInfo.secondUserId(),
+                    userDto != null ? userDto.avatarUrl() : null,
+                    userDto != null ? userDto.email() : null,
+                    userSessionDTO != null ? userSessionDTO.status() : null,
+                    userSessionDTO != null ? userSessionDTO.logoutTime() : null,
+                    conversationInfo.lastMessageDate(),
+                    conversationInfo.secondUserContactName(),
+                    conversationInfo.status(),
+                    conversationInfo.isUnread()
+            );
+        }).toList();
     }
 
     @Override
