@@ -17,6 +17,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "conversations")
 public class Conversation {
 
     @Id

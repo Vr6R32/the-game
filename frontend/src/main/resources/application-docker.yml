@@ -2,7 +2,7 @@ server:
   port: 8080
 
 app:
-  websocketUrl: http://domain-name.com/websocket
+  websocketUrl: http://localhost:8083/websocket
 
 spring:
   application:

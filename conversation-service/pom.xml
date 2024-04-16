@@ -10,6 +10,10 @@
     </parent>
 
     <artifactId>conversation-service</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>conversation-service</name>
+    <description>conversation-service</description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

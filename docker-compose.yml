@@ -30,7 +30,8 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
       - MONGO_INITDB_DATABASE=user_session
     volumes:
-       - ./db-init/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - mongo-data:/data/db
+      - ./db-init/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     ports:
       - "27017:27017"
   mongo-express:
@@ -50,17 +51,6 @@ services:
       - "27016:8081"
 
 
-  eureka-server:
-    image: michaelkey/eureka-server:0.0.1-SNAPSHOT
-    container_name: eureka-server
-    ports:
-      - "8761:8761"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    networks:
-      - spring
-    restart: unless-stopped
-
   api-gateway:
     image: michaelkey/api-gateway:0.0.1-SNAPSHOT
     container_name: api-gateway
@@ -74,36 +64,6 @@ services:
       - eureka-server
     restart: unless-stopped
 
-  user-service:
-    image: michaelkey/user-service:0.0.1-SNAPSHOT
-    container_name: user-service
-    ports:
-      - "8082:8082"
-    environment:
-      SERVER_PORT: 8082
-      SPRING_PROFILES_ACTIVE: docker
-      TZ: Europe/Warsaw
-    networks:
-      - spring
-      - postgres
-    depends_on:
-      - api-gateway
-    restart: unless-stopped
-
-  frontend:
-    image: michaelkey/frontend:0.0.1-SNAPSHOT
-    container_name: frontend
-    ports:
-      - "8080:8080"
-    environment:
-      SERVER_PORT: 8080
-      SPRING_PROFILES_ACTIVE: docker
-      TZ: Europe/Warsaw
-    networks:
-      - spring
-    depends_on:
-      - api-gateway
-    restart: unless-stopped
 
   auth-service:
     image: michaelkey/auth-service:0.0.1-SNAPSHOT
@@ -121,46 +81,87 @@ services:
       - api-gateway
     restart: unless-stopped
 
+  conversation-service:
+    image: michaelkey/conversation-service:0.0.1-SNAPSHOT
+    container_name: conversation-service
+    ports:
+      - "8087:8087"
+    environment:
+      SERVER_PORT: 8087
+      SPRING_PROFILES_ACTIVE: docker
+      TZ: Europe/Warsaw
+    networks:
+      - spring
+      - postgres
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+
+  eureka-server:
+    image: michaelkey/eureka-server:0.0.1-SNAPSHOT
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+    restart: unless-stopped
+
+  frontend:
+    image: michaelkey/frontend:0.0.1-SNAPSHOT
+    container_name: frontend
+    ports:
+      - "8080:8080"
+    environment:
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: docker
+      TZ: Europe/Warsaw
+    networks:
+      - spring
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
 
 
+  user-service:
+    image: michaelkey/user-service:0.0.1-SNAPSHOT
+    container_name: user-service
+    ports:
+      - "8082:8082"
+    environment:
+      SERVER_PORT: 8082
+      SPRING_PROFILES_ACTIVE: docker
+      TZ: Europe/Warsaw
+    networks:
+      - spring
+      - postgres
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
 
 
+  websocket-service:
+    image: michaelkey/websocket-service:0.0.1-SNAPSHOT
+    container_name: websocket-service
+    ports:
+      - "8085:8085"
+    environment:
+      SERVER_PORT: 8085
+      SPRING_PROFILES_ACTIVE: docker
+      TZ: Europe/Warsaw
+    networks:
+      - spring
+      - postgres
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
 
-
-
-
-#  frontend2:
-#    image: michaelkey/frontend:0.0.1-SNAPSHOT
-#    container_name: frontend2
-#    ports:
-#      - "8079:8079"
-#    environment:
-#      SERVER_PORT: 8079
-#      SPRING_PROFILES_ACTIVE: docker
-#      TZ: Europe/Warsaw
-#    networks:
-#      - spring
-#    depends_on:
-#      - api-gateway
-
-
-
-#  user-service2:
-#    image: michaelkey/user-service:0.0.1-SNAPSHOT
-#    container_name: user-service2
-#    ports:
-#      - "8081:8081"
-#    environment:
-#      SERVER_PORT: 8081
-#      SPRING_PROFILES_ACTIVE: docker
-#      TZ: Europe/Warsaw
-#    networks:
-#      - spring
-#    depends_on:
-#      - api-gateway
 
 volumes:
+  mongo-data:
   postgres-data:
+
 
 networks:
   spring:

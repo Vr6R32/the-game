@@ -12,6 +12,7 @@ spring:
     mongodb:
       uri: mongodb://mongo:dontgotosql@localhost:27017/user_session
       auto-index-creation: true
+
 eureka:
   client:
     service-url:

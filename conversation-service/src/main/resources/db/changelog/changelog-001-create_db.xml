@@ -6,23 +6,27 @@
 
     <changeSet id="1" author="michal-k">
         <sql>
-            CREATE TABLE IF NOT EXISTS app_users (
-                id BIGSERIAL PRIMARY KEY,
-                email VARCHAR(255) UNIQUE NOT NULL,
-                user_name VARCHAR(255) UNIQUE NOT NULL,
-                password VARCHAR(255) NOT NULL,
-                role VARCHAR(255) NOT NULL,
-                account_enabled BOOLEAN,
-                account_not_expired BOOLEAN,
-                account_not_locked BOOLEAN,
-                credentials_not_expired BOOLEAN,
-                register_code VARCHAR(255),
-                name VARCHAR(255),
-                surname VARCHAR(255),
-                phone_number VARCHAR(255),
-                reset_password_code VARCHAR(255),
-                reset_password_code_expiration TIMESTAMP
-                );
+            CREATE TABLE IF NOT EXISTS conversations (
+                    id UUID PRIMARY KEY,
+                    firstUserId BIGINT,
+                    secondUserId BIGINT,
+                    lastMessageSenderId BIGINT,
+                    statusUpdatedByUserId BIGINT,
+                    firstUserContactName VARCHAR(255),
+                    secondUserContactName VARCHAR(255),
+                    status VARCHAR(50),
+                    lastMessageDate DATE,
+                    isReadByReceiver BOOLEAN
+            );
+
+            CREATE TABLE IF NOT EXISTS  conversation_messages (
+                    id UUID PRIMARY KEY,
+                    conversation_id UUID,
+                    senderId BIGINT,
+                    messageText VARCHAR(1000),
+                    sendDate TIMESTAMP,
+                    CONSTRAINT fk_conversation FOREIGN KEY (conversation_id) REFERENCES conversations(id)
+            );
         </sql>
     </changeSet>
 
