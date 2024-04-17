@@ -3,6 +3,7 @@ server:
 
 app:
   websocketUrl: http://localhost:8083/websocket
+  websocketConnectionRefreshInterval: 1800000
 
 spring:
   application:

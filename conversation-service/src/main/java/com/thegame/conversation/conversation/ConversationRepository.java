@@ -47,4 +47,11 @@ public interface ConversationRepository extends JpaRepository<Conversation, UUID
     @Modifying
     @Query("UPDATE Conversation c SET c.isReadByReceiver = true WHERE c.id = :conversationId AND c.isReadByReceiver = false AND c.lastMessageSenderId != :receiverId")
     void updateMessagesReadByReceiverIfNecessary(@Param("conversationId") UUID conversationId, @Param("receiverId") Long receiverId);
+
+    @Query("SELECT c FROM Conversation c WHERE (c.firstUserId = :firstUserId AND c.secondUserId = :secondUserId) OR (c.firstUserId = :secondUserId AND c.secondUserId = :firstUserId)")
+    Optional<Conversation> findConversationByFirstUserIdAndSecondUserId(
+            @Param("firstUserId") Long firstUserId,
+            @Param("secondUserId") Long secondUserId
+    );
+
 }

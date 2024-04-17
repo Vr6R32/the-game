@@ -15,7 +15,7 @@ public class UserRepositoryDAO {
     private final JdbcTemplate jdbcTemplate;
 
     public AppUser findByUsername(String username) {
-        String sql = "SELECT id, username, password, role, email, account_enabled, account_not_locked, account_not_expired, credentials_not_expired FROM app_user WHERE username = ?";
+        String sql = "SELECT id, username, password, role, email, account_enabled, account_not_locked, account_not_expired, credentials_not_expired FROM app_users WHERE username = ?";
 
         return jdbcTemplate.query(sql, preparedStatement ->
                 preparedStatement.setString(1, username), this::mapToAppUser);

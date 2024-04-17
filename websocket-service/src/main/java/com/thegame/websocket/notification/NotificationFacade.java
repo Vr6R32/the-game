@@ -1,5 +1,6 @@
 package com.thegame.websocket.notification;
 
+import com.thegame.model.Notification;
 import com.thegame.model.Status;
 import com.thegame.websocket.filter.WebsocketUserPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -11,5 +12,10 @@ public class NotificationFacade {
 
     public void sendUpdateSessionStatusEventToConversationFriends(WebsocketUserPrincipal user, Status status) {
         notificationService.sendUpdateSessionStatusEventToConversationFriends(user,status);
+    }
+
+    public void sendConversationInvitationEventToSecondUser(Notification notification, Long secondUserId) {
+        notificationService.sendConversationInvitationEventToSecondUser(notification,secondUserId);
+
     }
 }

@@ -31,6 +31,7 @@ class SecurityConfig {
                 .addFilterBefore(serviceAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
+                                .requestMatchers("api/v1/users/register").permitAll()
                                 .anyRequest().hasRole(ROLE_USER.toString())
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS));

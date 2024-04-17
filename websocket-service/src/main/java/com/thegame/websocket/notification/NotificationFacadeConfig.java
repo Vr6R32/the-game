@@ -9,7 +9,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Configuration
 @RequiredArgsConstructor
-class NotificationServiceFacadeConfig {
+class NotificationFacadeConfig {
 
     private final ConversationServiceClient conversationServiceClient;
     private final SimpMessagingTemplate messagingTemplate;

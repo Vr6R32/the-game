@@ -12,10 +12,14 @@ public class FrontViewController {
     @Value("${app.websocketUrl}")
     private String websocketUrl;
 
+    @Value("${app.websocketConnectionRefreshInterval}")
+    private String websocketRefreshInterval;
+
 
     @GetMapping("/")
     public String getIndex(Model model){
         model.addAttribute("websocketUrl", websocketUrl);
+        model.addAttribute("websocketConnectionRefreshInterval", websocketRefreshInterval);
         return "chat.html";
     }
 

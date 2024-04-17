@@ -1,5 +1,6 @@
-package com.thegame.websocket.notification;
+package com.thegame.model;
 
 public enum NotificationType {
     FRIEND_SESSION_UPDATE,
+    CONVERSATION_INVITATION,
 }

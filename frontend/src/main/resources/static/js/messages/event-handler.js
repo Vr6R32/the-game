@@ -34,9 +34,23 @@ function handleFriendConversationSessionUpdate(payload) {
     }
 }
 
+function handleNewConversationInvitation(payload) {
+
+    let newConversation = payload;
+    invitationsCount++;
+
+    updateContactButtonValues(document.getElementById('normal-contacts'),document.getElementById('invite-contacts'));
+    createConversationDiv(newConversation);
+    if(currentContactsTab==="INVITATION") appendSpecifiedTypeConversations(currentContactsTab);
+
+}
+
 function handleNotificationEvent(notificationMessage) {
     if (notificationMessage.type === 'FRIEND_SESSION_UPDATE') {
         handleFriendConversationSessionUpdate(notificationMessage.payload);
+    }
+    if (notificationMessage.type === 'CONVERSATION_INVITATION') {
+        handleNewConversationInvitation(notificationMessage.payload);
     }
 }
 

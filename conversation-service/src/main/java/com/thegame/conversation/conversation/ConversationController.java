@@ -1,8 +1,9 @@
 package com.thegame.conversation.conversation;
 
-import com.thegame.conversation.entity.Conversation;
 import com.thegame.dto.*;
 import com.thegame.request.ConversationMessageRequest;
+import com.thegame.request.NewConversationRequest;
+import com.thegame.response.NewConversationResponse;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,7 @@ public record ConversationController(ConversationFacade conversationFacade) {
     }
 
     @PostMapping
-    public Conversation createNewConversation(@RequestBody @Valid ConversationRequest request, Authentication authentication) {
+    public NewConversationResponse createNewConversation(@RequestBody @Valid NewConversationRequest request, Authentication authentication) {
         AuthenticationUserObject user = (AuthenticationUserObject) authentication.getPrincipal();
         return conversationFacade.createNewConversation(user, request);
     }

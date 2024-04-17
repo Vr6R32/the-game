@@ -1,8 +1,9 @@
 package com.thegame.conversation.conversation;
 
-import com.thegame.conversation.entity.Conversation;
 import com.thegame.dto.*;
 import com.thegame.request.ConversationMessageRequest;
+import com.thegame.request.NewConversationRequest;
+import com.thegame.response.NewConversationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +37,7 @@ public class ConversationFacade {
         return conversationService.saveNewConversationMessage(conversationId, user, request);
     }
 
-    public Conversation createNewConversation(AuthenticationUserObject user, ConversationRequest request) {
+    public NewConversationResponse createNewConversation(AuthenticationUserObject user, NewConversationRequest request) {
         return conversationService.createNewConversation(user, request);
     }
 

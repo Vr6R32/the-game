@@ -3,7 +3,7 @@ function createAvatarWrapper(userAvatarUrl) {
     avatarWrapper.classList.add('avatar-wrapper');
     const avatarImg = document.createElement('img');
     avatarImg.classList.add('user-avatar');
-    avatarImg.src = userAvatarUrl;
+    avatarImg.src = 'api/v1/static/avatar/' + userAvatarUrl;
     avatarWrapper.appendChild(avatarImg);
     return avatarWrapper;
 }

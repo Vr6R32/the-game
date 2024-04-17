@@ -11,9 +11,13 @@ import java.util.UUID;
 record UserSessionController(UserSessionFacade sessionFacade) {
 
 
-
     @PostMapping
     public Map<UUID, UserSessionDTO>  findUserSessionDetailsByIdsMap(@RequestBody Map<UUID, Long> conversationIdSecondUserIdMap) {
         return sessionFacade.findUserSessionDetailsByIdsMap(conversationIdSecondUserIdMap);
+    }
+
+    @GetMapping("{userId}")
+    public UserSessionDTO findUserSessionDetailsById(@PathVariable Long userId) {
+        return sessionFacade.findUserSessionByUserId(userId);
     }
 }

@@ -8,23 +8,24 @@
         <sql>
             CREATE TABLE IF NOT EXISTS conversations (
                     id UUID PRIMARY KEY,
-                    firstUserId BIGINT,
-                    secondUserId BIGINT,
-                    lastMessageSenderId BIGINT,
-                    statusUpdatedByUserId BIGINT,
-                    firstUserContactName VARCHAR(255),
-                    secondUserContactName VARCHAR(255),
+                    first_user_id BIGINT,
+                    second_user_id BIGINT,
+                    last_message_sender_id BIGINT,
+                    status_Updated_By_user_id BIGINT,
+                    first_user_contact_Name VARCHAR(255),
+                    second_user_contact_name VARCHAR(255),
                     status VARCHAR(50),
-                    lastMessageDate DATE,
-                    isReadByReceiver BOOLEAN
+                    last_message_date DATE,
+                    is_read_by_receiver BOOLEAN
             );
 
             CREATE TABLE IF NOT EXISTS  conversation_messages (
                     id UUID PRIMARY KEY,
                     conversation_id UUID,
-                    senderId BIGINT,
-                    messageText VARCHAR(1000),
-                    sendDate TIMESTAMP,
+                    sender_id BIGINT,
+                    payload VARCHAR(1000),
+                    message_send_date TIMESTAMP,
+                    message_read_date TIMESTAMP,
                     CONSTRAINT fk_conversation FOREIGN KEY (conversation_id) REFERENCES conversations(id)
             );
         </sql>

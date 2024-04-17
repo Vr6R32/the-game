@@ -2,6 +2,7 @@ package com.thegame.clients;
 
 
 import com.thegame.dto.AppUserDTO;
+import com.thegame.request.NewConversationRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,4 +17,11 @@ public interface UserServiceClient {
 
     @GetMapping("api/v1/users/{email}")
     Long getUserIdByEmailAddress(@RequestHeader("X-USER-AUTH") String user, @PathVariable("email") String email);
+
+    @PostMapping("api/v1/users/register/invitation")
+    Long createInvitedUserAccount(@RequestHeader("X-USER-AUTH") String user, NewConversationRequest request);
+
+    @GetMapping("api/v1/users/details/{email}")
+    AppUserDTO getUserDetailsByEmailAddress(@RequestHeader("X-USER-AUTH") String user, @PathVariable("email") String email);
+
 }

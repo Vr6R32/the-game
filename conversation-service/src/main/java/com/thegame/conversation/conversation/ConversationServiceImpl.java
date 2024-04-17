@@ -8,7 +8,13 @@ import com.thegame.conversation.entity.Conversation;
 import com.thegame.conversation.entity.ConversationMessage;
 import com.thegame.model.ConversationStatus;
 import com.thegame.dto.*;
+import com.thegame.model.Notification;
+import com.thegame.model.NotificationType;
+import com.thegame.model.Status;
 import com.thegame.request.ConversationMessageRequest;
+import com.thegame.request.NewConversationRequest;
+import com.thegame.response.NewConversationResponse;
+import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
 import java.util.*;
@@ -98,9 +104,17 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
     }
 
     @Override
-    public Conversation createNewConversation(AuthenticationUserObject user, ConversationRequest request) {
+    public NewConversationResponse createNewConversation(AuthenticationUserObject user, NewConversationRequest request) {
+
         // TODO USER SERVICE FIND BY EMAIL , IF NOT EXISTS SEND AN EMAIL INVITATION
-        Long secondUserId = userServiceClient.getUserIdByEmailAddress(mapUserToJsonObject(user), request.secondUserEmail());
+
+        AppUserDTO secondUser = userServiceClient.getUserDetailsByEmailAddress(mapUserToJsonObject(user), request.secondUserEmail());
+
+        Long secondUserId = secondUser.id();
+
+        if(secondUserId==null) { secondUserId = userServiceClient.createInvitedUserAccount(mapUserToJsonObject(user), request); }
+
+        if(conversationRepository.findConversationByFirstUserIdAndSecondUserId(user.id(), secondUserId).isPresent()) return new NewConversationResponse("CONVERSATION ALREADY EXIST", HttpStatus.OK,null);
 
         Conversation newConversation = Conversation.builder()
                 .firstUserId(user.id())
@@ -110,7 +124,44 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
                 .statusUpdatedByUserId(user.id())
                 .build();
 
-        return conversationRepository.save(newConversation);
+        conversationRepository.save(newConversation);
+
+        // TODO IF USER EXISTS CHECK STATUS IF LOGGED IN , SEND NOTIFICATION
+
+        UserSessionDTO secondUserSessionDetails = webSocketSessionClient.findUserSessionDetailsById(mapUserToJsonObject(user), secondUserId);
+
+        Status userStatus = null;
+        Date logoutTime = null;
+
+        if (secondUserSessionDetails != null) {
+            userStatus = secondUserSessionDetails.status();
+            logoutTime = secondUserSessionDetails.logoutTime();
+        }
+
+        if (userStatus == Status.ONLINE || userStatus == Status.RECONNECTING) {
+            AppUserDTO initiator = userServiceClient.getUserDetailsByEmailAddress(mapUserToJsonObject(user), user.email());
+
+            DetailedConversationDTO secondUserNotification = new DetailedConversationDTO(newConversation.getId(),user.id(),initiator.avatarUrl(),initiator.email(),
+                    Status.ONLINE,null,null,user.username(),ConversationStatus.INVITATION,false);
+
+            webSocketSessionClient.sendNewConversationNotificationEvent(mapUserToJsonObject(user), new Notification(NotificationType.CONVERSATION_INVITATION, secondUserNotification),secondUserId);
+
+        }
+
+        //TODO FETCH DATA, LIKE USER STATUS , LOGOUT DATE AND AVATAR
+
+        return new NewConversationResponse("CONVERSATION CREATED", HttpStatus.OK, new DetailedConversationDTO(
+                newConversation.getId(),
+                secondUserId,
+                secondUser.avatarUrl(),
+                request.secondUserEmail(),
+                userStatus,
+                logoutTime,
+                null,
+                newConversation.getSecondUserContactName(),
+                ConversationStatus.INVITATION,
+                false
+        ));
     }
 
 

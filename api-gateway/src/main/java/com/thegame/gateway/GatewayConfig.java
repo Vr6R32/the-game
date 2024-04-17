@@ -68,13 +68,15 @@ public class GatewayConfig {
                         .filters(f -> f.filter(gatewayFilter))
                         .uri("lb://CONVERSATION-SERVICE"))
 
-//                .route("frontend", r -> r.path("/messages")
-//                        .filters(f -> f.filter(gatewayFilter))
-//                        .uri("lb://FRONTEND"))
+                .route("frontend_api_static", r -> r.path("/api/v1/static/**")
+                        .filters(f -> f.filter(gatewayFilter))
+                        .uri("lb://FRONTEND"))
 
                 .route("frontend", r -> r.path("/**")
                         .filters(f -> f.filter(gatewayFilter))
                         .uri("lb://FRONTEND"))
+
+
                 .build();
     }
 }

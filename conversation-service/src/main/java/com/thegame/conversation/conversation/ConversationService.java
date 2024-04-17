@@ -1,8 +1,9 @@
 package com.thegame.conversation.conversation;
 
-import com.thegame.conversation.entity.Conversation;
 import com.thegame.dto.*;
 import com.thegame.request.ConversationMessageRequest;
+import com.thegame.request.NewConversationRequest;
+import com.thegame.response.NewConversationResponse;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +20,6 @@ public interface ConversationService {
 
     String saveNewConversationMessage(UUID conversationId, AuthenticationUserObject user, ConversationMessageRequest request);
 
-    Conversation createNewConversation(AuthenticationUserObject user, ConversationRequest request);
+    NewConversationResponse createNewConversation(AuthenticationUserObject user, NewConversationRequest request);
 
 }

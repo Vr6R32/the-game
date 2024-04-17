@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thegame.clients.ConversationServiceClient;
 import com.thegame.dto.AuthenticationUserObject;
 import com.thegame.dto.ConversationFriendInfo;
+import com.thegame.dto.DetailedConversationDTO;
+import com.thegame.model.Notification;
 import com.thegame.model.Status;
 import com.thegame.websocket.filter.WebsocketUserPrincipal;
 import com.thegame.websocket.utils.WebSocketPrincipalMapper;
@@ -17,7 +19,8 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
-import static com.thegame.websocket.notification.NotificationType.FRIEND_SESSION_UPDATE;
+import static com.thegame.model.NotificationType.CONVERSATION_INVITATION;
+import static com.thegame.model.NotificationType.FRIEND_SESSION_UPDATE;
 
 @RequiredArgsConstructor
 class NotificationServiceImpl implements NotificationService {
@@ -42,6 +45,19 @@ class NotificationServiceImpl implements NotificationService {
         }
 
     }
+
+    @Override
+    public void sendConversationInvitationEventToSecondUser(Notification notification,Long secondUserId) {
+
+        //TODO HANDLE CASE WHEN NOTIFICATION STATUS IS RECONNECTING
+
+        DetailedConversationDTO detailedConversationDTO = objectMapper.convertValue(notification.payload(), DetailedConversationDTO.class);
+
+        messagingTemplate.convertAndSendToUser(
+                String.valueOf(secondUserId),
+                "/notifications",
+                new Notification(CONVERSATION_INVITATION, detailedConversationDTO));
+        }
 
 
     public String mapUserToJsonObject(AuthenticationUserObject appUser) {

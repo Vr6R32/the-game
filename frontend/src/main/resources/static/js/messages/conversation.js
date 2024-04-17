@@ -77,6 +77,17 @@ function createNewContactDiv() {
 
 }
 
+function handleNewConversationResponse(conversationResponse) {
+
+    let newConversation = conversationResponse.conversation;
+    invitationsCount++;
+
+    updateContactButtonValues(document.getElementById('normal-contacts'),document.getElementById('invite-contacts'));
+    createConversationDiv(newConversation);
+    if(currentContactsTab==="INVITATION") appendSpecifiedTypeConversations(currentContactsTab);
+
+}
+
 function submitNewContactInvitation() {
     fetch('api/v1/conversations', {
         method: 'POST',
@@ -95,7 +106,7 @@ function submitNewContactInvitation() {
             return response.json();
         })
         .then(data => {
-            console.log('Success:', data);
+            handleNewConversationResponse(data);
         })
         .catch((error) => {
             console.error('Error:', error);
@@ -122,13 +133,31 @@ function updateContactButtonValues(normalContactsButton, invitesContactsButton) 
 }
 
 function appendSpecifiedTypeConversations(statusType) {
+
     const acceptedConversations = Object.values(conversationsDivs).filter(div => div.conversationStatus === statusType);
+
     let contactsList = document.getElementById('contactsList');
     contactsList.innerHTML = '';
     currentContactsTab = statusType;
     acceptedConversations.forEach(div => {
         contactsList.appendChild(div.div);
     });
+
+
+    let searchInput = document.getElementById("searchInput");
+    if (searchInput && searchInput.value.trim() !== '') {
+        let searchTerm = searchInput.value.toLowerCase();
+        contactsList.innerHTML = "";
+
+        let filteredConversations = Object.values(conversationsDivs).filter(div =>
+            div.conversationStatus === currentContactsTab && div.div.textContent.toLowerCase().includes(searchTerm)
+        );
+
+        filteredConversations.forEach(div => {
+            contactsList.appendChild(div.div);
+        });
+    }
+
 }
 
 function createContactsContainer() {

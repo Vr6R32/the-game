@@ -18,6 +18,7 @@ import java.util.Collections;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "app_users")
 public class AppUser implements UserDetails {
 
     @Id

@@ -29,6 +29,7 @@ class SecurityConfig {
                 .addFilterBefore(serviceAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
+                                .requestMatchers("/api/v1/static/**").permitAll()
                                 .requestMatchers("/favicon.ico").permitAll()
                                 .requestMatchers("/css/**").permitAll()
                                 .requestMatchers("/js/**").permitAll()
