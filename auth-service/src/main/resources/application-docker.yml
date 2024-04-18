@@ -27,12 +27,12 @@ application:
   security:
     jwt:
       secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B59701231BZCZWQWRXCVXQWEQWREYGCX34234VXCVERW
-      expiration: 660000
-      #      expiration: 15000
+      expiration: 1900000
       refresh-token:
-        expiration: 604800000 # 7 days
-token:
-  key:
-    value: Udh5YQlFnpMuEwltT7m4q8Dcsvz+G28Iqru3kk3vJx8=
-  ivParameter:
-    value: anjbBT/W+R6ycBK2Akx1Ug==
+        expiration: 3600000
+      token-encryption:
+        key-value: Udh5YQlFnpMuEwltT7m4q8Dcsvz+G28Iqru3kk3vJx8=
+        ivParameter: anjbBT/W+R6ycBK2Akx1Ug==
+        algorithm: AES
+        transformation: AES/CBC/PKCS5Padding
+        key-size: 256

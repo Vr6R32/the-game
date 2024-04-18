@@ -12,7 +12,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,15 +22,21 @@ import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
 
-@RequiredArgsConstructor
 class JwtServiceImpl implements JwtService {
 
-    public static final String USER_ID = "userId";
-    public static final String EMAIL = "email";
-    public static final String ROLES = "roles";
+    private static final String USER_ID = "userId";
+    private static final String EMAIL = "email";
+    private static final String ROLES = "roles";
 
     private final TokenEncryption tokenEncryption;
     private final JwtConfig jwtConfig;
+
+    public JwtServiceImpl(TokenEncryption tokenEncryption, JwtConfig jwtConfig) {
+        this.tokenEncryption = tokenEncryption;
+        this.jwtConfig = jwtConfig;
+    }
+
+
 
     @Override
     public AuthenticationResponse authenticate(AppUser user, HttpServletResponse response) {

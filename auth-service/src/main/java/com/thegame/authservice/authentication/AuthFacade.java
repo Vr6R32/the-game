@@ -5,7 +5,13 @@ import com.thegame.dto.RefreshTokenAuthResponse;
 import com.thegame.response.LogoutResponse;
 import jakarta.servlet.http.HttpServletResponse;
 
-record AuthFacade(AuthService authService) {
+class AuthFacade {
+
+    private final AuthService authService;
+
+    public AuthFacade(AuthService authService) {
+        this.authService = authService;
+    }
 
     public AuthResponse authenticate(AuthRequest request, HttpServletResponse response) {
         return authService.authenticate(request,response);

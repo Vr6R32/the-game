@@ -16,7 +16,17 @@ import org.springframework.security.core.AuthenticationException;
 
 
 @Slf4j
-record AuthServiceImpl(AuthenticationManager authenticationManager, JwtFacade jwtFacade) implements AuthService {
+class AuthServiceImpl implements AuthService {
+
+    private final AuthenticationManager authenticationManager;
+    private final JwtFacade jwtFacade;
+
+
+    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtFacade jwtFacade) {
+        this.authenticationManager = authenticationManager;
+        this.jwtFacade = jwtFacade;
+    }
+
 
 
     @Override

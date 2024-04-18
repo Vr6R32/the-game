@@ -1,6 +1,5 @@
 package com.thegame.authservice.jwt;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.Cipher;
@@ -13,24 +12,21 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 @Slf4j
-@RequiredArgsConstructor
 public class TokenEncryption {
 
-    private static final String ALGORITHM = "AES";
-    private static final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
-    private static final String KEY_STRING = "Udh5YQlFnpMuEwltT7m4q8Dcsvz+G28Iqru3kk3vJx8=";
-    private static final String IV_STRING = "anjbBT/W+R6ycBK2Akx1Ug==";
-    private static final int KEY_SIZE = 256;
+    public TokenEncryption(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+    }
 
-
+    private final JwtConfig jwtConfig;
 
     public String encrypt(String token) {
         SecretKey key = decodeKeyFromString();
-        IvParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(IV_STRING));
+        IvParameterSpec iv = new IvParameterSpec(jwtConfig.getTokenEncryptionIvParameter());
         byte[] cipherText = new byte[0];
 
         try {
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            Cipher cipher = Cipher.getInstance(jwtConfig.getTokenEncryptionTransformation());
             cipher.init(Cipher.ENCRYPT_MODE, key, iv);
             cipherText = cipher.doFinal(token.getBytes());
         } catch (Exception e) {
@@ -42,10 +38,10 @@ public class TokenEncryption {
 
     public String decrypt(String token) {
         SecretKey key = decodeKeyFromString();
-        IvParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(IV_STRING));
+        IvParameterSpec iv = new IvParameterSpec(jwtConfig.getTokenEncryptionIvParameter());
         byte[] plainText = new byte[0];
         try {
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            Cipher cipher = Cipher.getInstance(jwtConfig.getTokenEncryptionTransformation());
             cipher.init(Cipher.DECRYPT_MODE, key, iv);
             plainText = cipher.doFinal(Base64.getDecoder().decode(token));
         } catch (Exception e) {
@@ -71,12 +67,12 @@ public class TokenEncryption {
     }
 
     private SecretKey generateKey() throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM);
-        keyGenerator.init(KEY_SIZE, new SecureRandom());
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(jwtConfig.getTokenEncryptionAlgorithm());
+        keyGenerator.init(jwtConfig.getTokenEncryptionKeySize(), new SecureRandom());
         return keyGenerator.generateKey();
     }
     private SecretKey decodeKeyFromString() {
-        byte[] decodedKey = Base64.getDecoder().decode(TokenEncryption.KEY_STRING);
-        return new SecretKeySpec(decodedKey, 0, decodedKey.length, ALGORITHM);
+        byte[] decodedKey = jwtConfig.getTokenEncryptionKey();
+        return new SecretKeySpec(decodedKey, 0, decodedKey.length, jwtConfig.getTokenEncryptionAlgorithm());
     }
 }

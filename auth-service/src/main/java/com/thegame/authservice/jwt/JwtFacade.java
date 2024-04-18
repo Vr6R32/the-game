@@ -6,7 +6,13 @@ import com.thegame.dto.RefreshTokenAuthResponse;
 import com.thegame.response.LogoutResponse;
 import jakarta.servlet.http.HttpServletResponse;
 
-public record JwtFacade(JwtService jwtService) {
+public class JwtFacade {
+
+    public JwtFacade(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+
+    private final JwtService jwtService;
 
     public AuthenticationResponse authenticate(AppUser user, HttpServletResponse response) {
         return jwtService.authenticate(user, response);

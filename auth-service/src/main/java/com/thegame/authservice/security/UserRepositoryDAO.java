@@ -3,14 +3,16 @@ package com.thegame.authservice.security;
 
 import com.thegame.AppUser;
 import com.thegame.model.Role;
-import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@RequiredArgsConstructor
 public class UserRepositoryDAO {
+
+    public UserRepositoryDAO(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     private final JdbcTemplate jdbcTemplate;
 
