@@ -4,8 +4,6 @@ server:
 spring:
   application:
     name: conversation-service
-  zipkin:
-    base-url: http://localhost:9411
   datasource:
     hikari:
       max-lifetime: 600000
@@ -28,9 +26,33 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
     fetch-registry: true
     register-with-eureka: true
   instance:
     preferIpAddress: true
     hostname: conversation-service
+
+
+
+management:
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+  observations:
+    key-values:
+      application: conversation-service
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /actuator
+  endpoint:
+    metrics:
+      enabled: true
+    shutdown:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true

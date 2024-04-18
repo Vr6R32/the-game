@@ -1,0 +1,52 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: 'API-GATEWAY'
+    static_configs:
+      - targets: ['localhost']
+        labels:
+          job: 'API-GATEWAY'
+          __path__: '/var/log/spring/api-gateway.*.log'
+
+  - job_name: 'AUTH-SERVICE'
+    static_configs:
+      - targets: ['localhost']
+        labels:
+          job: 'AUTH-SERVICE'
+          __path__: '/var/log/spring/auth-service.*.log'
+
+  - job_name: 'CONVERSATION-SERVICE'
+    static_configs:
+      - targets: ['localhost']
+        labels:
+          job: 'CONVERSATION-SERVICE'
+          __path__: '/var/log/spring/conversation-service.*.log'
+
+  - job_name: 'FRONTEND'
+    static_configs:
+      - targets: ['localhost']
+        labels:
+          job: 'FRONTEND'
+          __path__: '/var/log/spring/frontend.*.log'
+
+  - job_name: 'USER-SERVICE'
+    static_configs:
+      - targets: ['localhost']
+        labels:
+          job: 'USER-SERVICE'
+          __path__: '/var/log/spring/user-service.*.log'
+
+  - job_name: 'websocket-service'
+    static_configs:
+      - targets: ['localhost']
+        labels:
+          job: 'WEBSOCKET-SERVICE'
+          __path__: '/var/log/spring/websocket-service.*.log'

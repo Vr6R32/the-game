@@ -18,3 +18,25 @@ eureka:
   instance:
     preferIpAddress: true
     hostname: gateway
+
+management:
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+  observations:
+    key-values:
+      application: api-gateway
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /actuator
+  endpoint:
+    metrics:
+      enabled: true
+    shutdown:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true

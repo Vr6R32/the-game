@@ -4,8 +4,6 @@ server:
 spring:
   application:
     name: auth-service
-  zipkin:
-    base-url: http://localhost:9411
   datasource:
     hikari:
       max-lifetime: 600000
@@ -36,3 +34,26 @@ application:
         algorithm: AES
         transformation: AES/CBC/PKCS5Padding
         key-size: 256
+
+
+management:
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+  observations:
+    key-values:
+      application: auth-service
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /actuator
+  endpoint:
+    metrics:
+      enabled: true
+    shutdown:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true

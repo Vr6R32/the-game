@@ -29,6 +29,8 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
       - MONGO_INITDB_DATABASE=user_session
+    networks:
+      - mongo-network
     volumes:
       - mongo-data:/data/db
       - ./db-init/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
@@ -45,10 +47,80 @@ services:
       - ME_CONFIG_MONGODB_AUTH_PASSWORD=${MONGO_ROOT_PASSWORD}
       - ME_CONFIG_BASICAUTH_USERNAME=${MONGOEXPRESS_LOGIN}
       - ME_CONFIG_BASICAUTH_PASSWORD=${MONGOEXPRESS_PASSWORD}
+    networks:
+      - mongo-network
     depends_on:
       - mongo
     ports:
       - "27016:8081"
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - logging
+    restart: unless-stopped
+
+  promtail:
+    container_name: promtail
+    image: grafana/promtail:latest
+    volumes:
+      - api-logs:/var/log/spring
+      - ./logging_infrastructure/promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - logging
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Warsaw
+
+  loki:
+    container_name: loki
+    image: grafana/loki:latest
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - logging
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Warsaw
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=secret
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./logging_infrastructure/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./logging_infrastructure/grafana/datasources-config.yml:/etc/grafana/provisioning/datasources/main.yml
+      - ./logging_infrastructure/grafana/dashboard-config.yml:/etc/grafana/provisioning/dashboards/main.yml
+    depends_on:
+      - prometheus
+      - loki
+    ports:
+      - "3000:3000"
+    networks:
+      - logging
+    restart: unless-stopped
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.48.0
+    volumes:
+      - ./logging_infrastructure/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - logging
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Warsaw
 
 
   api-gateway:
@@ -58,7 +130,10 @@ services:
       - "8083:8083"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    volumes:
+      - api-logs:/var/log/spring
     networks:
+      - logging
       - spring
     depends_on:
       - eureka-server
@@ -74,7 +149,10 @@ services:
       SERVER_PORT: 8084
       SPRING_PROFILES_ACTIVE: docker
       TZ: Europe/Warsaw
+    volumes:
+      - api-logs:/var/log/spring
     networks:
+      - logging
       - spring
       - postgres
     depends_on:
@@ -90,7 +168,10 @@ services:
       SERVER_PORT: 8087
       SPRING_PROFILES_ACTIVE: docker
       TZ: Europe/Warsaw
+    volumes:
+      - api-logs:/var/log/spring
     networks:
+      - logging
       - spring
       - postgres
     depends_on:
@@ -104,7 +185,10 @@ services:
       - "8761:8761"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    volumes:
+      - api-logs:/var/log/spring
     networks:
+      - logging
       - spring
     restart: unless-stopped
 
@@ -117,7 +201,11 @@ services:
       SERVER_PORT: 8080
       SPRING_PROFILES_ACTIVE: docker
       TZ: Europe/Warsaw
+    volumes:
+      - api-logs:/var/log/spring
+      - ./files/static:/app/files/static
     networks:
+      - logging
       - spring
     depends_on:
       - api-gateway
@@ -133,7 +221,10 @@ services:
       SERVER_PORT: 8082
       SPRING_PROFILES_ACTIVE: docker
       TZ: Europe/Warsaw
+    volumes:
+      - api-logs:/var/log/spring
     networks:
+      - logging
       - spring
       - postgres
     depends_on:
@@ -150,9 +241,12 @@ services:
       SERVER_PORT: 8085
       SPRING_PROFILES_ACTIVE: docker
       TZ: Europe/Warsaw
+    volumes:
+      - api-logs:/var/log/spring
     networks:
+      - logging
       - spring
-      - postgres
+      - mongo-network
     depends_on:
       - api-gateway
     restart: unless-stopped
@@ -161,10 +255,20 @@ services:
 volumes:
   mongo-data:
   postgres-data:
-
+  grafana-data:
+  api-logs:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./logging_infrastructure/api-logs
+      o: bind
 
 networks:
+  logging:
+    driver: bridge
   spring:
     driver: bridge
   postgres:
+    driver: bridge
+  mongo-network:
     driver: bridge

@@ -1,0 +1,15 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    uid: 'fd86725d-30af-4259-8e75-6682833c7622'
+
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    uid: 'cde9d699-3d9c-4b21-bde6-c29b58402ec6'
