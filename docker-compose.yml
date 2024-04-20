@@ -99,7 +99,7 @@ services:
       - ./logging_infrastructure/grafana/datasources-config.yml:/etc/grafana/provisioning/datasources/main.yml
       - ./logging_infrastructure/grafana/dashboard-config.yml:/etc/grafana/provisioning/dashboards/main.yml
     depends_on:
-      - prometheus
+#      - prometheus
       - loki
     ports:
       - "3000:3000"
@@ -112,8 +112,10 @@ services:
     image: prom/prometheus:v2.48.0
     volumes:
       - ./logging_infrastructure/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./logging_infrastructure/sleep.sh:/etc/prometheus/sleep.sh
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
+    entrypoint: /etc/prometheus/sleep.sh
     networks:
       - logging
     ports:
@@ -129,7 +131,8 @@ services:
     ports:
       - "8083:8083"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      SERVER_PORT: 8083
+      SPRING_PROFILES_ACTIVE: docker
     volumes:
       - api-logs:/var/log/spring
     networks:

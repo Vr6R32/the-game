@@ -10,7 +10,7 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets:
-          - localhost:9090
+          - host.docker.internal:9090
 
   - job_name: 'eureka-discovery'
     metrics_path: '/actuator/prometheus'
@@ -21,9 +21,9 @@ scrape_configs:
         refresh_interval: 30s
 
     relabel_configs:
-      - source_labels: [__meta_eureka_app_instance_vip_address, __meta_eureka_app_instance_port]
+      - source_labels: [__meta_eureka_app_instance_ip_addr, __meta_eureka_app_instance_port]
         regex: '(.*);(\d+)'
-        replacement: '${1}:${2}'
+        replacement: 'host.docker.internal:${2}'
         target_label: __address__
 
       - source_labels: [__meta_eureka_app_instance_id]

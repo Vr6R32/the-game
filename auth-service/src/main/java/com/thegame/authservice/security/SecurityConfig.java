@@ -1,6 +1,5 @@
 package com.thegame.authservice.security;
 
-import com.thegame.model.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,7 +37,8 @@ class SecurityConfig {
                                 .requestMatchers("api/v1/auth/refresh-token/**").permitAll()
                                 .requestMatchers("api/v1/auth/logout").permitAll()
                                 .requestMatchers("api/v1/auth/login").permitAll()
-                                .anyRequest().hasRole(Role.ROLE_ADMIN.toString())
+//                                .anyRequest().hasRole(Role.ROLE_ADMIN.toString())
+                                .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider());

@@ -39,7 +39,7 @@ application:
 management:
   zipkin:
     tracing:
-      endpoint: http://zipkin:9411/api/v2/spans
+      endpoint: http://localhost:9411/api/v2/spans
   observations:
     key-values:
       application: auth-service
