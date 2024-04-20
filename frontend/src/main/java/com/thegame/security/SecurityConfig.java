@@ -9,8 +9,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static com.thegame.model.Role.ROLE_ADMIN;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -34,7 +36,7 @@ class SecurityConfig {
                                 .requestMatchers("/css/**").permitAll()
                                 .requestMatchers("/js/**").permitAll()
                                 .requestMatchers("/").permitAll()
-                                .anyRequest().hasRole(ROLE_ADMIN.toString())
+                                .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
         return http.build();

@@ -184,7 +184,8 @@ services:
     ports:
       - "8761:8761"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      SERVER_PORT: 8761
+      SPRING_PROFILES_ACTIVE: docker
     volumes:
       - api-logs:/var/log/spring
     networks:
@@ -211,7 +212,6 @@ services:
       - api-gateway
     restart: unless-stopped
 
-
   user-service:
     image: michaelkey/user-service:0.0.1-SNAPSHOT
     container_name: user-service
@@ -230,6 +230,25 @@ services:
     depends_on:
       - api-gateway
     restart: unless-stopped
+
+#  user-service2:
+#    image: michaelkey/user-service:0.0.1-SNAPSHOT
+#    container_name: user-service
+#    ports:
+#      - "8090:8090"
+#    environment:
+#      SERVER_PORT: 8090
+#      SPRING_PROFILES_ACTIVE: docker
+#      TZ: Europe/Warsaw
+#    volumes:
+#      - api-logs:/var/log/spring
+#    networks:
+#      - logging
+#      - spring
+#      - postgres
+#    depends_on:
+#      - api-gateway
+#    restart: unless-stopped
 
 
   websocket-service:
