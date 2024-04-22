@@ -9,44 +9,44 @@ clients:
   - url: http://loki:3100/loki/api/v1/push
 
 scrape_configs:
-  - job_name: 'API-GATEWAY'
+  - job_name: 'api-gateway'
     static_configs:
       - targets: ['localhost']
         labels:
-          job: 'API-GATEWAY'
+          job: 'api-gateway'
           __path__: '/var/log/spring/api-gateway.*.log'
 
-  - job_name: 'AUTH-SERVICE'
+  - job_name: 'auth-service'
     static_configs:
       - targets: ['localhost']
         labels:
-          job: 'AUTH-SERVICE'
+          job: 'auth-service'
           __path__: '/var/log/spring/auth-service.*.log'
 
-  - job_name: 'CONVERSATION-SERVICE'
+  - job_name: 'conversation-service'
     static_configs:
       - targets: ['localhost']
         labels:
-          job: 'CONVERSATION-SERVICE'
+          job: 'conversation-service'
           __path__: '/var/log/spring/conversation-service.*.log'
 
-  - job_name: 'FRONTEND'
+  - job_name: 'frontend'
     static_configs:
       - targets: ['localhost']
         labels:
-          job: 'FRONTEND'
+          job: 'frontend'
           __path__: '/var/log/spring/frontend.*.log'
 
-  - job_name: 'USER-SERVICE'
+  - job_name: 'user-service'
     static_configs:
       - targets: ['localhost']
         labels:
-          job: 'USER-SERVICE'
+          job: 'user-service'
           __path__: '/var/log/spring/user-service.*.log'
 
   - job_name: 'websocket-service'
     static_configs:
       - targets: ['localhost']
         labels:
-          job: 'WEBSOCKET-SERVICE'
+          job: 'websocket-service'
           __path__: '/var/log/spring/websocket-service.*.log'

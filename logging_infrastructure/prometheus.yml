@@ -21,9 +21,9 @@ scrape_configs:
         refresh_interval: 30s
 
     relabel_configs:
-      - source_labels: [__meta_eureka_app_instance_ip_addr, __meta_eureka_app_instance_port]
+      - source_labels: [__meta_eureka_app_instance_secure_vip_address, __meta_eureka_app_instance_port]
         regex: '(.*);(\d+)'
-        replacement: 'host.docker.internal:${2}'
+        replacement: '${1}:${2}'
         target_label: __address__
 
       - source_labels: [__meta_eureka_app_instance_id]

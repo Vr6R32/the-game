@@ -366,7 +366,10 @@ function createSpecifiedConversationMessagesBox(conversation, conversationDiv) {
 
         const avatarWrapper = createAvatarWrapper(conversation.userAvatarUrl);
         const detailsDiv = createUserDetailsDiv(conversation.username, conversation.userEmail);
-        const statusDot = createStatusDot(conversation.userStatus);
+
+        let userStatus = conversationsDivs[conversation.id].userStatus;
+
+        const statusDot = createStatusDot(userStatus);
 
         const conversationInfo = conversationsDivs[conversation.id];
         const activitySpan = createActivityStatusSpan(conversationInfo.userStatus, conversationInfo.userLogoutDate);

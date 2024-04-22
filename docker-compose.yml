@@ -254,24 +254,24 @@ services:
 #    restart: unless-stopped
 
 
-  websocket-service:
-    image: michaelkey/websocket-service:0.0.1-SNAPSHOT
-    container_name: websocket-service
-    ports:
-      - "8085:8085"
-    environment:
-      SERVER_PORT: 8085
-      SPRING_PROFILES_ACTIVE: docker
-      TZ: Europe/Warsaw
-    volumes:
-      - api-logs:/var/log/spring
-    networks:
-      - logging
-      - spring
-      - mongo-network
-    depends_on:
-      - api-gateway
-    restart: unless-stopped
+#  websocket-service:
+#    image: michaelkey/websocket-service:0.0.1-SNAPSHOT
+#    container_name: websocket-service
+#    ports:
+#      - "8085:8085"
+#    environment:
+#      SERVER_PORT: 8085
+#      SPRING_PROFILES_ACTIVE: docker
+#      TZ: Europe/Warsaw
+#    volumes:
+#      - api-logs:/var/log/spring
+#    networks:
+#      - logging
+#      - spring
+#      - mongo-network
+#    depends_on:
+#      - api-gateway
+#    restart: unless-stopped
 
 
 volumes:

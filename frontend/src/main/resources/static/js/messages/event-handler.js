@@ -16,7 +16,7 @@ function handleFriendConversationSessionUpdate(payload) {
         payload.eventDate
     );
 
-    conversationsDivs[conversationId].status = payload.status;
+    conversationsDivs[conversationId].userStatus = payload.status;
     if (payload.status === "OFFLINE") {
         conversationsDivs[conversationId].userLogoutDate = payload.eventDate;
     }
