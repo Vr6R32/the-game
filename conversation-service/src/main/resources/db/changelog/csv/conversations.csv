@@ -1,0 +1,8 @@
+"id","first_user_id","second_user_id","last_message_sender_id","status_updated_by_user_id","first_user_contact_name","second_user_contact_name","status","last_message_date","is_read_by_receiver"
+4ec26891-fa79-4bbd-821e-03fe0bcfcf5b,12,4,,12,tester,heisannoying,INVITATION,,false
+735d18e6-540b-4db2-87d6-a5c07bf2b4fa,12,10,,12,tester,casualuser,INVITATION,,false
+e059565a-594a-4769-b911-c43e02a836e1,12,3,,12,tester,likethatguy,ACCEPTED,,false
+f532dfe0-df61-4e36-9681-658d874ed69e,12,6,,12,tester,hrspecialist,ACCEPTED,,false
+6707485b-945d-41ea-af1e-aa6f8d31eb1b,12,8,,12,tester,gymfriend,ACCEPTED,,false
+a9560995-26c1-4119-adcf-7296cb4cf24f,12,9,,12,tester,justelon,ACCEPTED,,false
+632b696d-657b-489f-98da-b171407b4ba5,12,5,,12,tester,theboss,ACCEPTED,,false

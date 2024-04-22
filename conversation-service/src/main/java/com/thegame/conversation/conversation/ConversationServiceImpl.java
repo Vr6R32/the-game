@@ -120,6 +120,7 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
                 .firstUserId(user.id())
                 .secondUserId(secondUserId)
                 .status(ConversationStatus.INVITATION)
+                .firstUserContactName(user.username())
                 .secondUserContactName(request.secondUserContactName())
                 .statusUpdatedByUserId(user.id())
                 .build();
@@ -175,9 +176,9 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
         Map<UUID, ConversationInfo> conversationInfoMap = new LinkedHashMap<>();
         for (ConversationDTO conversation : allConversationsByUserId) {
             Long secondUserId = conversation.firstUserId().equals(user.id()) ? conversation.secondUserId() : conversation.firstUserId();
+            String secondUserContactName = secondUserId.equals(conversation.firstUserId()) ? conversation.firstUserContactName() : conversation.secondUserContactName();
             boolean isUnread = conversation.lastMessageSenderId() != null && conversation.lastMessageSenderId().equals(secondUserId) && !conversation.isReadByReceiver();
-            conversationInfoMap.put(conversation.id(), new ConversationInfo(secondUserId, conversation.lastMessageDate(),
-                    conversation.secondUserContactName(),conversation.status(),isUnread));
+            conversationInfoMap.put(conversation.id(), new ConversationInfo(secondUserId, conversation.lastMessageDate(), secondUserContactName, conversation.status(), isUnread));
         }
 
         return conversationInfoMap;

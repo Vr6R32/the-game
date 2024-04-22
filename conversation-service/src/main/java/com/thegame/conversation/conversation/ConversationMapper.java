@@ -18,6 +18,7 @@ public class ConversationMapper {
                 conversation.getLastMessageSenderId(),
                 conversation.isReadByReceiver(),
                 conversation.getLastMessageDate(),
+                conversation.getFirstUserContactName(),
                 conversation.getSecondUserContactName(),
                 conversation.getStatus());
     }
