@@ -41,3 +41,7 @@ management:
     metrics:
       export:
         enabled: true
+
+static:
+  files:
+    path: files/static/avatar.jpg

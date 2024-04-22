@@ -1,6 +1,7 @@
 package com.thegame.controller;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -12,13 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1/static")
 public class ResourceController {
 
-//    @GetMapping(value = "avatar/{imageUrl}", produces = MediaType.IMAGE_JPEG_VALUE)
-//    public Resource getImage(@PathVariable String imageUrl) {
-//        return new FileSystemResource("files/static/" + imageUrl);
-//    }
+    @Value("${static.files.path}")
+    private String filesPath;
 
     @GetMapping(value = "avatar/default", produces = MediaType.IMAGE_JPEG_VALUE)
     public Resource getImage() {
-        return new FileSystemResource("app/files/static/avatar.jpg");
+        return new FileSystemResource(filesPath);
     }
 }
