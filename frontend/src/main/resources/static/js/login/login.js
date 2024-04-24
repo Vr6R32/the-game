@@ -76,7 +76,7 @@ function submitLoginForm() {
                 stabilizeWebSocketConnection();
                 createContactsContainer()
             } else {
-                // MAKE AUTH ERROR
+                //TODO MAKE AUTH ERROR HANDLING
             }
         })
         .catch(error => {
@@ -109,6 +109,9 @@ function logout() {
         .then(data => {
             console.log(data);
             stompClient.disconnect();
+            acceptedCount = 0;
+            invitationsCount = 0;
+            conversationsDivs = [];
             handleLogoutAnimation();
         })
         .catch(error => {

@@ -17,6 +17,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import java.util.Date;
 import java.util.UUID;
 
 import static com.thegame.websocket.WebSocketManager.extractDestinationPathVariable;
@@ -47,19 +48,23 @@ public class WebSocketController {
         AuthenticationUserObject senderUser = extractUserFromSession(headerAccessor);
         UUID conversationId = extractDestinationPathVariable(headerAccessor);
 
-        ChatMessage validatedMsg = new ChatMessage(conversationId,senderUser.id(),chatMessage.payload());
+
         ConversationDTO conversation = conversationServiceClient
                 .findConversationById(mapUserToJsonObject(senderUser), conversationId);
 
         if(validateConversationAccess(conversation,senderUser)) {
             ConversationMessageRequest newMessageRequest = new ConversationMessageRequest(chatMessage.payload());
-            conversationServiceClient.sendAndSaveNewConversationMessage((mapUserToJsonObject(senderUser)),conversationId, newMessageRequest);
+            Date eventDate = conversationServiceClient.sendAndSaveNewConversationMessage((mapUserToJsonObject(senderUser)), conversationId, newMessageRequest);
 
+            ChatMessage validatedMsg = new ChatMessage(conversationId,senderUser.id(),chatMessage.payload(), eventDate);
 
             messagingTemplate.convertAndSendToUser(String.valueOf(senderUser.id()), "/messages", validatedMsg);
             Long receiverId = senderUser.id().equals(conversation.firstUserId()) ? conversation.secondUserId() : conversation.firstUserId();
 
+            //TODO HANDLE CASE WHEN MONGO CONNECTION IS DEAD
+
             UserSessionDTO receiverSession = userSessionFacade.findUserSessionByUserId(receiverId);
+
             if(receiverSession != null && receiverSession.status().equals(Status.ONLINE)) {
                 messagingTemplate.convertAndSendToUser(String.valueOf(receiverId), "/messages", validatedMsg);
             }

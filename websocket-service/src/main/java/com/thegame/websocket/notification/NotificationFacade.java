@@ -18,4 +18,8 @@ public class NotificationFacade {
         notificationService.sendConversationInvitationEventToSecondUser(notification,secondUserId);
 
     }
+
+    public void sendConversationStatusUpdateEvent(Notification notification, Long secondUserId) {
+        notificationService.sendConversationStatusUpdateEvent(notification, secondUserId);
+    }
 }

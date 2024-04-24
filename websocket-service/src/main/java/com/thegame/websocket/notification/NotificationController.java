@@ -16,4 +16,9 @@ class NotificationController {
         notificationFacade.sendConversationInvitationEventToSecondUser(notification,secondUserId);
     }
 
+    @PostMapping("conversation/status/update/{secondUserId}")
+    public void sendConversationStatusUpdateEvent(@RequestBody Notification notification, @PathVariable("secondUserId") Long secondUserId) {
+        notificationFacade.sendConversationStatusUpdateEvent(notification,secondUserId);
+    }
+
 }

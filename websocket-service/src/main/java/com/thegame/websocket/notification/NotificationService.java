@@ -8,5 +8,8 @@ interface NotificationService {
 
     void sendUpdateSessionStatusEventToConversationFriends(WebsocketUserPrincipal user, Status status);
 
-    void sendConversationInvitationEventToSecondUser(Notification notification,Long secondUserId);
+    void sendConversationInvitationEventToSecondUser(Notification notification, Long secondUserId);
+
+    void sendConversationStatusUpdateEvent(Notification notification, Long secondUserId);
+
 }

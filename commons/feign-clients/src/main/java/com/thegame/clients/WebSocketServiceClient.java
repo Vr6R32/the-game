@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @FeignClient(value = "websocket-service", configuration = FeignClientConfig.class)
-public interface WebSocketSessionClient {
+public interface WebSocketServiceClient {
 
     @PostMapping("api/v1/sessions")
     Map<UUID, UserSessionDTO> findConversationUserSessionsByIdMap(@RequestHeader("X-USER-AUTH") String user, @RequestBody Map<UUID, Long> conversationIdSecondUserIdMap);
@@ -20,5 +20,8 @@ public interface WebSocketSessionClient {
 
     @PostMapping("api/v1/ws/notifications/{secondUserId}")
     void sendNewConversationNotificationEvent(@RequestHeader("X-USER-AUTH") String user, Notification notification, @PathVariable("secondUserId") Long secondUserId);
+
+    @PostMapping("api/v1/ws/notifications/conversation/status/update/{secondUserId}")
+    void sendConversationStatusUpdateEvent(@RequestHeader("X-USER-AUTH") String user, @RequestBody Notification notification, @PathVariable("secondUserId") Long secondUserId);
 }
 

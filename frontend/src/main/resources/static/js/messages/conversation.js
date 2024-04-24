@@ -17,7 +17,7 @@ function checkIfUserAlreadyLogged() {
         .then(data => {
             if (!data) return;
             loggedUser = data;
-            setTimeout(createContactsContainer,1000);
+            setTimeout(createContactsContainer,300);
             stabilizeWebSocketConnection();
         })
         .catch(error => {
@@ -114,27 +114,43 @@ function submitNewContactInvitation() {
 }
 
 function updateContactButtonValues(normalContactsButton, invitesContactsButton) {
-    setTimeout(() => {
-        acceptedCount = 0;
-        invitationsCount = 0;
+    acceptedCount = 0;
+    invitationsCount = 0;
+    Object.values(conversationsDivs).forEach(conversationInfo => {
+        if (conversationInfo.conversationStatus === 'ACCEPTED') {
+            acceptedCount++;
+        } else if (conversationInfo.conversationStatus === 'INVITATION') {
+            invitationsCount++;
+        }
+    });
+    normalContactsButton.textContent = 'Contacts (' + acceptedCount + ')';
+    invitesContactsButton.textContent = 'Invites (' + invitationsCount + ')';
+}
 
-        Object.values(conversationsDivs).forEach(conversationInfo => {
-            if (conversationInfo.conversationStatus === 'ACCEPTED') {
-                acceptedCount++;
-            } else if (conversationInfo.conversationStatus === 'INVITATION') {
-                invitationsCount++;
-            }
-        });
+function sortConversations(acceptedConversations) {
+    acceptedConversations.sort((a, b) => {
+        const dateA = a.lastMessageDate ? new Date(a.lastMessageDate) : null;
+        const dateB = b.lastMessageDate ? new Date(b.lastMessageDate) : null;
 
-        normalContactsButton.textContent = 'Contacts (' + acceptedCount + ')';
-        invitesContactsButton.textContent = 'Invites (' + invitationsCount + ')';
-
-    }, 100);
+        if (dateA === null && dateB === null) {
+            return 0;
+        } else if (dateA === null) {
+            return 1;
+        } else if (dateB === null) {
+            return -1;
+        } else {
+            return dateB - dateA;
+        }
+    });
 }
 
 function appendSpecifiedTypeConversations(statusType) {
 
     const acceptedConversations = Object.values(conversationsDivs).filter(div => div.conversationStatus === statusType);
+
+    updateContactButtonValues(document.getElementById('normal-contacts'),document.getElementById('invite-contacts'));
+    sortConversations(acceptedConversations);
+
 
     let contactsList = document.getElementById('contactsList');
     contactsList.innerHTML = '';
@@ -192,13 +208,11 @@ function createContactsContainer() {
     let contactsList = document.createElement('div');
     contactsList.id = 'contactsList';
 
-    fetchConversations().then(conversationsDivs => {
-        const acceptedConversations = Object.values(conversationsDivs).filter(div => div.conversationStatus === 'ACCEPTED');
-        updateContactButtonValues(acceptedContactsButton, invitesContactsButton);
-        acceptedConversations.forEach(div => {
-            contactsList.appendChild(div.div);
-        });
+
+    fetchConversations().then(()  => {
+        appendSpecifiedTypeConversations(currentContactsTab);
     });
+
 
 
     let contactsPanel = document.createElement('div');
@@ -291,19 +305,16 @@ function removeContactsContainerAnimation(){
     contactsContainer.style.animation = 'none'
 }
 
-
 function fetchConversations() {
     return fetch('/api/v1/conversations')
         .then(response => response.json())
         .then(data => {
-            const sortedData = data.sort((a, b) => new Date(b.lastMessageDate) - new Date(a.lastMessageDate));
-            sortedData.forEach(conversation => {
+            data.forEach(conversation => {
                 createConversationDiv(conversation);
             });
             return conversationsDivs;
         });
 }
-
 
 function getActivityElapsedTime(logoutDateString) {
     const logoutDate = new Date(logoutDateString);
@@ -327,8 +338,6 @@ function getActivityElapsedTime(logoutDateString) {
     }
 }
 
-
-
 function updateLogoutTimes() {
     Object.keys(conversationsDivs).forEach(conversationId => {
         const conversationInfo = conversationsDivs[conversationId];
@@ -349,6 +358,43 @@ function updateLogoutTimes() {
 }
 
 setInterval(updateLogoutTimes, 61000);
+
+function handleConversationAwaitingAccept(conversationId, messageContainer, conversationMessagesContainer) {
+    if (conversationsDivs[conversationId].acceptFlag === true) {
+        let acceptConversationDiv = document.createElement('div');
+        acceptConversationDiv.setAttribute('id', 'acceptConversationDiv');
+
+        let acceptationText = document.createElement('span');
+        acceptationText.textContent = 'Accept that conversation?'
+        acceptationText.style.marginRight = '10px';
+        acceptationText.style.fontSize = '1.5vh';
+
+        let acceptRejectButtons = document.createElement('div');
+        acceptRejectButtons.className = 'buttons';
+
+        let acceptButton = document.createElement('button');
+        acceptButton.textContent = 'YES';
+        acceptButton.addEventListener('click', function() {
+            submitConversationStatusUpdateEvent(acceptConversationDiv,conversationId,true,conversationMessagesContainer);
+        });
+
+        let rejectButton = document.createElement('button');
+        rejectButton.textContent = 'NO';
+        rejectButton.addEventListener('click', function() {
+            submitConversationStatusUpdateEvent(acceptConversationDiv,conversationId,false,conversationMessagesContainer);
+        });
+
+        acceptRejectButtons.appendChild(acceptButton);
+        acceptRejectButtons.appendChild(rejectButton);
+
+        acceptConversationDiv.appendChild(acceptationText);
+        acceptConversationDiv.appendChild(acceptRejectButtons);
+
+
+        messageContainer.appendChild(acceptConversationDiv);
+        conversationMessagesContainer.style.height = '64%';
+    }
+}
 
 function createSpecifiedConversationMessagesBox(conversation, conversationDiv) {
     loadMessages(conversation.id).then(messages => {
@@ -401,7 +447,8 @@ function createSpecifiedConversationMessagesBox(conversation, conversationDiv) {
         conversationMessagesContainer.append(...messages);
         currentConversationId = conversation.id;
 
-        messageContainer.appendChild(conversationSecondUserDiv);
+        handleConversationAwaitingAccept(currentConversationId, messageContainer, conversationMessagesContainer);
+
         messageContainer.appendChild(conversationMessagesContainer);
 
         conversationMessagesContainer.scrollTop = conversationMessagesContainer.scrollHeight;
@@ -440,14 +487,15 @@ function createConversationDiv(conversation) {
 
     conversationsDivs[conversation.id] = {
         div: conversationDiv,
+        lastMessageDate: conversation.lastMessageDate,
         userStatus: conversation.userStatus,
         userLogoutDate: conversation.userLogoutDate,
-        conversationStatus: conversation.status
+        conversationStatus: conversation.status,
+        acceptFlag: conversation.awaitAcceptFlag
     };
 
     return conversationDiv;
 }
-
 
 function loadMessages(conversationId) {
     return fetch('/api/v1/conversations/messages/' + conversationId)

@@ -44,4 +44,4 @@ management:
 
 static:
   files:
-    path: files/static/avatar.jpg
+    path: files/static/

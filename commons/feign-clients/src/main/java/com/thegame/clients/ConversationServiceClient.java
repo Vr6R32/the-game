@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,6 +24,6 @@ public interface ConversationServiceClient {
     List<ConversationFriendInfo> getAllUserConversationSecondUserIds(@RequestHeader("X-USER-AUTH") String user);
 
     @PostMapping("api/v1/conversations/messages/{conversationId}/send")
-    String sendAndSaveNewConversationMessage(@RequestHeader("X-USER-AUTH") String user, @PathVariable("conversationId") UUID conversationId, ConversationMessageRequest request);
+    Date sendAndSaveNewConversationMessage(@RequestHeader("X-USER-AUTH") String user, @PathVariable("conversationId") UUID conversationId, ConversationMessageRequest request);
 }
 

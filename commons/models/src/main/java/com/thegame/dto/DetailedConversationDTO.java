@@ -15,5 +15,7 @@ public record DetailedConversationDTO(UUID id,
                                       Date lastMessageDate,
                                       String username,
                                       ConversationStatus status,
-                                              boolean isUnread) {
+                                      boolean isUnread,
+                                      boolean awaitAcceptFlag
+) {
 }

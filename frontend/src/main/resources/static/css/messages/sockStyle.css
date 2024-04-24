@@ -63,7 +63,6 @@
     display: flex;
     padding-left: 10px;
     padding-right: 10px;
-    /*border: 1px solid white;*/
 }
 
 #contactsList {
@@ -72,21 +71,17 @@
     border-radius: 10px;
     overflow-y: auto;
     overflow-x: hidden;
-    /*border: 1px solid darkgoldenrod;*/
 }
 
 #createContact {
     height:7%;
     justify-content: center;
     padding-bottom: 0.4vh;
-    /*border: 1px solid darkgoldenrod;*/
 }
 
 
 #contactsContainer {
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(39, 39, 39, 0.7));
-    /*background-color: transparent;*/
-    /*border-right: 1px dashed white;*/
     box-shadow: 5px 0px 0px 0px rgba(255, 255, 255, 0.4);
     height: 60vh;
     width: 100%;
@@ -123,6 +118,32 @@
     margin-bottom: 10px;
     border: 1px white;
     background-color: transparent;
+}
+
+#acceptConversationDiv {
+    height: 5%;
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+    word-wrap: break-word;
+    margin-bottom: 0.5%;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    left: 0;
+    right: 0;
+    z-index: 999;
+}
+
+.fade-out-remove {
+    animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0;
+        display: none;}
 }
 
 #conversationMessages {

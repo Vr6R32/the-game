@@ -15,7 +15,7 @@
                     first_user_contact_Name VARCHAR(255),
                     second_user_contact_name VARCHAR(255),
                     status VARCHAR(50),
-                    last_message_date DATE,
+                    last_message_date TIMESTAMP,
                     is_read_by_receiver BOOLEAN
             );
 

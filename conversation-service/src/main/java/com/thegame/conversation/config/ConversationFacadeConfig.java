@@ -2,7 +2,7 @@ package com.thegame.conversation.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thegame.clients.UserServiceClient;
-import com.thegame.clients.WebSocketSessionClientProxy;
+import com.thegame.clients.WebSocketServiceClientProxy;
 import com.thegame.conversation.conversation.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +15,7 @@ public class ConversationFacadeConfig {
     private final ConversationMessageRepository conversationMessageRepository;
     private final ConversationRepository conversationRepository;
     private final UserServiceClient userServiceClient;
-    private final WebSocketSessionClientProxy sessionClient;
+    private final WebSocketServiceClientProxy sessionClient;
     private final ObjectMapper objectMapper;
 
     @Bean

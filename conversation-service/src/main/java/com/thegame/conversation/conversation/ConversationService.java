@@ -2,9 +2,12 @@ package com.thegame.conversation.conversation;
 
 import com.thegame.dto.*;
 import com.thegame.request.ConversationMessageRequest;
+import com.thegame.request.ConversationStatusUpdateRequest;
 import com.thegame.request.NewConversationRequest;
+import com.thegame.response.ConversationStatusUpdateResponse;
 import com.thegame.response.NewConversationResponse;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,8 +21,9 @@ public interface ConversationService {
 
     List<ConversationMessageDTO> getAllConversationMessages(UUID conversationId, AuthenticationUserObject user);
 
-    String saveNewConversationMessage(UUID conversationId, AuthenticationUserObject user, ConversationMessageRequest request);
+    Date saveNewConversationMessage(UUID conversationId, AuthenticationUserObject user, ConversationMessageRequest request);
 
     NewConversationResponse createNewConversation(AuthenticationUserObject user, NewConversationRequest request);
 
+    ConversationStatusUpdateResponse updateConversationStatus(AuthenticationUserObject user, ConversationStatusUpdateRequest request);
 }

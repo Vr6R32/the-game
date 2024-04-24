@@ -7,5 +7,6 @@ import java.util.UUID;
 
 public record ConversationDTO(UUID id, Long firstUserId, Long secondUserId,
                               Long lastMessageSenderId, boolean isReadByReceiver, Date lastMessageDate,
-                              String firstUserContactName, String secondUserContactName, ConversationStatus status) {
+                              String firstUserContactName, String secondUserContactName, ConversationStatus status,
+                              Long statusUpdatedByUserId) {
 }

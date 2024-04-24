@@ -11,18 +11,18 @@ import java.util.UUID;
 
 @Slf4j
 @Component
-public class WebSocketSessionClientProxy {
+public class WebSocketServiceClientProxy {
 
     public static final String CONNECTION_TIMEOUT_EXCEPTION = "Failed to retrieve user session details due to an internal server connection timeout error: {}";
-    private final WebSocketSessionClient webSocketSessionClient;
+    private final WebSocketServiceClient webSocketServiceClient;
 
-    public WebSocketSessionClientProxy(WebSocketSessionClient webSocketSessionClient) {
-        this.webSocketSessionClient = webSocketSessionClient;
+    public WebSocketServiceClientProxy(WebSocketServiceClient webSocketServiceClient) {
+        this.webSocketServiceClient = webSocketServiceClient;
     }
 
     public Map<UUID, UserSessionDTO> findConversationUserSessionsByIdMap(String user, Map<UUID, Long> conversationIdSecondUserIdMap) {
         try {
-            return webSocketSessionClient.findConversationUserSessionsByIdMap(user, conversationIdSecondUserIdMap);
+            return webSocketServiceClient.findConversationUserSessionsByIdMap(user, conversationIdSecondUserIdMap);
         } catch (Exception e) {
             log.info(CONNECTION_TIMEOUT_EXCEPTION, e.getMessage());
             return Collections.emptyMap();
@@ -31,7 +31,7 @@ public class WebSocketSessionClientProxy {
 
     public UserSessionDTO findUserSessionDetailsById(String user, Long userId) {
         try {
-            return webSocketSessionClient.findUserSessionDetailsById(user,userId);
+            return webSocketServiceClient.findUserSessionDetailsById(user,userId);
         } catch (Exception e) {
             log.info(CONNECTION_TIMEOUT_EXCEPTION, e.getMessage());
             return null;
@@ -40,7 +40,15 @@ public class WebSocketSessionClientProxy {
 
     public void sendNewConversationNotificationEvent(String user, Notification notification,Long secondUserId) {
         try {
-            webSocketSessionClient.sendNewConversationNotificationEvent(user,notification,secondUserId);
+            webSocketServiceClient.sendNewConversationNotificationEvent(user,notification,secondUserId);
+        } catch (Exception e) {
+            log.info(CONNECTION_TIMEOUT_EXCEPTION, e.getMessage());
+        }
+    }
+
+    public void sendConversationStatusUpdateEvent(String user, Notification notification, Long secondUserId) {
+        try {
+            webSocketServiceClient.sendConversationStatusUpdateEvent(user,notification,secondUserId);
         } catch (Exception e) {
             log.info(CONNECTION_TIMEOUT_EXCEPTION, e.getMessage());
         }

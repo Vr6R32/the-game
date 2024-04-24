@@ -1,3 +1,43 @@
+function updateConversationStatus(conversationId, conversationStatus) {
+    conversationsDivs[conversationId].conversationStatus = conversationStatus;
+    conversationsDivs[conversationId].acceptFlag = false;
+    appendSpecifiedTypeConversations(currentContactsTab);
+}
+
+function removeAcceptationDiv(acceptDiv, conversationContainer) {
+    acceptDiv.classList.add('fade-out-remove');
+    setTimeout(() => {
+        acceptDiv.style.display = 'none';
+        conversationContainer.style.height = '69%';
+    }, 500);
+}
+
+function submitConversationStatusUpdateEvent(acceptDiv,conversationId, isAccepted, conversationContainer) {
+
+    const conversationStatusUpdateRequest = {
+        conversationId: conversationId,
+        isAccepted: isAccepted
+    };
+
+    fetch('api/v1/conversations/status/update', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(conversationStatusUpdateRequest)
+    })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            updateConversationStatus(conversationId,data.conversationStatus);
+            removeAcceptationDiv(acceptDiv, conversationContainer);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
 
 function updateStatusElements(statusDot, activityStatusSpan, status, eventDate) {
     statusDot.classList.remove('online', 'offline');
@@ -37,7 +77,7 @@ function handleFriendConversationSessionUpdate(payload) {
 function handleNewConversationInvitation(payload) {
 
     let newConversation = payload;
-    invitationsCount++;
+    // invitationsCount++;
 
     updateContactButtonValues(document.getElementById('normal-contacts'),document.getElementById('invite-contacts'));
     createConversationDiv(newConversation);
@@ -51,6 +91,9 @@ function handleNotificationEvent(notificationMessage) {
     }
     if (notificationMessage.type === 'CONVERSATION_INVITATION') {
         handleNewConversationInvitation(notificationMessage.payload);
+    }
+    if (notificationMessage.type === 'CONVERSATION_STATUS_UPDATE') {
+        updateConversationStatus(notificationMessage.payload.conversationId,notificationMessage.payload.status);
     }
 }
 
@@ -66,6 +109,7 @@ function handleNewMessageEvent(message) {
     setMessageOwnerClass(message, userId, newMessage);
 
     let conversationDiv = conversationsDivs[message.conversationId].div;
+    conversationsDivs[message.conversationId].lastMessageDate = message.messageDate;
 
     if (conversationDiv) {
         const conversationsList = conversationDiv.parentNode;

@@ -2,12 +2,15 @@ package com.thegame.conversation.conversation;
 
 import com.thegame.dto.*;
 import com.thegame.request.ConversationMessageRequest;
+import com.thegame.request.ConversationStatusUpdateRequest;
 import com.thegame.request.NewConversationRequest;
+import com.thegame.response.ConversationStatusUpdateResponse;
 import com.thegame.response.NewConversationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +36,7 @@ public class ConversationFacade {
         return conversationService.getAllConversationMessages(conversationId, user);
     }
     @Transactional
-    public String saveNewConversationMessage(UUID conversationId, AuthenticationUserObject user, ConversationMessageRequest request) {
+    public Date saveNewConversationMessage(UUID conversationId, AuthenticationUserObject user, ConversationMessageRequest request) {
         return conversationService.saveNewConversationMessage(conversationId, user, request);
     }
 
@@ -41,4 +44,7 @@ public class ConversationFacade {
         return conversationService.createNewConversation(user, request);
     }
 
+    public ConversationStatusUpdateResponse updateConversationStatus(AuthenticationUserObject user, ConversationStatusUpdateRequest request) {
+        return conversationService.updateConversationStatus(user, request);
+    }
 }

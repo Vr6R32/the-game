@@ -6,6 +6,7 @@ import com.thegame.clients.ConversationServiceClient;
 import com.thegame.dto.AuthenticationUserObject;
 import com.thegame.dto.ConversationFriendInfo;
 import com.thegame.dto.DetailedConversationDTO;
+import com.thegame.event.ConversationStatusUpdateEvent;
 import com.thegame.model.Notification;
 import com.thegame.model.Status;
 import com.thegame.websocket.filter.WebsocketUserPrincipal;
@@ -19,12 +20,12 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
-import static com.thegame.model.NotificationType.CONVERSATION_INVITATION;
 import static com.thegame.model.NotificationType.FRIEND_SESSION_UPDATE;
 
 @RequiredArgsConstructor
 class NotificationServiceImpl implements NotificationService {
 
+    public static final String NOTIFICATIONS_PATH = "/notifications";
     private final ConversationServiceClient conversationServiceClient;
     private final ObjectMapper objectMapper;
 
@@ -39,7 +40,7 @@ class NotificationServiceImpl implements NotificationService {
         for (ConversationFriendInfo conversationFriend : allUserConversationSecondUserIds) {
             messagingTemplate.convertAndSendToUser(
                     String.valueOf(conversationFriend.secondUserId()),
-                    "/notifications",
+                    NOTIFICATIONS_PATH,
                     new Notification(FRIEND_SESSION_UPDATE, new SessionStatusUpdateEvent(conversationFriend.conversationId(), status, eventDate))
             );
         }
@@ -55,9 +56,24 @@ class NotificationServiceImpl implements NotificationService {
 
         messagingTemplate.convertAndSendToUser(
                 String.valueOf(secondUserId),
-                "/notifications",
-                new Notification(CONVERSATION_INVITATION, detailedConversationDTO));
+                NOTIFICATIONS_PATH,
+                new Notification(notification.type(), detailedConversationDTO));
         }
+
+
+    @Override
+    public void sendConversationStatusUpdateEvent(Notification notification, Long secondUserId) {
+
+        //TODO HANDLE CASE WHEN NOTIFICATION STATUS IS RECONNECTING
+
+        ConversationStatusUpdateEvent conversationStatusUpdateRequest = objectMapper.convertValue(notification.payload(), ConversationStatusUpdateEvent.class);
+
+        messagingTemplate.convertAndSendToUser(
+                String.valueOf(secondUserId),
+                NOTIFICATIONS_PATH,
+                new Notification(notification.type(), conversationStatusUpdateRequest));
+
+    }
 
 
     public String mapUserToJsonObject(AuthenticationUserObject appUser) {

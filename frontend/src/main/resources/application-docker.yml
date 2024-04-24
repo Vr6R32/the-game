@@ -45,4 +45,4 @@ management:
 
 static:
   files:
-    path: app/files/static/avatar.jpg
+    path: app/files/static/

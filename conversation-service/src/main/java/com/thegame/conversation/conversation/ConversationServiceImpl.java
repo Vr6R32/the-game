@@ -3,16 +3,19 @@ package com.thegame.conversation.conversation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thegame.clients.UserServiceClient;
-import com.thegame.clients.WebSocketSessionClientProxy;
+import com.thegame.clients.WebSocketServiceClientProxy;
 import com.thegame.conversation.entity.Conversation;
 import com.thegame.conversation.entity.ConversationMessage;
+import com.thegame.event.ConversationStatusUpdateEvent;
 import com.thegame.model.ConversationStatus;
 import com.thegame.dto.*;
 import com.thegame.model.Notification;
 import com.thegame.model.NotificationType;
 import com.thegame.model.Status;
 import com.thegame.request.ConversationMessageRequest;
+import com.thegame.request.ConversationStatusUpdateRequest;
 import com.thegame.request.NewConversationRequest;
+import com.thegame.response.ConversationStatusUpdateResponse;
 import com.thegame.response.NewConversationResponse;
 import org.springframework.http.HttpStatus;
 
@@ -22,7 +25,7 @@ import java.util.*;
 public record ConversationServiceImpl(ConversationRepository conversationRepository,
                                       ConversationMessageRepository messageRepository,
                                       UserServiceClient userServiceClient,
-                                      WebSocketSessionClientProxy webSocketSessionClient,
+                                      WebSocketServiceClientProxy webSocketServiceClient,
                                       ObjectMapper objectMapper) implements ConversationService {
 
 
@@ -35,7 +38,7 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
         conversationInfoMap.forEach((conversationId, conversationInfo) -> conversationIdSecondUserIdMap.put(conversationId, conversationInfo.secondUserId()));
 
         Map<UUID, AppUserDTO> conversationsUsersDetails = userServiceClient.getConversationsUsersDetails(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
-        Map<UUID, UserSessionDTO> conversationUsersSessionDetails = webSocketSessionClient.findConversationUserSessionsByIdMap(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
+        Map<UUID, UserSessionDTO> conversationUsersSessionDetails = webSocketServiceClient.findConversationUserSessionsByIdMap(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
 
         return conversationInfoMap.entrySet().stream().map(entry -> {
             UUID conversationId = entry.getKey();
@@ -43,6 +46,8 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
 
             AppUserDTO userDto = conversationsUsersDetails.get(conversationId);
             UserSessionDTO userSessionDTO = conversationUsersSessionDetails.get(conversationId);
+
+            boolean awaitAcceptFlag = conversationInfo.status() == ConversationStatus.INVITATION && !conversationInfo.statusUpdatedByUserId().equals(user.id());
 
             return new DetailedConversationDTO(
                     conversationId,
@@ -54,7 +59,8 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
                     conversationInfo.lastMessageDate(),
                     conversationInfo.secondUserContactName(),
                     conversationInfo.status(),
-                    conversationInfo.isUnread()
+                    conversationInfo.isUnread(),
+                    awaitAcceptFlag
             );
         }).toList();
     }
@@ -86,7 +92,7 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
     }
 
     @Override
-    public String saveNewConversationMessage(UUID conversationId, AuthenticationUserObject user, ConversationMessageRequest request) {
+    public Date saveNewConversationMessage(UUID conversationId, AuthenticationUserObject user, ConversationMessageRequest request) {
 
         Date messageSendDate = Date.from(Instant.now());
 
@@ -99,8 +105,8 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
                 .messageSendDate(messageSendDate)
                 .build();
 
-        ConversationMessage savedMessage = messageRepository.save(newMessage);
-        return savedMessage.getId().toString();
+        messageRepository.save(newMessage);
+        return messageSendDate;
     }
 
     @Override
@@ -127,9 +133,8 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
 
         conversationRepository.save(newConversation);
 
-        // TODO IF USER EXISTS CHECK STATUS IF LOGGED IN , SEND NOTIFICATION
 
-        UserSessionDTO secondUserSessionDetails = webSocketSessionClient.findUserSessionDetailsById(mapUserToJsonObject(user), secondUserId);
+        UserSessionDTO secondUserSessionDetails = webSocketServiceClient.findUserSessionDetailsById(mapUserToJsonObject(user), secondUserId);
 
         Status userStatus = null;
         Date logoutTime = null;
@@ -143,13 +148,12 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
             AppUserDTO initiator = userServiceClient.getUserDetailsByEmailAddress(mapUserToJsonObject(user), user.email());
 
             DetailedConversationDTO secondUserNotification = new DetailedConversationDTO(newConversation.getId(),user.id(),initiator.avatarUrl(),initiator.email(),
-                    Status.ONLINE,null,null,user.username(),ConversationStatus.INVITATION,false);
+                    Status.ONLINE,null,null,user.username(),ConversationStatus.INVITATION,false, true);
 
-            webSocketSessionClient.sendNewConversationNotificationEvent(mapUserToJsonObject(user), new Notification(NotificationType.CONVERSATION_INVITATION, secondUserNotification),secondUserId);
+            webSocketServiceClient.sendNewConversationNotificationEvent(mapUserToJsonObject(user), new Notification(NotificationType.CONVERSATION_INVITATION, secondUserNotification),secondUserId);
 
         }
 
-        //TODO FETCH DATA, LIKE USER STATUS , LOGOUT DATE AND AVATAR
 
         return new NewConversationResponse("CONVERSATION CREATED", HttpStatus.OK, new DetailedConversationDTO(
                 newConversation.getId(),
@@ -161,11 +165,10 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
                 null,
                 newConversation.getSecondUserContactName(),
                 ConversationStatus.INVITATION,
+                false,
                 false
         ));
     }
-
-
 
 
     private Map<UUID, ConversationInfo> getConversationUserIdMap(AuthenticationUserObject user) {
@@ -175,13 +178,37 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
 
         Map<UUID, ConversationInfo> conversationInfoMap = new LinkedHashMap<>();
         for (ConversationDTO conversation : allConversationsByUserId) {
+
             Long secondUserId = conversation.firstUserId().equals(user.id()) ? conversation.secondUserId() : conversation.firstUserId();
             String secondUserContactName = secondUserId.equals(conversation.firstUserId()) ? conversation.firstUserContactName() : conversation.secondUserContactName();
             boolean isUnread = conversation.lastMessageSenderId() != null && conversation.lastMessageSenderId().equals(secondUserId) && !conversation.isReadByReceiver();
-            conversationInfoMap.put(conversation.id(), new ConversationInfo(secondUserId, conversation.lastMessageDate(), secondUserContactName, conversation.status(), isUnread));
+
+            conversationInfoMap.put(conversation.id(), new ConversationInfo(secondUserId, conversation.lastMessageDate(),
+                    secondUserContactName, conversation.status(), conversation.statusUpdatedByUserId(), isUnread));
         }
 
         return conversationInfoMap;
+    }
+
+    @Override
+    public ConversationStatusUpdateResponse updateConversationStatus(AuthenticationUserObject user, ConversationStatusUpdateRequest request) {
+        Conversation conversation = conversationRepository.findConversationIdById(request.conversationId()).orElseGet(() -> null);
+
+        if (conversation == null || !conversation.getSecondUserId().equals(user.id())) {
+            throw new ConversationException("NOT AUTHORIZED");
+        }
+
+        if (request.isAccepted()) {
+            conversation.setStatus(ConversationStatus.ACCEPTED);
+        } else {
+            conversation.setStatus(ConversationStatus.REJECTED);
+        }
+
+        conversationRepository.save(conversation);
+
+        webSocketServiceClient.sendConversationStatusUpdateEvent(mapUserToJsonObject(user),
+                new Notification(NotificationType.CONVERSATION_STATUS_UPDATE,new ConversationStatusUpdateEvent(request.conversationId(),conversation.getStatus())), conversation.getFirstUserId());
+        return new ConversationStatusUpdateResponse("Conversation status updated successfully", HttpStatus.OK, conversation.getStatus());
     }
 
 
