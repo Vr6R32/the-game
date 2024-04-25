@@ -14,8 +14,9 @@ body {
 
 h2 {
   margin-top: 5vh;
+  margin-bottom: 5vh;
   text-align: center;
-  font-size: 2em;
+  font-size: 3vh;
   color: #03e9f4;
   font-family: "Lobster", cursive;
 }

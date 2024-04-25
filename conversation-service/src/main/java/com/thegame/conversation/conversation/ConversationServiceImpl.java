@@ -116,11 +116,14 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
 
         AppUserDTO secondUser = userServiceClient.getUserDetailsByEmailAddress(mapUserToJsonObject(user), request.secondUserEmail());
 
+
+
+        if(secondUser==null) { secondUser = userServiceClient.createInvitedUserAccount(mapUserToJsonObject(user), request); }
+
         Long secondUserId = secondUser.id();
 
-        if(secondUserId==null) { secondUserId = userServiceClient.createInvitedUserAccount(mapUserToJsonObject(user), request); }
+        if(conversationRepository.findConversationByFirstUserIdAndSecondUserId(user.id(), secondUserId).isPresent()) return new NewConversationResponse("Conversation Already Exists", HttpStatus.OK,null);
 
-        if(conversationRepository.findConversationByFirstUserIdAndSecondUserId(user.id(), secondUserId).isPresent()) return new NewConversationResponse("CONVERSATION ALREADY EXIST", HttpStatus.OK,null);
 
         Conversation newConversation = Conversation.builder()
                 .firstUserId(user.id())
@@ -155,7 +158,7 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
         }
 
 
-        return new NewConversationResponse("CONVERSATION CREATED", HttpStatus.OK, new DetailedConversationDTO(
+        return new NewConversationResponse("Invitation Sent Successfully", HttpStatus.OK, new DetailedConversationDTO(
                 newConversation.getId(),
                 secondUserId,
                 secondUser.avatarUrl(),

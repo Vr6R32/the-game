@@ -18,7 +18,7 @@ public interface UserService {
 
     String registerNewAppUser(RegistrationRequest request);
 
-    Long registerUserByInvitation(NewConversationRequest request, AuthenticationUserObject user);
+    AppUserDTO registerUserByInvitation(NewConversationRequest request, AuthenticationUserObject user);
 
     AppUserDTO getAppUserDetailsByEmail(String email);
 

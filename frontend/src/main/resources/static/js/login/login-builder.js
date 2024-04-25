@@ -18,6 +18,8 @@ function createFormInput(id, type) {
 function createFormLabel(divUsername, inputUsername, form, textContent) {
     const labelUsername = document.createElement('label');
     labelUsername.textContent = textContent;
+    labelUsername.style.width = '100%';
+    labelUsername.style.height = '100%';
     divUsername.appendChild(inputUsername);
     divUsername.appendChild(labelUsername);
     form.appendChild(divUsername);

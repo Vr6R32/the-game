@@ -52,6 +52,9 @@ function createNewContactDiv() {
 
     const loginFormWrapper = document.createElement('div');
     loginFormWrapper.classList.add('form-wrapper');
+    loginFormWrapper.style.width = '100%';
+    loginFormWrapper.style.height = '100%';
+    // loginFormWrapper.style.marginTop = '15%';
 
     const invitationHeading = document.createElement('h2');
     invitationHeading.textContent = 'Send an Invitation for';
@@ -78,6 +81,18 @@ function createNewContactDiv() {
 }
 
 function handleNewConversationResponse(conversationResponse) {
+
+
+
+    let messageContainer = document.getElementById('messageContainer');
+    messageContainer.innerHTML = '';
+
+
+    const responseHeader = document.createElement('h2');
+    responseHeader.textContent = conversationResponse.message;
+    responseHeader.style.marginTop = '40%';
+    messageContainer.appendChild(responseHeader);
+
 
     let newConversation = conversationResponse.conversation;
     invitationsCount++;

@@ -41,7 +41,7 @@ record UserController(UserFacade userFacade) {
     }
 
     @PostMapping("register/invitation")
-    public Long registerUserByInvitation(@RequestBody NewConversationRequest request, Authentication authentication) {
+    public AppUserDTO registerUserByInvitation(@RequestBody NewConversationRequest request, Authentication authentication) {
         AuthenticationUserObject user = (AuthenticationUserObject) authentication.getPrincipal();
         return userFacade.registerUserByInvitation(request,user);
     }

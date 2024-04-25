@@ -6,8 +6,10 @@
     flex-direction: row;
     align-items: stretch;
     max-width: 65vh;
+    /*max-width: 80vh;*/
     min-width: 30vh;
     width: 65vh;
+    /*width: 80vh;*/
     box-sizing: border-box;
 }
 
@@ -84,6 +86,7 @@
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(39, 39, 39, 0.7));
     box-shadow: 5px 0px 0px 0px rgba(255, 255, 255, 0.4);
     height: 60vh;
+    /*height: inherit;*/
     width: 100%;
     border-radius: 10px 0 0 10px;
     overflow: visible;
@@ -96,15 +99,14 @@
 
 #messageContainer {
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(39, 39, 39, 0.7));
-    /*background-color: transparent;*/
     height: 60vh;
+    /*height: 70vh;*/
     width: 100%;
     border-radius: 0 10px 10px 0 ;
     overflow: visible;
     word-wrap: break-word;
     padding: 10px;
     margin-bottom: 10px;
-
 }
 
 #secondUserConversationInfo {

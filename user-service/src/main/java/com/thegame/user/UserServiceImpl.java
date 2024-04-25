@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.thegame.mapper.UserMapper.mapUserToDTO;
+
 @Slf4j
 @RequiredArgsConstructor
 class UserServiceImpl implements UserService {
@@ -73,7 +75,7 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long registerUserByInvitation(NewConversationRequest request, AuthenticationUserObject user) {
+    public AppUserDTO registerUserByInvitation(NewConversationRequest request, AuthenticationUserObject user) {
 
         //TODO SEND AN INVITATION BY EMAIL SERVICE
 
@@ -97,7 +99,7 @@ class UserServiceImpl implements UserService {
 
         log.info("USER SERVICE -> SUCCESSFULLY REGISTERED USER FOR EMAIL [{}] , ASSIGNED ID [{}] INVITATION BY [{}] ",newUser.getEmail(),newUser.getId(),user.id());
 
-        return newUser.getId();
+        return mapUserToDTO(newUser);
     }
 
     @Override

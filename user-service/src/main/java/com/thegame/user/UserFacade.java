@@ -28,7 +28,7 @@ record UserFacade(UserService userService) {
         return userService.registerNewAppUser(request);
     }
 
-    public Long registerUserByInvitation(NewConversationRequest request, AuthenticationUserObject user) {
+    public AppUserDTO registerUserByInvitation(NewConversationRequest request, AuthenticationUserObject user) {
         return userService.registerUserByInvitation(request,user);
     }
 

@@ -19,7 +19,7 @@ public interface UserServiceClient {
     Long getUserIdByEmailAddress(@RequestHeader("X-USER-AUTH") String user, @PathVariable("email") String email);
 
     @PostMapping("api/v1/users/register/invitation")
-    Long createInvitedUserAccount(@RequestHeader("X-USER-AUTH") String user, NewConversationRequest request);
+    AppUserDTO createInvitedUserAccount(@RequestHeader("X-USER-AUTH") String user, NewConversationRequest request);
 
     @GetMapping("api/v1/users/details/{email}")
     AppUserDTO getUserDetailsByEmailAddress(@RequestHeader("X-USER-AUTH") String user, @PathVariable("email") String email);
