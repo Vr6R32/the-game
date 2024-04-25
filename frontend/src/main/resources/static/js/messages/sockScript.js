@@ -5,6 +5,7 @@ let messageTimes = [];
 
 function stabilizeWebSocketConnection() {
     connectSocket();
+    manageLogoutButton();
 
     let reconnectInterval = document.getElementById('websocketConnectionRefreshInterval').value;
 

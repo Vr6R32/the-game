@@ -45,21 +45,17 @@ public class GatewayConfig {
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("messaging-service-sockjs", r -> r.path("/websocket/**")
-//                        .filters(f -> f.filter(webSocketHeaderFilters)
-//                                .filter(gatewayFilter)
-//                                .filter(corsFilter()))
                         .filters(f -> f.filter(gatewayFilter))
                         .uri("lb://WEBSOCKET-SERVICE"))
+
                 .route("messaging-service-websocket", r -> r.path("/chat/**")
-//                        .filters(f -> f.filter(webSocketHeaderFilters)
-//                                .filter(gatewayFilter)
-//                                .filter(corsFilter()))
                         .filters(f -> f.filter(gatewayFilter))
                         .uri("lb:ws://WEBSOCKET-SERVICE"))
 
                 .route("user-service", r -> r.path("/api/v1/users/**")
                         .filters(f -> f.filter(gatewayFilter))
                         .uri("lb://USER-SERVICE"))
+
                 .route("auth-service", r -> r.path("/api/v1/auth/**")
                         .filters(f -> f.filter(gatewayFilter))
                         .uri("lb://AUTH-SERVICE"))

@@ -178,6 +178,10 @@ a {
   }
 }
 
+#logout-button {
+  display: none;
+}
+
 
 @media screen and (max-width: 1000px) {
   .hamburger1 {
@@ -199,6 +203,5 @@ a {
   .menu1 {
     display: none;
     text-align: center !important;
-
   }
 }

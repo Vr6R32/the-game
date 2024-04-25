@@ -33,6 +33,14 @@ function createLoginForm() {
 }
 
 
+function manageLogoutButton() {
+    let logoutButton = document.getElementById('logout-button');
+    if (logoutButton.style.display === 'block') {
+        logoutButton.style.display = 'none';
+    } else {
+        logoutButton.style.display = 'block';
+    }
+}
 
 function submitLoginForm() {
     let username = document.getElementById("username").value;
@@ -112,6 +120,7 @@ function logout() {
             acceptedCount = 0;
             invitationsCount = 0;
             conversationsDivs = [];
+            manageLogoutButton();
             handleLogoutAnimation();
         })
         .catch(error => {
