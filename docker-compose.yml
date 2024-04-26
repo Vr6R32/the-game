@@ -36,6 +36,7 @@ services:
       - ./db-init/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     ports:
       - "27017:27017"
+
   mongo-express:
     image: mongo-express
     environment:
@@ -53,76 +54,76 @@ services:
       - mongo
     ports:
       - "27016:8081"
+#
+#  zipkin:
+#    image: openzipkin/zipkin
+#    container_name: zipkin
+#    ports:
+#      - "9411:9411"
+#    networks:
+#      - spring
+#    restart: unless-stopped
+#
+#  promtail:
+#    container_name: promtail
+#    image: grafana/promtail:latest
+#    volumes:
+#      - api-logs:/var/log/spring
+#      - ./logging_infrastructure/promtail-config.yml:/etc/promtail/config.yml
+#    command: -config.file=/etc/promtail/config.yml
+#    depends_on:
+#      - loki
+#    networks:
+#      - spring
+#    restart: unless-stopped
+#    environment:
+#      TZ: Europe/Warsaw
+#
+#  loki:
+#    container_name: loki
+#    image: grafana/loki:latest
+#    command: -config.file=/etc/loki/local-config.yaml
+#    networks:
+#      - spring
+#    restart: unless-stopped
+#    environment:
+#      TZ: Europe/Warsaw
+#
+#  grafana:
+#    container_name: grafana
+#    image: grafana/grafana:latest
+#    environment:
+#      - GF_SECURITY_ADMIN_PASSWORD=secret
+#    volumes:
+#      - grafana-data:/var/lib/grafana
+#      - ./logging_infrastructure/grafana/dashboards:/var/lib/grafana/dashboards
+#      - ./logging_infrastructure/grafana/datasources-config.yml:/etc/grafana/provisioning/datasources/main.yml
+#      - ./logging_infrastructure/grafana/dashboard-config.yml:/etc/grafana/provisioning/dashboards/main.yml
+#    depends_on:
+##      - prometheus
+#      - loki
+#    ports:
+#      - "3000:3000"
+#    networks:
+#      - spring
+#    restart: unless-stopped
 
-  zipkin:
-    image: openzipkin/zipkin
-    container_name: zipkin
-    ports:
-      - "9411:9411"
-    networks:
-      - logging
-    restart: unless-stopped
-
-  promtail:
-    container_name: promtail
-    image: grafana/promtail:latest
-    volumes:
-      - api-logs:/var/log/spring
-      - ./logging_infrastructure/promtail-config.yml:/etc/promtail/config.yml
-    command: -config.file=/etc/promtail/config.yml
-    depends_on:
-      - loki
-    networks:
-      - logging
-    restart: unless-stopped
-    environment:
-      TZ: Europe/Warsaw
-
-  loki:
-    container_name: loki
-    image: grafana/loki:latest
-    command: -config.file=/etc/loki/local-config.yaml
-    networks:
-      - logging
-    restart: unless-stopped
-    environment:
-      TZ: Europe/Warsaw
-
-  grafana:
-    container_name: grafana
-    image: grafana/grafana:latest
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=secret
-    volumes:
-      - grafana-data:/var/lib/grafana
-      - ./logging_infrastructure/grafana/dashboards:/var/lib/grafana/dashboards
-      - ./logging_infrastructure/grafana/datasources-config.yml:/etc/grafana/provisioning/datasources/main.yml
-      - ./logging_infrastructure/grafana/dashboard-config.yml:/etc/grafana/provisioning/dashboards/main.yml
-    depends_on:
-#      - prometheus
-      - loki
-    ports:
-      - "3000:3000"
-    networks:
-      - logging
-    restart: unless-stopped
-
-  prometheus:
-    container_name: prometheus
-    image: prom/prometheus:v2.48.0
-    volumes:
-      - ./logging_infrastructure/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./logging_infrastructure/sleep.sh:/etc/prometheus/sleep.sh
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    entrypoint: /etc/prometheus/sleep.sh
-    networks:
-      - logging
-    ports:
-      - "9090:9090"
-    restart: unless-stopped
-    environment:
-      TZ: Europe/Warsaw
+#  prometheus:
+#    container_name: prometheus
+#    image: prom/prometheus:v2.48.0
+#    volumes:
+#      - ./logging_infrastructure/prometheus.yml:/etc/prometheus/prometheus.yml
+#      - ./logging_infrastructure/sleep.sh:/etc/prometheus/sleep.sh
+#    command:
+#      - '--config.file=/etc/prometheus/prometheus.yml'
+#    entrypoint: /etc/prometheus/sleep.sh
+#    networks:
+#      - logging
+#    ports:
+#      - "9090:9090"
+#    restart: unless-stopped
+#    environment:
+#      TZ: Europe/Warsaw
 
 
   api-gateway:
@@ -136,7 +137,6 @@ services:
     volumes:
       - api-logs:/var/log/spring
     networks:
-      - logging
       - spring
     depends_on:
       - eureka-server
@@ -155,7 +155,6 @@ services:
     volumes:
       - api-logs:/var/log/spring
     networks:
-      - logging
       - spring
       - postgres
     depends_on:
@@ -174,7 +173,6 @@ services:
     volumes:
       - api-logs:/var/log/spring
     networks:
-      - logging
       - spring
       - postgres
     depends_on:
@@ -192,7 +190,6 @@ services:
     volumes:
       - api-logs:/var/log/spring
     networks:
-      - logging
       - spring
     restart: unless-stopped
 
@@ -209,7 +206,6 @@ services:
       - api-logs:/var/log/spring
       - ./files/static:/app/files/static
     networks:
-      - logging
       - spring
     depends_on:
       - api-gateway
@@ -227,51 +223,30 @@ services:
     volumes:
       - api-logs:/var/log/spring
     networks:
-      - logging
       - spring
       - postgres
     depends_on:
       - api-gateway
     restart: unless-stopped
 
-#  user-service2:
-#    image: michaelkey/user-service:0.0.1-SNAPSHOT
-#    container_name: user-service
-#    ports:
-#      - "8090:8090"
-#    environment:
-#      SERVER_PORT: 8090
-#      SPRING_PROFILES_ACTIVE: docker
-#      TZ: Europe/Warsaw
-#    volumes:
-#      - api-logs:/var/log/spring
-#    networks:
-#      - logging
-#      - spring
-#      - postgres
-#    depends_on:
-#      - api-gateway
-#    restart: unless-stopped
 
-
-#  websocket-service:
-#    image: michaelkey/websocket-service:0.0.1-SNAPSHOT
-#    container_name: websocket-service
-#    ports:
-#      - "8085:8085"
-#    environment:
-#      SERVER_PORT: 8085
-#      SPRING_PROFILES_ACTIVE: docker
-#      TZ: Europe/Warsaw
-#    volumes:
-#      - api-logs:/var/log/spring
-#    networks:
-#      - logging
-#      - spring
-#      - mongo-network
-#    depends_on:
-#      - api-gateway
-#    restart: unless-stopped
+  websocket-service:
+    image: michaelkey/websocket-service:0.0.1-SNAPSHOT
+    container_name: websocket-service
+    ports:
+      - "8085:8085"
+    environment:
+      SERVER_PORT: 8085
+      SPRING_PROFILES_ACTIVE: docker
+      TZ: Europe/Warsaw
+    volumes:
+      - api-logs:/var/log/spring
+    networks:
+      - spring
+      - mongo-network
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
 
 
 volumes:

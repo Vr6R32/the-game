@@ -46,31 +46,31 @@ public class GatewayConfig {
         return builder.routes()
                 .route("messaging-service-sockjs", r -> r.path("/websocket/**")
                         .filters(f -> f.filter(gatewayFilter))
-                        .uri("lb://WEBSOCKET-SERVICE"))
+                        .uri("lb://websocket-service"))
 
                 .route("messaging-service-websocket", r -> r.path("/chat/**")
                         .filters(f -> f.filter(gatewayFilter))
-                        .uri("lb:ws://WEBSOCKET-SERVICE"))
+                        .uri("lb:ws://websocket-service"))
 
                 .route("user-service", r -> r.path("/api/v1/users/**")
                         .filters(f -> f.filter(gatewayFilter))
-                        .uri("lb://USER-SERVICE"))
+                        .uri("lb://user-service"))
 
                 .route("auth-service", r -> r.path("/api/v1/auth/**")
                         .filters(f -> f.filter(gatewayFilter))
-                        .uri("lb://AUTH-SERVICE"))
+                        .uri("lb://auth-service"))
 
                 .route("conversation-service", r -> r.path("/api/v1/conversations/**")
                         .filters(f -> f.filter(gatewayFilter))
-                        .uri("lb://CONVERSATION-SERVICE"))
+                        .uri("lb://conversation-service"))
 
                 .route("frontend_api_static", r -> r.path("/api/v1/static/**")
                         .filters(f -> f.filter(gatewayFilter))
-                        .uri("lb://FRONTEND"))
+                        .uri("lb://frontend"))
 
                 .route("frontend", r -> r.path("/**")
                         .filters(f -> f.filter(gatewayFilter))
-                        .uri("lb://FRONTEND"))
+                        .uri("lb://frontend"))
 
 
                 .build();

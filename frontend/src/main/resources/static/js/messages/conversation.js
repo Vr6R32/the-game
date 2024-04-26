@@ -96,9 +96,10 @@ function handleNewConversationResponse(conversationResponse) {
 
     let newConversation = conversationResponse.conversation;
     invitationsCount++;
+    createConversationDiv(newConversation);
 
     updateContactButtonValues(document.getElementById('normal-contacts'),document.getElementById('invite-contacts'));
-    createConversationDiv(newConversation);
+
     if(currentContactsTab==="INVITATION") appendSpecifiedTypeConversations(currentContactsTab);
 
 }
