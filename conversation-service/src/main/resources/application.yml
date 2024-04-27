@@ -21,6 +21,8 @@ spring:
     enabled: true
     drop-first: true
     change-log: classpath:db/changelog/db.changelog-master.xml
+  banner:
+    location: classpath:banner.txt
 
 
 eureka:
@@ -31,7 +33,7 @@ eureka:
     register-with-eureka: true
   instance:
     preferIpAddress: true
-    hostname: conversation-service
+#    hostname: conversation-service
 
 
 management:

@@ -21,7 +21,8 @@ spring:
     enabled: true
     drop-first: true
     change-log: classpath:db/changelog/db.changelog-master.xml
-
+  banner:
+    location: classpath:banner.txt
 
 eureka:
   client:

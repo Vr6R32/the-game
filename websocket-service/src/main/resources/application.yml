@@ -10,6 +10,8 @@ spring:
     mongodb:
       uri: mongodb://mongo:dontgotosql@localhost:27017/user_session
       auto-index-creation: true
+  banner:
+    location: classpath:banner.txt
 
 eureka:
   client:
@@ -19,7 +21,7 @@ eureka:
     register-with-eureka: true
   instance:
     preferIpAddress: false
-    hostname: websocket-service
+#    hostname: websocket-service
 
 management:
   zipkin:

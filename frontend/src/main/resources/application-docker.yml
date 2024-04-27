@@ -8,6 +8,8 @@ app:
 spring:
   application:
     name: frontend
+  banner:
+    location: classpath:banner.txt
 
 eureka:
   client:

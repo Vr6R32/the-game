@@ -21,6 +21,8 @@ spring:
     enabled: true
     drop-first: true
     change-log: classpath:db/changelog/db.changelog-master.xml
+  banner:
+    location: classpath:banner.txt
 
 eureka:
   client:
@@ -30,7 +32,7 @@ eureka:
     register-with-eureka: true
   instance:
     preferIpAddress: true
-    hostname: user-service
+#    hostname: user-service
 
 management:
   zipkin:

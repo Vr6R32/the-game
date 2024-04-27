@@ -10,6 +10,8 @@ spring:
     url: jdbc:postgresql://postgres:5432/the_game_user
     username: postgres
     password: dontgotosql
+  banner:
+    location: classpath:banner.txt
 
 eureka:
   client:

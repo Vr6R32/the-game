@@ -10,6 +10,8 @@ spring:
     url: jdbc:postgresql://localhost:5432/the_game_user
     username: postgres
     password: dontgotosql
+  banner:
+    location: classpath:banner.txt
 
 eureka:
   client:
@@ -19,7 +21,7 @@ eureka:
     register-with-eureka: true
   instance:
     preferIpAddress: true
-    hostname: auth-service
+#    hostname: auth-service
 
 application:
   security:

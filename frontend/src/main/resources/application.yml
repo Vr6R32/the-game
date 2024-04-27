@@ -8,6 +8,8 @@ app:
 spring:
   application:
     name: frontend
+  banner:
+    location: classpath:banner.txt
 
 eureka:
   client:
@@ -17,7 +19,7 @@ eureka:
     register-with-eureka: true
   instance:
     preferIpAddress: true
-    hostname: frontend
+#    hostname: frontend
 
 
 management:

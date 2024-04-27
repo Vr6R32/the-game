@@ -10,6 +10,8 @@ spring:
     mongodb:
       uri: mongodb://mongo:dontgotosql@mongo:27017/user_session
       auto-index-creation: true
+  banner:
+    location: classpath:banner.txt
 
 eureka:
   client:
