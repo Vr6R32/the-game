@@ -17,7 +17,7 @@ eureka:
     register-with-eureka: true
   instance:
     preferIpAddress: true
-    hostname: frontend
+#    hostname: frontend
 
 management:
   zipkin:

@@ -30,7 +30,7 @@ eureka:
     register-with-eureka: true
   instance:
     preferIpAddress: true
-    hostname: user-service
+#    hostname: user-service
 
 management:
   zipkin:

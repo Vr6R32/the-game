@@ -19,7 +19,7 @@ eureka:
     register-with-eureka: true
   instance:
     preferIpAddress: true
-    hostname: websocket-service
+#    hostname: websocket-service
 
 management:
   zipkin:

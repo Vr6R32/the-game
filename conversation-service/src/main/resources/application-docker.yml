@@ -31,7 +31,7 @@ eureka:
     register-with-eureka: true
   instance:
     preferIpAddress: true
-    hostname: conversation-service
+#    hostname: conversation-service
 
 
 

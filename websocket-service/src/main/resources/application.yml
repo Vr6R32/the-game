@@ -6,8 +6,6 @@ spring:
     web-application-type: servlet
   application:
     name: websocket-service
-  zipkin:
-    base-url: http://localhost:9411
   data:
     mongodb:
       uri: mongodb://mongo:dontgotosql@localhost:27017/user_session
@@ -20,7 +18,7 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
   instance:
-    preferIpAddress: true
+    preferIpAddress: false
     hostname: websocket-service
 
 management:

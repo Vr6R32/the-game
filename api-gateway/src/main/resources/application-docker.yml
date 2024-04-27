@@ -15,7 +15,7 @@ eureka:
     register-with-eureka: true
   instance:
     preferIpAddress: true
-    hostname: gateway
+#    hostname: api-gateway
 
 management:
   zipkin:
