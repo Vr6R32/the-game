@@ -111,4 +111,12 @@ docker compose up
 <br>
 
 ![](readme/real-time-offline-status-update.webp)
+<br>
+
+<h1 align="center">Conversation messages pagination pulldown effect</h1>
+
+<br>
+
+![](readme/messages-pagination-pulldown.webp)
+
 
