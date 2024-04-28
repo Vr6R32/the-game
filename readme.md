@@ -92,8 +92,23 @@ docker compose up
 ![](readme/accept-invite.webp)
 <br>
 
-<h1 align="center">Real time invitation event</h1>
+<h1 align="center">Real time invitation accept event</h1>
 
 <br>
 
 ![](readme/accept-invite-second-user-event.webp)
+<br>
+
+<h1 align="center">Invitation Section</h1>
+
+<br>
+
+![](readme/new-contact-invitation.webp)
+<br>
+
+<h1 align="center">Real time offline status update</h1>
+
+<br>
+
+![](readme/real-time-offline-status-update.webp)
+
