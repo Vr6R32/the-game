@@ -10,5 +10,10 @@
         </loadData>
     </changeSet>
 
+    <changeSet id="insert_conversation_messages" author="michal-k">
+        <loadData tableName="conversation_messages" file="classpath:/db/changelog/csv/conversation_messages.csv" separator=",">
+        </loadData>
+    </changeSet>
+
 
 </databaseChangeLog>

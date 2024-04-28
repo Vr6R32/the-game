@@ -7,6 +7,7 @@ import com.thegame.request.NewConversationRequest;
 import com.thegame.response.ConversationStatusUpdateResponse;
 import com.thegame.response.NewConversationResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -32,8 +33,8 @@ public class ConversationFacade {
     }
 
     @Transactional
-    public List<ConversationMessageDTO> getAllConversationMessages(UUID conversationId, AuthenticationUserObject user) {
-        return conversationService.getAllConversationMessages(conversationId, user);
+    public Page<ConversationMessageDTO> getAllConversationMessages(UUID conversationId, AuthenticationUserObject user, int pageSize, int pageNumber) {
+        return conversationService.getAllConversationMessages(conversationId, user, pageSize, pageNumber);
     }
     @Transactional
     public Date saveNewConversationMessage(UUID conversationId, AuthenticationUserObject user, ConversationMessageRequest request) {

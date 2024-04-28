@@ -6,6 +6,7 @@ import com.thegame.request.ConversationStatusUpdateRequest;
 import com.thegame.request.NewConversationRequest;
 import com.thegame.response.ConversationStatusUpdateResponse;
 import com.thegame.response.NewConversationResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.Date;
 import java.util.List;
@@ -19,7 +20,7 @@ public interface ConversationService {
 
     ConversationDTO getConversationById(UUID uuid, AuthenticationUserObject user);
 
-    List<ConversationMessageDTO> getAllConversationMessages(UUID conversationId, AuthenticationUserObject user);
+    Page<ConversationMessageDTO> getAllConversationMessages(UUID conversationId, AuthenticationUserObject user, int pageSize, int pageNumber);
 
     Date saveNewConversationMessage(UUID conversationId, AuthenticationUserObject user, ConversationMessageRequest request);
 

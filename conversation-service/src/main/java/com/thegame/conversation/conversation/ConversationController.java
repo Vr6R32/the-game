@@ -7,6 +7,7 @@ import com.thegame.request.NewConversationRequest;
 import com.thegame.response.ConversationStatusUpdateResponse;
 import com.thegame.response.NewConversationResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,9 +39,10 @@ public record ConversationController(ConversationFacade conversationFacade) {
     }
 
     @GetMapping("/messages/{conversationId}")
-    public List<ConversationMessageDTO> getAllConversationMessages(@PathVariable("conversationId") UUID conversationId, Authentication authentication) {
+    public Page<ConversationMessageDTO> getAllConversationMessages(@PathVariable("conversationId") UUID conversationId, Authentication authentication,
+                                                                   @RequestParam(defaultValue = "20",required = false) int pageSize, @RequestParam(defaultValue = "-1") int pageNumber) {
         AuthenticationUserObject user = (AuthenticationUserObject) authentication.getPrincipal();
-        return conversationFacade.getAllConversationMessages(conversationId, user);
+        return conversationFacade.getAllConversationMessages(conversationId, user, pageSize, pageNumber);
     }
 
     @PostMapping("/messages/{conversationId}/send")

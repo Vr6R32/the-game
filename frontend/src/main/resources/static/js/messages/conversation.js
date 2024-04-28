@@ -3,6 +3,7 @@ let acceptedCount = 0;
 let invitationsCount = 0;
 let conversationsDivs = [];
 let currentContactsTab = 'ACCEPTED';
+let pageNumber = 0;
 
 
 function checkIfUserAlreadyLogged() {
@@ -412,7 +413,15 @@ function handleConversationAwaitingAccept(conversationId, messageContainer, conv
     }
 }
 
+
+function resetPageNumber() {
+    pageNumber = 0;
+}
+
 function createSpecifiedConversationMessagesBox(conversation, conversationDiv) {
+
+    resetPageNumber();
+
     loadMessages(conversation.id).then(messages => {
 
         if (conversationDiv.classList.contains('unread-message')) {
@@ -453,7 +462,11 @@ function createSpecifiedConversationMessagesBox(conversation, conversationDiv) {
             if (atTop) {
                 conversationMessagesContainer.classList.add('pull-down-refresh');
                 conversationMessagesContainer.addEventListener('animationend', () => {
-                    // loadMoreMessagesAtTop();
+                    if(pageNumber!==0) {
+                        loadMoreMessagesAtTop(conversationMessagesContainer);
+                    } else {
+                        // TODO MAKE ANIMATION MESSAGE " U ARE ALREADY ON TOP CONVERSATION"
+                    }
                     conversationMessagesContainer.scrollTop = 1;
                     conversationMessagesContainer.classList.remove('pull-down-refresh');
                 }, {once: true});
@@ -473,6 +486,18 @@ function createSpecifiedConversationMessagesBox(conversation, conversationDiv) {
 
     }).catch(error => {
         console.error('Error loading messages:', error);
+    });
+}
+
+function loadMoreMessagesAtTop(messageContainer) {
+    loadMessages(currentConversationId).then(messages => {
+        const existingMessages = messageContainer.children;
+        messages.reverse();
+        messages.forEach(message => {
+            messageContainer.insertBefore(message, existingMessages[0]);
+        });
+    }).catch(error => {
+        console.error('Error loading more messages:', error);
     });
 }
 
@@ -514,10 +539,12 @@ function createConversationDiv(conversation) {
 }
 
 function loadMessages(conversationId) {
-    return fetch('/api/v1/conversations/messages/' + conversationId)
+    const url = `/api/v1/conversations/messages/${conversationId}?pageNumber=${pageNumber-1}`;
+    return fetch(url)
         .then(response => response.json())
         .then(data => {
-            return data.map(message => {
+            pageNumber = data.pageable.pageNumber;
+            return data.content.map(message => {
                 const newMessage = document.createElement('div');
                 newMessage.textContent = message.payload;
                 newMessage.classList.add('conversation-message');

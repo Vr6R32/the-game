@@ -3,6 +3,8 @@ package com.thegame.conversation.conversation;
 import com.thegame.conversation.entity.Conversation;
 import com.thegame.conversation.entity.ConversationMessage;
 import com.thegame.dto.ConversationFriendInfo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -35,7 +37,12 @@ public interface ConversationRepository extends JpaRepository<Conversation, UUID
     @Query("SELECT cm FROM ConversationMessage cm WHERE cm.conversation.id = :conversationId " +
             "AND (cm.conversation.secondUserId = :userId OR cm.conversation.firstUserId = :userId) " +
             "ORDER BY cm.messageSendDate ASC")
-    List<ConversationMessage> findAllConversationMessagesByUserAndConversationId(@Param("conversationId") UUID conversationId, @Param("userId") Long userId);
+    Page<ConversationMessage> findAllConversationMessagesByUserAndConversationId(@Param("conversationId") UUID conversationId, @Param("userId") Long userId, Pageable pageable);
+
+
+    @Query("SELECT COUNT(cm) FROM ConversationMessage cm WHERE cm.conversation.id = :conversationId " +
+            "AND (cm.conversation.secondUserId = :userId OR cm.conversation.firstUserId = :userId)")
+    Long countAllConversationMessagesByUserAndConversationId(@Param("conversationId") UUID conversationId, @Param("userId") Long userId);
 
     @Modifying
     @Query("UPDATE Conversation c SET c.lastMessageDate = :lastMessageDate, c.lastMessageSenderId = :lastMessageSenderId, c.isReadByReceiver = :isReadByReceiver WHERE c.id = :conversationId")

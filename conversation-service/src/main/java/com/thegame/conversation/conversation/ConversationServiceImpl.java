@@ -17,6 +17,10 @@ import com.thegame.request.ConversationStatusUpdateRequest;
 import com.thegame.request.NewConversationRequest;
 import com.thegame.response.ConversationStatusUpdateResponse;
 import com.thegame.response.NewConversationResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
@@ -80,15 +84,40 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
     }
 
     @Override
-    public List<ConversationMessageDTO> getAllConversationMessages(UUID conversationId, AuthenticationUserObject user) {
-        List<ConversationMessageDTO> messageList = conversationRepository.findAllConversationMessagesByUserAndConversationId(conversationId, user.id())
-                .stream()
-                .map(ConversationMapper::mapConversationMessageToDTO)
-                .toList();
+    public Page<ConversationMessageDTO> getAllConversationMessages(UUID conversationId, AuthenticationUserObject user, int pageSize, int pageNumber) {
+
+        int latestPageNumber = setProperPagination(conversationId, user.id(), pageSize, pageNumber);
+        PageRequest pageable = PageRequest.of(latestPageNumber, pageSize, Sort.by(Sort.Direction.DESC, "messageSendDate"));
+
+        Page<ConversationMessage> latestPageMessageList = conversationRepository.findAllConversationMessagesByUserAndConversationId(conversationId, user.id(), pageable);
+        List<ConversationMessageDTO> latestContentMessageList = latestPageMessageList.getContent().stream().map(ConversationMapper::mapConversationMessageToDTO).toList();
+
+        if(latestPageMessageList.getNumberOfElements() < pageSize && latestPageMessageList.getTotalPages() > 2) {
+        return returnTwoLastPagesWhenLatestPageContentNotFull(conversationId, user, pageSize, latestPageNumber, latestContentMessageList);
+        }
+
 
         conversationRepository.updateMessagesReadByReceiverIfNecessary(conversationId,user.id());
+        return new PageImpl<>(latestContentMessageList, latestPageMessageList.getPageable(), latestPageMessageList.getTotalElements());
+    }
 
-        return messageList;
+    private PageImpl<ConversationMessageDTO> returnTwoLastPagesWhenLatestPageContentNotFull(UUID conversationId, AuthenticationUserObject user, int pageSize, int latestPageNumber, List<ConversationMessageDTO> latestContentMessageList) {
+        PageRequest pageable = PageRequest.of(latestPageNumber - 1, pageSize, Sort.by(Sort.Direction.DESC, "messageSendDate"));
+        Page<ConversationMessage> minusOnePageContentList = conversationRepository
+                .findAllConversationMessagesByUserAndConversationId(conversationId, user.id(), pageable);
+        List<ConversationMessageDTO> minusOneContentMessageList = new ArrayList<>(minusOnePageContentList.getContent().stream().map(ConversationMapper::mapConversationMessageToDTO).toList());
+        minusOneContentMessageList.addAll(latestContentMessageList);
+        return new PageImpl<>(minusOneContentMessageList, minusOnePageContentList.getPageable(), minusOnePageContentList.getTotalElements());
+    }
+
+    private int setProperPagination(UUID conversationId, Long userId, int pageSize, int pageNumber) {
+        Long messagesCount = conversationRepository.countAllConversationMessagesByUserAndConversationId(conversationId, userId);
+        int latestPageNumber = pageNumber;
+
+        if(pageNumber ==-1) {
+            latestPageNumber = (int) (messagesCount / pageSize % 10);
+        }
+        return latestPageNumber;
     }
 
     @Override
