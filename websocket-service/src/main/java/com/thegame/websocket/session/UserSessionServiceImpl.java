@@ -3,6 +3,7 @@ package com.thegame.websocket.session;
 import com.thegame.dto.AuthenticationUserObject;
 import com.thegame.dto.UserSessionDTO;
 import com.thegame.model.Status;
+import com.thegame.websocket.eureka.EurekaClientInfo;
 import com.thegame.websocket.filter.WebsocketUserPrincipal;
 import com.thegame.websocket.notification.NotificationFacade;
 import lombok.RequiredArgsConstructor;
@@ -18,25 +19,31 @@ class UserSessionServiceImpl implements UserSessionService {
 
     private final NotificationFacade notificationFacade;
     private final UserSessionRepository userSessionRepository;
+    private final EurekaClientInfo eurekaClientInfo;
 
     @Override
     public void setSessionStatusOnline(WebsocketUserPrincipal user) {
 
         UserSession userSession = userSessionRepository.findUserSessionByUserId(user.userId()).orElseGet(() -> null);
-        notificationFacade.sendUpdateSessionStatusEventToConversationFriends(user, Status.ONLINE);
+        String instanceId = eurekaClientInfo.getInstanceId();
+
 
         if(userSession == null) {
             UserSession newSession = UserSession.builder()
                     .userId(user.userId())
                     .username(user.name())
                     .status(Status.ONLINE)
+                    .loggedInstanceId(instanceId)
                     .build();
             userSessionRepository.save(newSession);
         } else {
+            userSession.setLoggedInstanceId(instanceId);
             userSession.setStatus(Status.ONLINE);
             userSession.setLogoutTime(null);
             userSessionRepository.save(userSession);
         }
+
+        notificationFacade.sendUpdateSessionStatusEventToConversationFriends(user, Status.ONLINE);
     }
 
     @Override
@@ -44,10 +51,12 @@ class UserSessionServiceImpl implements UserSessionService {
         UserSession userSession = userSessionRepository.findUserSessionByUserId(user.userId()).orElseGet(() -> null);
 
         if(userSession != null && !userSession.getStatus().equals(Status.RECONNECTING)) {
-            notificationFacade.sendUpdateSessionStatusEventToConversationFriends(user, Status.OFFLINE);
             userSession.setStatus(Status.OFFLINE);
             userSession.setLogoutTime(Date.from(Instant.now().plus(Duration.ofHours(2))));
+            userSession.setLoggedInstanceId(null);
             userSessionRepository.save(userSession);
+            notificationFacade.sendUpdateSessionStatusEventToConversationFriends(user, Status.OFFLINE);
+
         }
     }
 

@@ -20,4 +20,5 @@ public class UserSession {
     private Long userId;
     private Status status;
     private Date logoutTime;
+    private String loggedInstanceId;
 }

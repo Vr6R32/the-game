@@ -100,16 +100,16 @@ function handleNotificationEvent(notificationMessage) {
 function handleNewMessageEvent(message) {
     const conversationMessages = document.getElementById('conversationMessages');
 
-    let newMessage = document.createElement('div');
-    newMessage.classList.add('conversation-message');
-    newMessage.textContent = `${message.payload}`;
+    let newConversationMessage = document.createElement('div');
+    newConversationMessage.classList.add('conversation-message');
+    newConversationMessage.textContent = `${message.payload.message}`;
 
     const userId = loggedUser.id;
 
-    setMessageOwnerClass(message, userId, newMessage);
+    setMessageOwnerClass(message.payload, userId, newConversationMessage);
 
-    let conversationDiv = conversationsDivs[message.conversationId].div;
-    conversationsDivs[message.conversationId].lastMessageDate = message.messageDate;
+    let conversationDiv = conversationsDivs[message.payload.conversationId].div;
+    conversationsDivs[message.payload.conversationId].lastMessageDate = message.payload.messageDate;
 
     if (conversationDiv) {
         const conversationsList = conversationDiv.parentNode;
@@ -118,15 +118,15 @@ function handleNewMessageEvent(message) {
             conversationsList.prepend(conversationDiv);
         }
 
-        if (currentConversationId !== message.conversationId) {
+        if (currentConversationId !== message.payload.conversationId) {
             conversationDiv.classList.add('unread-message');
         }
     }
 
 
-    if (currentConversationId === message.conversationId) {
+    if (currentConversationId === message.payload.conversationId) {
         const isScrolledToBottom = conversationMessages.scrollHeight - conversationMessages.clientHeight <= conversationMessages.scrollTop + 1;
-        conversationMessages.append(newMessage);
+        conversationMessages.append(newConversationMessage);
 
         if (isScrolledToBottom) {
             conversationMessages.scrollTop = conversationMessages.scrollHeight;

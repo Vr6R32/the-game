@@ -72,7 +72,7 @@ function sendMessageLinux() {
         return;
     }
     const message = {
-        payload: trimmedMessage
+        message: trimmedMessage
     };
     stompClient.send("/chat/private/message/"+ currentConversationId , {}, JSON.stringify(message));
     messageInput.textContent = '';

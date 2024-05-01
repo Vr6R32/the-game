@@ -1,4 +1,4 @@
-package com.thegame.websocket;
+package com.thegame.websocket.messaging;
 
 import com.thegame.dto.AuthenticationUserObject;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -6,9 +6,9 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import java.util.Objects;
 import java.util.UUID;
 
-public class WebSocketManager {
+public class WebSocketUserAuthHelper {
 
-    private WebSocketManager() {
+    private WebSocketUserAuthHelper() {
     }
 
     public static AuthenticationUserObject extractUserFromSession(SimpMessageHeaderAccessor headerAccessor) {

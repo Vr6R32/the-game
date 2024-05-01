@@ -8,6 +8,6 @@ public class UserSessionMapper {
     }
 
     public static UserSessionDTO mapUserSessionToDTO(UserSession userSession) {
-        return new UserSessionDTO(userSession.getUsername(), userSession.getUserId(), userSession.getStatus(), userSession.getLogoutTime());
+        return new UserSessionDTO(userSession.getUsername(), userSession.getUserId(), userSession.getStatus(), userSession.getLogoutTime(), userSession.getLoggedInstanceId());
     }
 }

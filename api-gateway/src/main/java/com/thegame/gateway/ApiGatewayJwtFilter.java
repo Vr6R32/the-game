@@ -1,10 +1,9 @@
 package com.thegame.gateway;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thegame.clients.AuthServiceClient;
 import com.thegame.dto.AuthenticationUserObject;
 import com.thegame.dto.RefreshTokenAuthResponse;
+import com.thegame.mapper.AuthMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -23,7 +22,7 @@ import java.util.List;
 class ApiGatewayJwtFilter implements GatewayFilter {
 
     private final RouteValidator routeValidator;
-    private final ObjectMapper objectMapper;
+    private final AuthMapper authMapper;
     private final AuthServiceClient authServiceClient;
 
     @Override
@@ -58,7 +57,7 @@ class ApiGatewayJwtFilter implements GatewayFilter {
 
             RefreshTokenAuthResponse appUser = authServiceClient.refreshToken(refreshToken);
             exchange.getResponse().getHeaders().addAll(appUser.httpHeaders());
-            String jsonUserAuthObject = mapUserToJsonObject(appUser.authenticationUserObject());
+            String jsonUserAuthObject = authMapper.mapUserToJsonObject(appUser.authenticationUserObject());
 
             ServerHttpRequest request = exchange.getRequest()
                     .mutate()
@@ -84,7 +83,7 @@ class ApiGatewayJwtFilter implements GatewayFilter {
     private Mono<Void> authenticateToken(ServerWebExchange exchange, GatewayFilterChain chain, String token) {
 
             AuthenticationUserObject appUser = authServiceClient.validateToken(token);
-            String jsonUserAuthObject = mapUserToJsonObject(appUser);
+            String jsonUserAuthObject = authMapper.mapUserToJsonObject(appUser);
 
             ServerHttpRequest request = exchange.getRequest()
                     .mutate()
@@ -95,15 +94,6 @@ class ApiGatewayJwtFilter implements GatewayFilter {
             return chain.filter(newExchange);
         }
 
-    private String mapUserToJsonObject(AuthenticationUserObject appUser) {
-        String jsonUserObject = null;
-        try {
-            jsonUserObject = objectMapper.writeValueAsString(appUser);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        return jsonUserObject;
-    }
 
     private boolean areHttpCookieTokensMissing (ServerHttpRequest request){
             RequestCookies requestCookies = RequestCookies.extractCookiesFromRequest(request.getCookies());

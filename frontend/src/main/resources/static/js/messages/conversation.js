@@ -414,13 +414,7 @@ function handleConversationAwaitingAccept(conversationId, messageContainer, conv
 }
 
 
-function resetPageNumber() {
-    pageNumber = 0;
-}
-
 function createSpecifiedConversationMessagesBox(conversation, conversationDiv) {
-
-    resetPageNumber();
 
     loadMessages(conversation.id).then(messages => {
 

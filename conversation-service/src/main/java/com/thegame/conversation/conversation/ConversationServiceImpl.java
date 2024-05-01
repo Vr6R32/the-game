@@ -1,12 +1,11 @@
 package com.thegame.conversation.conversation;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thegame.clients.UserServiceClient;
 import com.thegame.clients.WebSocketServiceClientProxy;
 import com.thegame.conversation.entity.Conversation;
 import com.thegame.conversation.entity.ConversationMessage;
 import com.thegame.event.ConversationStatusUpdateEvent;
+import com.thegame.mapper.AuthMapper;
 import com.thegame.model.ConversationStatus;
 import com.thegame.dto.*;
 import com.thegame.model.Notification;
@@ -30,7 +29,7 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
                                       ConversationMessageRepository messageRepository,
                                       UserServiceClient userServiceClient,
                                       WebSocketServiceClientProxy webSocketServiceClient,
-                                      ObjectMapper objectMapper) implements ConversationService {
+                                      AuthMapper authMapper) implements ConversationService {
 
 
     @Override
@@ -41,8 +40,8 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
         Map<UUID, Long> conversationIdSecondUserIdMap = new HashMap<>();
         conversationInfoMap.forEach((conversationId, conversationInfo) -> conversationIdSecondUserIdMap.put(conversationId, conversationInfo.secondUserId()));
 
-        Map<UUID, AppUserDTO> conversationsUsersDetails = userServiceClient.getConversationsUsersDetails(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
-        Map<UUID, UserSessionDTO> conversationUsersSessionDetails = webSocketServiceClient.findConversationUserSessionsByIdMap(mapUserToJsonObject(user), conversationIdSecondUserIdMap);
+        Map<UUID, AppUserDTO> conversationsUsersDetails = userServiceClient.getConversationsUsersDetails(authMapper.mapUserToJsonObject(user), conversationIdSecondUserIdMap);
+        Map<UUID, UserSessionDTO> conversationUsersSessionDetails = webSocketServiceClient.findConversationUserSessionsByIdMap(authMapper.mapUserToJsonObject(user), conversationIdSecondUserIdMap);
 
         return conversationInfoMap.entrySet().stream().map(entry -> {
             UUID conversationId = entry.getKey();
@@ -143,11 +142,11 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
 
         // TODO USER SERVICE FIND BY EMAIL , IF NOT EXISTS SEND AN EMAIL INVITATION
 
-        AppUserDTO secondUser = userServiceClient.getUserDetailsByEmailAddress(mapUserToJsonObject(user), request.secondUserEmail());
+        AppUserDTO secondUser = userServiceClient.getUserDetailsByEmailAddress(authMapper.mapUserToJsonObject(user), request.secondUserEmail());
 
 
 
-        if(secondUser==null) { secondUser = userServiceClient.createInvitedUserAccount(mapUserToJsonObject(user), request); }
+        if(secondUser==null) { secondUser = userServiceClient.createInvitedUserAccount(authMapper.mapUserToJsonObject(user), request); }
 
         Long secondUserId = secondUser.id();
 
@@ -166,7 +165,7 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
         conversationRepository.save(newConversation);
 
 
-        UserSessionDTO secondUserSessionDetails = webSocketServiceClient.findUserSessionDetailsById(mapUserToJsonObject(user), secondUserId);
+        UserSessionDTO secondUserSessionDetails = webSocketServiceClient.findUserSessionDetailsById(authMapper.mapUserToJsonObject(user), secondUserId);
 
         Status userStatus = null;
         Date logoutTime = null;
@@ -177,12 +176,12 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
         }
 
         if (userStatus == Status.ONLINE || userStatus == Status.RECONNECTING) {
-            AppUserDTO initiator = userServiceClient.getUserDetailsByEmailAddress(mapUserToJsonObject(user), user.email());
+            AppUserDTO initiator = userServiceClient.getUserDetailsByEmailAddress(authMapper.mapUserToJsonObject(user), user.email());
 
             DetailedConversationDTO secondUserNotification = new DetailedConversationDTO(newConversation.getId(),user.id(),initiator.avatarUrl(),initiator.email(),
                     Status.ONLINE,null,null,user.username(),ConversationStatus.INVITATION,false, true);
 
-            webSocketServiceClient.sendNewConversationNotificationEvent(mapUserToJsonObject(user), new Notification(NotificationType.CONVERSATION_INVITATION, secondUserNotification),secondUserId);
+            webSocketServiceClient.sendNewConversationNotificationEvent(authMapper.mapUserToJsonObject(user), new Notification(NotificationType.CONVERSATION_INVITATION, secondUserNotification),secondUserId);
 
         }
 
@@ -238,20 +237,8 @@ public record ConversationServiceImpl(ConversationRepository conversationReposit
 
         conversationRepository.save(conversation);
 
-        webSocketServiceClient.sendConversationStatusUpdateEvent(mapUserToJsonObject(user),
+        webSocketServiceClient.sendConversationStatusUpdateEvent(authMapper.mapUserToJsonObject(user),
                 new Notification(NotificationType.CONVERSATION_STATUS_UPDATE,new ConversationStatusUpdateEvent(request.conversationId(),conversation.getStatus())), conversation.getFirstUserId());
         return new ConversationStatusUpdateResponse("Conversation status updated successfully", HttpStatus.OK, conversation.getStatus());
     }
-
-
-    private String mapUserToJsonObject(AuthenticationUserObject appUser) {
-        String jsonUserObject = null;
-        try {
-            jsonUserObject = objectMapper.writeValueAsString(appUser);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        return jsonUserObject;
-    }
-
 }
