@@ -6,13 +6,99 @@
 <p align="center">
 Email Chatter is a responsive single page application facilitating real-time message and event exchange between users based on their email addresses, leveraging WebSocket technology. This application features a scalable microservice architecture built on Spring Cloud API, with
  Api Gateway incorporating the Eureka server-client pattern along with Feign clients for efficient inter-service communication. It utilizes two databases, PostgreSQL and MongoDB, for data storage and management. This project demonstrates proficiency in modern backend development, cloud architecture, and database integration within a distributed system.
-<br>
-
-Application target is to build responsive online browser-based game,
-project is undergoing expansion and is not yet fully ready for use. Initially, it emerged as an idea for a responsive browser game. For now, a solid foundation has been laid with user authentication infrastructure, contact creation, and real-time message transmission via WebSocket for real-time processing.
-
 </p>
 <br>
+
+
+<p align="center">
+Application target is to build responsive online browser-based game,
+project is undergoing expansion and is not yet fully ready for use. Initially, it emerged as an idea for a responsive browser game. For now, a solid foundation has been laid with user authentication infrastructure, contact creation, and real-time message transmission via WebSocket for real-time processing.
+</p>
+<br>
+
+
+<h1 align="center">Fully scaled & tracked infrastructure</h1>
+
+<p align="center">
+Application is build as a fully scaled infrastructure with possibility to load up more instances if needed. 
+</p>
+
+
+<h2 align="left">
+Eureka: 
+</h2>
+
+Used for service discovery and registration, allowing services to locate and communicate with each other without hardcoding service locations.
+
+<h2 align="left">
+Spring Cloud Feign: 
+</h2>
+
+Simplifies the development of RESTful clients by providing a higher-level abstraction over HTTP clients. This enables declarative REST calls between microservices.
+
+<h2 align="left">
+Prometheus: 
+</h2>
+
+An open-source monitoring and alerting toolkit that collects metrics from your services and infrastructure, helping you detect and diagnose issues in real time.
+
+<h2 align="left">
+Kafka: 
+</h2>
+
+A distributed event streaming platform used to publish, subscribe to, store, and process streams of records in real time. It serves as an asynchronous messaging backbone for communication between WebSocket service instances.
+
+<h2 align="left">
+WebSocket Service: 
+</h2>
+
+Utilizes SockJS and STOMP protocol for handling real-time, session-based communication. The infrastructure is designed to seamlessly scale WebSocket services by leveraging Apache Kafka for asynchronous message exchange between service instances.
+
+<h2 align="left">
+Grafana with Loki and Promtail:
+</h2>
+Grafana is used for metric visualization and monitoring dashboards, with Loki log aggregation system and Promtail that ships the logs to Loki are dispatched for logging and log aggregation.
+
+
+<br>
+<br>
+
+<h1 align="center">
+Monitoring stack pictures
+</h1>
+
+
+![](readme/png/prometheus-targets.png)
+
+<br>
+<br>
+
+
+![](readme/png/websocket-monitoring.png)
+
+<br>
+<br>
+
+
+![](readme/png/tracing-logging.png)
+
+
+<br>
+<br>
+
+
+![](readme/png/conversation-monitoring.png)
+<br>
+<br>
+
+
+![](readme/png/mongo-sessions.png)
+<br>
+<br>
+
+
+
+
 
 
 |       Service        |                       LOCAL                        |                                          OpenAPI                                           | Login  |  Password   |

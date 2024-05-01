@@ -216,6 +216,40 @@ services:
       - api-gateway
     restart: unless-stopped
 
+  conversation-service2:
+    image: michaelkey/conversation-service:0.0.1-SNAPSHOT
+    container_name: conversation-service2
+    ports:
+      - "8088:8088"
+    environment:
+      SERVER_PORT: 8088
+      SPRING_PROFILES_ACTIVE: docker
+      TZ: Europe/Warsaw
+    volumes:
+      - api-logs:/var/log/spring
+    networks:
+      - spring
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+
+  conversation-service3:
+    image: michaelkey/conversation-service:0.0.1-SNAPSHOT
+    container_name: conversation-service3
+    ports:
+      - "8068:8068"
+    environment:
+      SERVER_PORT: 8068
+      SPRING_PROFILES_ACTIVE: docker
+      TZ: Europe/Warsaw
+    volumes:
+      - api-logs:/var/log/spring
+    networks:
+      - spring
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+
   eureka-server:
     image: michaelkey/eureka-server:0.0.1-SNAPSHOT
     container_name: eureka-server
@@ -289,6 +323,23 @@ services:
       - "8090:8090"
     environment:
       SERVER_PORT: 8090
+      SPRING_PROFILES_ACTIVE: docker
+      TZ: Europe/Warsaw
+    volumes:
+      - api-logs:/var/log/spring
+    networks:
+      - spring
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+
+  websocket-service3:
+    image: michaelkey/websocket-service:0.0.1-SNAPSHOT
+    container_name: websocket-service3
+    ports:
+      - "8092:8092"
+    environment:
+      SERVER_PORT: 8092
       SPRING_PROFILES_ACTIVE: docker
       TZ: Europe/Warsaw
     volumes:
